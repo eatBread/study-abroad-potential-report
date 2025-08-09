@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>留学潜力报告生成系统 - 演示</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        .demo-container {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .demo-header {
+            margin-bottom: 50px;
+        }
+        .demo-header h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .demo-header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+        .demo-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 50px 0;
+        }
+        .demo-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: left;
+            transition: transform 0.3s ease;
+        }
+        .demo-card:hover {
+            transform: translateY(-10px);
+        }
+        .demo-card h3 {
+            color: #fff;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+        .demo-card ul {
+            list-style: none;
+            padding: 0;
+        }
+        .demo-card li {
+            margin: 10px 0;
+            opacity: 0.9;
+        }
+        .demo-card li:before {
+            content: "✓ ";
+            color: #4ade80;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+        .action-buttons {
+            margin-top: 50px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 15px 30px;
+            margin: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        .btn-primary {
+            background: #3b82f6;
+            border-color: #3b82f6;
+        }
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+        }
+        .feature {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+        }
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        .tech-stack {
+            margin: 50px 0;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+        }
+        .tech-stack h3 {
+            margin-bottom: 20px;
+        }
+        .tech-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+        .tech-tag {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        @media (max-width: 768px) {
+            .demo-header h1 {
+                font-size: 2rem;
+            }
+            .demo-cards {
+                grid-template-columns: 1fr;
+            }
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <div class="demo-header">
+            <h1>🎓 留学潜力报告生成系统</h1>
+            <p>基于科学评估的个性化留学规划报告生成工具</p>
+            <p>简单、专业、高效的留学评估解决方案</p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature">
+                <div class="feature-icon">📝</div>
+                <h4>数据录入</h4>
+                <p>全面的学生信息采集</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">⚙️</div>
+                <h4>后台管理</h4>
+                <p>灵活的内容自定义</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">📊</div>
+                <h4>雷达图分析</h4>
+                <p>五维能力可视化</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">📄</div>
+                <h4>PDF导出</h4>
+                <p>高质量报告输出</p>
+            </div>
+        </div>
+
+        <div class="demo-cards">
+            <div class="demo-card">
+                <h3>🎯 核心功能</h3>
+                <ul>
+                    <li>学生信息全面录入</li>
+                    <li>五维能力雷达图分析</li>
+                    <li>个性化诊断与建议</li>
+                    <li>分层次院校推荐</li>
+                    <li>专业PDF报告生成</li>
+                    <li>响应式设计体验</li>
+                </ul>
+            </div>
+
+            <div class="demo-card">
+                <h3>📋 数据收集</h3>
+                <ul>
+                    <li>学生基本信息</li>
+                    <li>学业成绩记录</li>
+                    <li>留学意向调研</li>
+                    <li>课外活动评估</li>
+                    <li>个人素养分析</li>
+                    <li>综合能力测评</li>
+                </ul>
+            </div>
+
+            <div class="demo-card">
+                <h3>🎨 报告内容</h3>
+                <ul>
+                    <li>专业报告头设计</li>
+                    <li>学生信息概览</li>
+                    <li>能力雷达图展示</li>
+                    <li>核心诊断分析</li>
+                    <li>提升建议指导</li>
+                    <li>院校匹配推荐</li>
+                </ul>
+            </div>
+
+            <div class="demo-card">
+                <h3>🔧 技术特色</h3>
+                <ul>
+                    <li>纯前端技术栈</li>
+                    <li>本地数据存储</li>
+                    <li>模块化架构设计</li>
+                    <li>可扩展性强</li>
+                    <li>易于部署维护</li>
+                    <li>支持AI集成</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="tech-stack">
+            <h3>🛠 技术栈</h3>
+            <div class="tech-tags">
+                <span class="tech-tag">HTML5</span>
+                <span class="tech-tag">CSS3</span>
+                <span class="tech-tag">JavaScript ES6+</span>
+                <span class="tech-tag">Chart.js</span>
+                <span class="tech-tag">html2pdf.js</span>
+                <span class="tech-tag">LocalStorage</span>
+                <span class="tech-tag">Responsive Design</span>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <a href="index.html" class="btn btn-primary">🚀 开始使用</a>
+            <a href="report.html" class="btn">📄 查看报告示例</a>
+            <a href="README.md" class="btn">📖 查看文档</a>
+        </div>
+
+        <div style="margin-top: 50px; opacity: 0.7; font-size: 0.9rem;">
+            <p>✨ 专为留学咨询机构和教育工作者设计</p>
+            <p>🔮 支持AI智能分析功能扩展</p>
+            <p>🌐 完全开源，可自由定制</p>
+        </div>
+    </div>
+
+    <script>
+        // 简单的动画效果
+        window.addEventListener('load', function() {
+            const cards = document.querySelectorAll('.demo-card, .feature');
+            cards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(50px)';
+                    card.style.transition = 'all 0.6s ease';
+                    
+                    setTimeout(() => {
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }, 100);
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+</html> 

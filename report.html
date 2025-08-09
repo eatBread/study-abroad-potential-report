@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>留学潜力报告</title>
+    <link rel="stylesheet" href="styles/report.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+    <div class="report-container" id="report-content">
+        <!-- 第一页 -->
+        <div class="page page-1">
+            <!-- 报告头部 -->
+            <header class="report-header">
+                <div class="header-content">
+                    <h1>留学潜力报告</h1>
+                    <p class="subtitle">Study Abroad Potential Assessment Report</p>
+                    <div class="report-date">
+                        <span id="report-date"></span>
+                    </div>
+                </div>
+                <div class="header-decoration"></div>
+            </header>
+
+            <!-- 学生基本信息 -->
+            <section class="student-info">
+                <h2>学生基本信息</h2>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="label">姓名：</span>
+                        <span class="value" id="student-name"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">性别：</span>
+                        <span class="value" id="student-gender"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">年级：</span>
+                        <span class="value" id="student-grade"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">学校：</span>
+                        <span class="value" id="student-school"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">学科分组：</span>
+                        <span class="value" id="student-subject-group"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">留学意向：</span>
+                        <span class="value" id="student-destination"></span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 综合能力雷达图 -->
+            <section class="radar-section">
+                <h2>综合能力评估</h2>
+                <div class="radar-container">
+                    <canvas id="radarChart" width="400" height="400"></canvas>
+                </div>
+                <div class="radar-legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #3b82f6;"></div>
+                        <span>当前能力水平</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 五维能力详细分析 -->
+            <section class="analysis-section">
+                <h2>五维能力详细分析</h2>
+                
+                <!-- 学术能力 -->
+                <div class="ability-detail">
+                    <h3>📚 学术能力</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item strengths">
+                            <h4>优势</h4>
+                            <p id="academic-strengths"><!-- 动态内容 --></p>
+                        </div>
+                        <div class="detail-item weaknesses">
+                            <h4>不足</h4>
+                            <p id="academic-weaknesses"><!-- 动态内容 --></p>
+                        </div>
+                        <div class="detail-item suggestions">
+                            <h4>建议</h4>
+                            <p id="academic-suggestions"><!-- 动态内容 --></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 学术潜力 -->
+                <div class="ability-detail">
+                    <h3>🚀 学术潜力</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item strengths">
+                            <h4>优势</h4>
+                            <p id="potential-strengths"><!-- 动态内容 --></p>
+                        </div>
+                        <div class="detail-item weaknesses">
+                            <h4>不足</h4>
+                            <p id="potential-weaknesses"><!-- 动态内容 --></p>
+                        </div>
+                        <div class="detail-item suggestions">
+                            <h4>建议</h4>
+                            <p id="potential-suggestions"><!-- 动态内容 --></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 语言能力 -->
+                <div class="ability-detail">
+                    <h3>🌍 语言能力</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item strengths">
+                            <h4>优势</h4>
+                            <p id="language-strengths"><!-- 动态内容 --></p>
+                        </div>
+                        <div class="detail-item weaknesses">
+                            <h4>不足</h4>
+                            <p id="language-weaknesses"><!-- 动态内容 --></p>
+                        </div>
+                        <div class="detail-item suggestions">
+                            <h4>建议</h4>
+                            <p id="language-suggestions"><!-- 动态内容 --></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 综合素养 -->
+                <div class="ability-detail">
+                    <h3>⭐ 综合素养</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item strengths">
+                            <h4>优势</h4>
+                            <p id="quality-strengths"><!-- 动态内容 --></p>
+                        </div>
+                        <div class="detail-item weaknesses">
+                            <h4>不足</h4>
+                            <p id="quality-weaknesses"><!-- 动态内容 --></p>
+                        </div>
+                        <div class="detail-item suggestions">
+                            <h4>建议</h4>
+                            <p id="quality-suggestions"><!-- 动态内容 --></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 目标匹配度 -->
+                <div class="ability-detail">
+                    <h3>🎯 目标匹配度</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item strengths">
+                            <h4>优势</h4>
+                            <p id="matching-strengths"><!-- 动态内容 --></p>
+                        </div>
+                        <div class="detail-item weaknesses">
+                            <h4>不足</h4>
+                            <p id="matching-weaknesses"><!-- 动态内容 --></p>
+                        </div>
+                        <div class="detail-item suggestions">
+                            <h4>建议</h4>
+                            <p id="matching-suggestions"><!-- 动态内容 --></p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- 第二页 -->
+        <div class="page page-2">
+            <!-- 综合提升建议 -->
+            <section class="suggestions-section">
+                <h2>综合提升建议</h2>
+                <div class="suggestions-content" id="suggestions-content">
+                    <!-- 动态内容 -->
+                </div>
+            </section>
+
+            <!-- 院校与专业推荐 -->
+            <section class="universities-section">
+                <h2>院校与专业匹配推荐</h2>
+                
+                <div class="university-category">
+                    <h3><span class="category-badge reach">冲刺</span>冲刺院校</h3>
+                    <div class="university-list" id="reach-universities">
+                        <!-- 动态内容 -->
+                    </div>
+                </div>
+
+                <div class="university-category">
+                    <h3><span class="category-badge match">稳妥</span>稳妥院校</h3>
+                    <div class="university-list" id="match-universities">
+                        <!-- 动态内容 -->
+                    </div>
+                </div>
+
+                <div class="university-category">
+                    <h3><span class="category-badge safety">保底</span>保底院校</h3>
+                    <div class="university-list" id="safety-universities">
+                        <!-- 动态内容 -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- 服务引流模块 -->
+            <section class="service-section">
+                <div class="service-content">
+                    <div class="service-slogan" id="service-slogan">
+                        <!-- 动态内容 -->
+                    </div>
+                    <div class="success-cases">
+                        <h3>成功案例</h3>
+                        <div class="cases-content" id="success-cases">
+                            <!-- 动态内容 -->
+                        </div>
+                    </div>
+                </div>
+                <div class="contact-info">
+                    <p>想了解更多？联系我们获取专业咨询</p>
+                    <div class="contact-details">
+                        <span>📞 400-123-4567</span>
+                        <span>📧 info@studyabroad.com</span>
+                        <span>🌐 www.studyabroad.com</span>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- 操作按钮 -->
+    <div class="action-buttons">
+        <button class="btn btn-primary" onclick="exportToPDF()">导出PDF报告</button>
+        <button class="btn btn-secondary" onclick="window.close()">关闭窗口</button>
+    </div>
+
+    <script src="scripts/report.js"></script>
+</body>
+</html> 

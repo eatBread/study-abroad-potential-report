@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>留学潜力报告生成系统</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>留学潜力报告生成系统</h1>
+            <p>基于科学评估的个性化留学规划报告</p>
+        </header>
+
+        <nav class="nav-tabs">
+            <button class="tab-btn active" onclick="showTab('input')">学生信息录入</button>
+            <button class="tab-btn" onclick="showTab('admin')">后台管理</button>
+        </nav>
+
+        <!-- 学生信息录入页面 -->
+        <div id="input-tab" class="tab-content active">
+            <div class="form-container">
+                <h2>学生基本信息</h2>
+                <form id="student-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="studentName">学生姓名 *</label>
+                            <input type="text" id="studentName" name="studentName" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="gender">性别 *</label>
+                            <select id="gender" name="gender" required>
+                                <option value="">请选择</option>
+                                <option value="男">男</option>
+                                <option value="女">女</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="grade">所在年级 *</label>
+                            <select id="grade" name="grade" required>
+                                <option value="">请选择</option>
+                                <option value="高一">高一</option>
+                                <option value="高二">高二</option>
+                                <option value="高三">高三</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="school">所在学校名称 *</label>
+                            <input type="text" id="school" name="school" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="subjectGroup">高考学科分组 *</label>
+                            <select id="subjectGroup" name="subjectGroup" required>
+                                <option value="">请选择</option>
+                                <option value="物理组">物理组</option>
+                                <option value="历史组">历史组</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <h3>学业成绩</h3>
+                    <div class="scores-section">
+                        <h4>最近一次考试成绩</h4>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="currentChinese">语文</label>
+                                <input type="number" id="currentChinese" name="currentChinese" min="0" max="150">
+                            </div>
+                            <div class="form-group">
+                                <label for="currentMath">数学</label>
+                                <input type="number" id="currentMath" name="currentMath" min="0" max="150">
+                            </div>
+                            <div class="form-group">
+                                <label for="currentEnglish">英语</label>
+                                <input type="number" id="currentEnglish" name="currentEnglish" min="0" max="150">
+                            </div>
+                            <div class="form-group">
+                                <label for="currentPhysics">物理</label>
+                                <input type="number" id="currentPhysics" name="currentPhysics" min="0" max="100">
+                            </div>
+                            <div class="form-group">
+                                <label for="currentBiology">生物</label>
+                                <input type="number" id="currentBiology" name="currentBiology" min="0" max="100">
+                            </div>
+                            <div class="form-group">
+                                <label for="currentChemistry">化学</label>
+                                <input type="number" id="currentChemistry" name="currentChemistry" min="0" max="100">
+                            </div>
+                            <div class="form-group">
+                                <label for="currentHistory">历史</label>
+                                <input type="number" id="currentHistory" name="currentHistory" min="0" max="100">
+                            </div>
+                            <div class="form-group">
+                                <label for="currentGeography">地理</label>
+                                <input type="number" id="currentGeography" name="currentGeography" min="0" max="100">
+                            </div>
+                            <div class="form-group">
+                                <label for="currentPolitics">政治</label>
+                                <input type="number" id="currentPolitics" name="currentPolitics" min="0" max="100">
+                            </div>
+                            <div class="form-group">
+                                <label for="currentTotal">总分</label>
+                                <input type="number" id="currentTotal" name="currentTotal" min="0" max="750">
+                            </div>
+                        </div>
+
+                        <h4>预测高考成绩</h4>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="predictedChinese">语文</label>
+                                <input type="number" id="predictedChinese" name="predictedChinese" min="0" max="150">
+                            </div>
+                            <div class="form-group">
+                                <label for="predictedMath">数学</label>
+                                <input type="number" id="predictedMath" name="predictedMath" min="0" max="150">
+                            </div>
+                            <div class="form-group">
+                                <label for="predictedEnglish">英语</label>
+                                <input type="number" id="predictedEnglish" name="predictedEnglish" min="0" max="150">
+                            </div>
+                            <div class="form-group">
+                                <label for="predictedTotal">总分</label>
+                                <input type="number" id="predictedTotal" name="predictedTotal" min="0" max="750">
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>补习情况</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="hasTutoring">是否进行学科补习</label>
+                            <select id="hasTutoring" name="hasTutoring">
+                                <option value="">请选择</option>
+                                <option value="是">是</option>
+                                <option value="否">否</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="tutoringSubjects">正在补习的科目</label>
+                            <input type="text" id="tutoringSubjects" name="tutoringSubjects" placeholder="多个科目请用逗号分隔">
+                        </div>
+                    </div>
+
+                    <h3>专业倾向与留学意向</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="majorPreference">大学倾向专业方向</label>
+                            <select id="majorPreference" name="majorPreference">
+                                <option value="">请选择</option>
+                                <option value="建筑">建筑</option>
+                                <option value="理科">理科</option>
+                                <option value="工科">工科</option>
+                                <option value="商科">商科</option>
+                                <option value="文科">文科</option>
+                                <option value="医护">医护</option>
+                                <option value="音乐">音乐</option>
+                                <option value="美术">美术</option>
+                                <option value="其他">其他</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="englishTestType">国际英语成绩类型</label>
+                            <select id="englishTestType" name="englishTestType">
+                                <option value="">请选择</option>
+                                <option value="雅思">雅思</option>
+                                <option value="托福">托福</option>
+                                <option value="PTE">PTE</option>
+                                <option value="多邻国">多邻国</option>
+                                <option value="暂无">暂无</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="englishScore">英语考试成绩</label>
+                            <input type="text" id="englishScore" name="englishScore" placeholder="请输入成绩">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="studyDestination">留学意向国家/地区</label>
+                            <select id="studyDestination" name="studyDestination">
+                                <option value="">请选择</option>
+                                <option value="美国">美国</option>
+                                <option value="英国">英国</option>
+                                <option value="澳大利亚">澳大利亚</option>
+                                <option value="中国香港">中国香港</option>
+                                <option value="中国澳门">中国澳门</option>
+                                <option value="新加坡">新加坡</option>
+                                <option value="马来西亚">马来西亚</option>
+                                <option value="爱尔兰">爱尔兰</option>
+                                <option value="荷兰">荷兰</option>
+                                <option value="新西兰">新西兰</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="budget">预期留学投入费用</label>
+                            <select id="budget" name="budget">
+                                <option value="">请选择</option>
+                                <option value="80万以内">80万以内</option>
+                                <option value="100万以内">100万以内</option>
+                                <option value="120万以内">120万以内</option>
+                                <option value="150万以内">150万以内</option>
+                                <option value="200万以内">200万以内</option>
+                                <option value="200万以上">200万以上</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <h3>课外活动与个人素养</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="hasClub">是否参加学校社团</label>
+                            <select id="hasClub" name="hasClub">
+                                <option value="">请选择</option>
+                                <option value="是">是</option>
+                                <option value="否">否</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="clubActivities">参加的社团</label>
+                            <input type="text" id="clubActivities" name="clubActivities" placeholder="多个社团请用逗号分隔">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="hasLongTermHobby">是否有维持3年以上的兴趣爱好</label>
+                            <select id="hasLongTermHobby" name="hasLongTermHobby">
+                                <option value="">请选择</option>
+                                <option value="是">是</option>
+                                <option value="否">否</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="hobbies">兴趣爱好</label>
+                            <input type="text" id="hobbies" name="hobbies" placeholder="多个爱好请用逗号分隔">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="friendsCount">经常来往的好友数量</label>
+                            <input type="number" id="friendsCount" name="friendsCount" min="0">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="talents">音乐、美术、体育、艺术才艺</label>
+                            <input type="text" id="talents" name="talents" placeholder="多个才艺请用逗号分隔">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="certificates">才艺证书资质或奖项</label>
+                            <input type="text" id="certificates" name="certificates" placeholder="多个证书请用逗号分隔">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="organizationFrequency">整理生活和工作空间频率</label>
+                            <select id="organizationFrequency" name="organizationFrequency">
+                                <option value="">请选择</option>
+                                <option value="每天">每天</option>
+                                <option value="每周">每周</option>
+                                <option value="每月">每月</option>
+                                <option value="很少">很少</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="askForHelp">遇到困难是否向周围的人求助</label>
+                            <select id="askForHelp" name="askForHelp">
+                                <option value="">请选择</option>
+                                <option value="经常">经常</option>
+                                <option value="偶尔">偶尔</option>
+                                <option value="很少">很少</option>
+                                <option value="从不">从不</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="canCook">是否会自己做饭</label>
+                            <select id="canCook" name="canCook">
+                                <option value="">请选择</option>
+                                <option value="是">是</option>
+                                <option value="否">否</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="readingTime">每天课外阅读时间（小时）</label>
+                            <input type="number" id="readingTime" name="readingTime" min="0" max="24" step="0.5">
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">生成报告</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- 后台管理页面 -->
+        <div id="admin-tab" class="tab-content">
+            <div class="admin-container">
+                <h2>后台管理设置</h2>
+                
+                <!-- 状态提示区域 -->
+                <div class="status-banner" id="admin-status">
+                    <div class="status-info">
+                        <span class="status-icon">ℹ️</span>
+                        <span class="status-text" id="status-text">在这里可以自定义报告的所有内容。配置完成后可以直接生成报告预览。</span>
+                    </div>
+                    <button type="button" class="btn btn-primary btn-small" onclick="generateReportFromAdmin()">📊 生成报告</button>
+                </div>
+                
+                <div class="admin-section">
+                    <h3>雷达图维度设置</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="academicAbility">学术能力 (0-100)</label>
+                            <input type="number" id="academicAbility" name="academicAbility" min="0" max="100" value="75">
+                        </div>
+                        <div class="form-group">
+                            <label for="academicPotential">学术潜力 (0-100)</label>
+                            <input type="number" id="academicPotential" name="academicPotential" min="0" max="100" value="80">
+                        </div>
+                        <div class="form-group">
+                            <label for="languageAbility">语言能力 (0-100)</label>
+                            <input type="number" id="languageAbility" name="languageAbility" min="0" max="100" value="70">
+                        </div>
+                        <div class="form-group">
+                            <label for="comprehensiveQuality">综合素养 (0-100)</label>
+                            <input type="number" id="comprehensiveQuality" name="comprehensiveQuality" min="0" max="100" value="85">
+                        </div>
+                        <div class="form-group">
+                            <label for="goalMatching">目标匹配度 (0-100)</label>
+                            <input type="number" id="goalMatching" name="goalMatching" min="0" max="100" value="78">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="admin-section">
+                    <h3>五维能力详细分析</h3>
+                    <p class="section-desc">为每个能力维度设置详细的分析内容。留空则根据分数自动生成对应评价。</p>
+                    
+                    <!-- 学术能力分析 -->
+                    <div class="ability-analysis">
+                        <h4>📚 学术能力分析</h4>
+                        <div class="analysis-grid">
+                            <div class="form-group">
+                                <label for="academicStrengths">优势</label>
+                                <textarea id="academicStrengths" name="academicStrengths" rows="2" placeholder="留空则根据分数自动生成"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="academicWeaknesses">不足</label>
+                                <textarea id="academicWeaknesses" name="academicWeaknesses" rows="2" placeholder="留空则根据分数自动生成"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="academicSuggestions">可行性建议</label>
+                                <textarea id="academicSuggestions" name="academicSuggestions" rows="2" placeholder="留空则根据分数自动生成"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 学术潜力分析 -->
+                    <div class="ability-analysis">
+                        <h4>🚀 学术潜力分析</h4>
+                        <div class="analysis-grid">
+                            <div class="form-group">
+                                <label for="potentialStrengths">优势</label>
+                                <textarea id="potentialStrengths" name="potentialStrengths" rows="2" placeholder="留空则根据分数自动生成"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="potentialWeaknesses">不足</label>
+                                <textarea id="potentialWeaknesses" name="potentialWeaknesses" rows="2" placeholder="留空则根据分数自动生成"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="potentialSuggestions">可行性建议</label>
+                                <textarea id="potentialSuggestions" name="potentialSuggestions" rows="2" placeholder="留空则根据分数自动生成"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 语言能力分析 -->
+                    <div class="ability-analysis">
+                        <h4>🌍 语言能力分析</h4>
+                        <div class="analysis-grid">
+                            <div class="form-group">
+                                <label for="languageStrengths">优势</label>
+                                <textarea id="languageStrengths" name="languageStrengths" rows="2" placeholder="留空则根据分数自动生成"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="languageWeaknesses">不足</label>
+                                <textarea id="languageWeaknesses" name="languageWeaknesses" rows="2" placeholder="留空则根据分数自动生成"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="languageSuggestions">可行性建议</label>
+                                <textarea id="languageSuggestions" name="languageSuggestions" rows="2" placeholder="留空则根据分数自动生成"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 综合素养分析 -->
+                    <div class="ability-analysis">
+                        <h4>⭐ 综合素养分析</h4>
+                        <div class="analysis-grid">
+                            <div class="form-group">
+                                <label for="qualityStrengths">优势</label>
+                                <textarea id="qualityStrengths" name="qualityStrengths" rows="2" placeholder="留空则根据分数自动生成"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="qualityWeaknesses">不足</label>
+                                <textarea id="qualityWeaknesses" name="qualityWeaknesses" rows="2" placeholder="留空则根据分数自动生成"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="qualitySuggestions">可行性建议</label>
+                                <textarea id="qualitySuggestions" name="qualitySuggestions" rows="2" placeholder="留空则根据分数自动生成"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 目标匹配度分析 -->
+                    <div class="ability-analysis">
+                        <h4>🎯 目标匹配度分析</h4>
+                        <div class="analysis-grid">
+                            <div class="form-group">
+                                <label for="matchingStrengths">优势</label>
+                                <textarea id="matchingStrengths" name="matchingStrengths" rows="2" placeholder="留空则根据分数自动生成"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="matchingWeaknesses">不足</label>
+                                <textarea id="matchingWeaknesses" name="matchingWeaknesses" rows="2" placeholder="留空则根据分数自动生成"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="matchingSuggestions">可行性建议</label>
+                                <textarea id="matchingSuggestions" name="matchingSuggestions" rows="2" placeholder="留空则根据分数自动生成"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="admin-section">
+                        <h3>综合提升建议</h3>
+                        <div class="form-group">
+                            <label for="overallSuggestions">整体建议</label>
+                            <textarea id="overallSuggestions" name="overallSuggestions" rows="4" placeholder="留空则根据五维分析自动汇总生成">1. 加强英语听说读写能力，建议参加雅思或托福培训
+2. 扩展学术课外活动，如科研项目或学科竞赛
+3. 培养领导力，可考虑在社团中担任职务
+4. 增加国际化视野，关注目标专业的前沿发展</textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="admin-section">
+                    <h3>院校与专业推荐</h3>
+                    
+                    <h4>冲刺院校（2所）</h4>
+                    <div class="university-grid">
+                        <div class="university-item">
+                            <input type="text" placeholder="大学名称" id="reach1Name" value="剑桥大学">
+                            <input type="text" placeholder="专业名称" id="reach1Major" value="工程学">
+                            <input type="text" placeholder="地区" id="reach1Location" value="英国">
+                            <input type="url" placeholder="校徽URL" id="reach1Logo" value="https://via.placeholder.com/60x60?text=剑桥">
+                        </div>
+                        <div class="university-item">
+                            <input type="text" placeholder="大学名称" id="reach2Name" value="帝国理工学院">
+                            <input type="text" placeholder="专业名称" id="reach2Major" value="计算机科学">
+                            <input type="text" placeholder="地区" id="reach2Location" value="英国">
+                            <input type="url" placeholder="校徽URL" id="reach2Logo" value="https://via.placeholder.com/60x60?text=帝国">
+                        </div>
+                    </div>
+
+                    <h4>稳妥院校（2所）</h4>
+                    <div class="university-grid">
+                        <div class="university-item">
+                            <input type="text" placeholder="大学名称" id="match1Name" value="曼彻斯特大学">
+                            <input type="text" placeholder="专业名称" id="match1Major" value="电子工程">
+                            <input type="text" placeholder="地区" id="match1Location" value="英国">
+                            <input type="url" placeholder="校徽URL" id="match1Logo" value="https://via.placeholder.com/60x60?text=曼大">
+                        </div>
+                        <div class="university-item">
+                            <input type="text" placeholder="大学名称" id="match2Name" value="伯明翰大学">
+                            <input type="text" placeholder="专业名称" id="match2Major" value="机械工程">
+                            <input type="text" placeholder="地区" id="match2Location" value="英国">
+                            <input type="url" placeholder="校徽URL" id="match2Logo" value="https://via.placeholder.com/60x60?text=伯明翰">
+                        </div>
+                    </div>
+
+                    <h4>保底院校（2所）</h4>
+                    <div class="university-grid">
+                        <div class="university-item">
+                            <input type="text" placeholder="大学名称" id="safety1Name" value="利兹大学">
+                            <input type="text" placeholder="专业名称" id="safety1Major" value="土木工程">
+                            <input type="text" placeholder="地区" id="safety1Location" value="英国">
+                            <input type="url" placeholder="校徽URL" id="safety1Logo" value="https://via.placeholder.com/60x60?text=利兹">
+                        </div>
+                        <div class="university-item">
+                            <input type="text" placeholder="大学名称" id="safety2Name" value="谢菲尔德大学">
+                            <input type="text" placeholder="专业名称" id="safety2Major" value="材料科学">
+                            <input type="text" placeholder="地区" id="safety2Location" value="英国">
+                            <input type="url" placeholder="校徽URL" id="safety2Logo" value="https://via.placeholder.com/60x60?text=谢菲">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="admin-section">
+                    <h3>服务引流模块</h3>
+                    <div class="form-group">
+                        <label for="serviceSlogan">宣传标语</label>
+                        <textarea id="serviceSlogan" name="serviceSlogan" rows="3" placeholder="请输入宣传标语...">专业留学规划 · 成就海外梦想
+我们拥有10年+留学服务经验，已帮助2000+学生成功留学世界名校</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="successCases">过往案例</label>
+                        <textarea id="successCases" name="successCases" rows="4" placeholder="请输入过往案例...">• 张同学：高考580分 → 剑桥大学工程学院
+• 李同学：雅思6.5分 → 帝国理工计算机科学
+• 王同学：高中理科生 → 牛津大学物理系
+• 陈同学：艺术特长生 → 伦敦艺术大学</textarea>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="saveAdminSettings()">保存设置</button>
+                    <button type="button" class="btn btn-primary" onclick="generateReportFromAdmin()">📊 生成报告</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="scripts/main.js"></script>
+</body>
+</html> 

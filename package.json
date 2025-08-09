@@ -1,0 +1,19 @@
+{
+  "name": "study-abroad-potential-report",
+  "version": "1.0.0",
+  "description": "留学潜力报告生成系统",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx http-server . -p 3000 -o",
+    "dev": "npx http-server . -p 3000 -o",
+    "start-alt": "npx http-server . -p 8081 -o",
+    "preview": "npx http-server . -p 8080 -o",
+    "serve": "npx http-server . -p 3000"
+  },
+  "keywords": ["education", "report", "study-abroad"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+} 
