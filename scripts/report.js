@@ -10,7 +10,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // 加载报告数据
 function loadReportData() {
-    const data = localStorage.getItem('reportData');
+    // 检查URL参数，看是否有指定的学生索引
+    const urlParams = new URLSearchParams(window.location.search);
+    const studentIndex = urlParams.get('student');
+    
+    let dataKey = 'reportData';
+    if (studentIndex !== null) {
+        dataKey = `reportData_${studentIndex}`;
+    }
+    
+    const data = localStorage.getItem(dataKey);
     if (data) {
         reportData = JSON.parse(data);
     } else {

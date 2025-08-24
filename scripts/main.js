@@ -1,6 +1,8 @@
 // 全局变量
 let studentData = {};
 let adminSettings = {};
+let excelData = []; // 存储Excel数据
+let excelHeaders = []; // 存储Excel表头
 
 // 五维能力评价数据库
 const abilityEvaluations = {
@@ -298,10 +300,10 @@ function generateIntelligentAnalysis() {
     
     const radar = {
         academicAbility: parseInt(safeGetValue('academicAbility', '75')) || 75,
-        academicPotential: parseInt(safeGetValue('academicPotential', '80')) || 80,
         languageAbility: parseInt(safeGetValue('languageAbility', '70')) || 70,
-        comprehensiveQuality: parseInt(safeGetValue('comprehensiveQuality', '85')) || 85,
-        goalMatching: parseInt(safeGetValue('goalMatching', '78')) || 78
+        artisticQuality: parseInt(safeGetValue('artisticQuality', '80')) || 80,
+        socialAbility: parseInt(safeGetValue('socialAbility', '85')) || 85,
+        independentLiving: parseInt(safeGetValue('independentLiving', '78')) || 78
     };
 
     const analysis = {
@@ -310,25 +312,25 @@ function generateIntelligentAnalysis() {
             weaknesses: safeGetValue('academicWeaknesses') || getAbilityEvaluation('academic', radar.academicAbility).weaknesses,
             suggestions: safeGetValue('academicSuggestions') || getAbilityEvaluation('academic', radar.academicAbility).suggestions
         },
-        potential: {
-            strengths: safeGetValue('potentialStrengths') || getAbilityEvaluation('potential', radar.academicPotential).strengths,
-            weaknesses: safeGetValue('potentialWeaknesses') || getAbilityEvaluation('potential', radar.academicPotential).weaknesses,
-            suggestions: safeGetValue('potentialSuggestions') || getAbilityEvaluation('potential', radar.academicPotential).suggestions
-        },
         language: {
             strengths: safeGetValue('languageStrengths') || getAbilityEvaluation('language', radar.languageAbility).strengths,
             weaknesses: safeGetValue('languageWeaknesses') || getAbilityEvaluation('language', radar.languageAbility).weaknesses,
             suggestions: safeGetValue('languageSuggestions') || getAbilityEvaluation('language', radar.languageAbility).suggestions
         },
-        quality: {
-            strengths: safeGetValue('qualityStrengths') || getAbilityEvaluation('quality', radar.comprehensiveQuality).strengths,
-            weaknesses: safeGetValue('qualityWeaknesses') || getAbilityEvaluation('quality', radar.comprehensiveQuality).weaknesses,
-            suggestions: safeGetValue('qualitySuggestions') || getAbilityEvaluation('quality', radar.comprehensiveQuality).suggestions
+        artistic: {
+            strengths: safeGetValue('artisticStrengths') || getAbilityEvaluation('artistic', radar.artisticQuality).strengths,
+            weaknesses: safeGetValue('artisticWeaknesses') || getAbilityEvaluation('artistic', radar.artisticQuality).weaknesses,
+            suggestions: safeGetValue('artisticSuggestions') || getAbilityEvaluation('artistic', radar.artisticQuality).suggestions
         },
-        matching: {
-            strengths: safeGetValue('matchingStrengths') || getAbilityEvaluation('matching', radar.goalMatching).strengths,
-            weaknesses: safeGetValue('matchingWeaknesses') || getAbilityEvaluation('matching', radar.goalMatching).weaknesses,
-            suggestions: safeGetValue('matchingSuggestions') || getAbilityEvaluation('matching', radar.goalMatching).suggestions
+        social: {
+            strengths: safeGetValue('socialStrengths') || getAbilityEvaluation('social', radar.socialAbility).strengths,
+            weaknesses: safeGetValue('socialWeaknesses') || getAbilityEvaluation('social', radar.socialAbility).weaknesses,
+            suggestions: safeGetValue('socialSuggestions') || getAbilityEvaluation('social', radar.socialAbility).suggestions
+        },
+        living: {
+            strengths: safeGetValue('livingStrengths') || getAbilityEvaluation('living', radar.independentLiving).strengths,
+            weaknesses: safeGetValue('livingWeaknesses') || getAbilityEvaluation('living', radar.independentLiving).weaknesses,
+            suggestions: safeGetValue('livingSuggestions') || getAbilityEvaluation('living', radar.independentLiving).suggestions
         }
     };
 
@@ -356,16 +358,22 @@ function generateOverallSuggestions(detailedAnalysis) {
         suggestions.push('2. 维持语言优势，考虑学习第二外语拓展国际视野');
     }
     
-    if (detailedAnalysis.quality.suggestions.includes('社团') || detailedAnalysis.quality.suggestions.includes('活动')) {
-        suggestions.push('3. 积极参与课外活动和社团组织，培养领导力和团队协作能力');
+    if (detailedAnalysis.artistic.suggestions.includes('才艺') || detailedAnalysis.artistic.suggestions.includes('特长')) {
+        suggestions.push('3. 发展文体特长，参与相关比赛和活动，提升综合素质');
     } else {
-        suggestions.push('3. 深化个人特长发展，在优势领域建立突出表现');
+        suggestions.push('3. 深化文体素养，在优势领域建立突出表现');
     }
     
-    if (detailedAnalysis.matching.suggestions.includes('重新评估') || detailedAnalysis.matching.suggestions.includes('差距')) {
-        suggestions.push('4. 调整留学规划，选择更匹配的目标院校和专业方向');
+    if (detailedAnalysis.social.suggestions.includes('社交') || detailedAnalysis.social.suggestions.includes('沟通')) {
+        suggestions.push('4. 加强社交能力培养，参与团队活动和志愿服务');
     } else {
-        suggestions.push('4. 完善申请材料，增强申请竞争力和成功率');
+        suggestions.push('4. 维持良好的社交关系，拓展人际网络');
+    }
+    
+    if (detailedAnalysis.living.suggestions.includes('生活') || detailedAnalysis.living.suggestions.includes('独立')) {
+        suggestions.push('5. 培养独立生活能力，学习时间管理和自我管理');
+    } else {
+        suggestions.push('5. 保持独立生活优势，为留学做好充分准备');
     }
     
     return suggestions.join('\n');
@@ -384,10 +392,10 @@ function saveAdminSettings() {
     adminSettings = {
         radar: {
             academicAbility: parseInt(safeGetValue('academicAbility', '75')) || 75,
-            academicPotential: parseInt(safeGetValue('academicPotential', '80')) || 80,
             languageAbility: parseInt(safeGetValue('languageAbility', '70')) || 70,
-            comprehensiveQuality: parseInt(safeGetValue('comprehensiveQuality', '85')) || 85,
-            goalMatching: parseInt(safeGetValue('goalMatching', '78')) || 78
+            artisticQuality: parseInt(safeGetValue('artisticQuality', '80')) || 80,
+            socialAbility: parseInt(safeGetValue('socialAbility', '85')) || 85,
+            independentLiving: parseInt(safeGetValue('independentLiving', '78')) || 78
         },
         detailedAnalysis: detailedAnalysis,
         analysis: {
@@ -458,10 +466,10 @@ function loadAdminSettings() {
         // 填充表单字段
         if (adminSettings.radar) {
             document.getElementById('academicAbility').value = adminSettings.radar.academicAbility || 75;
-            document.getElementById('academicPotential').value = adminSettings.radar.academicPotential || 80;
             document.getElementById('languageAbility').value = adminSettings.radar.languageAbility || 70;
-            document.getElementById('comprehensiveQuality').value = adminSettings.radar.comprehensiveQuality || 85;
-            document.getElementById('goalMatching').value = adminSettings.radar.goalMatching || 78;
+            document.getElementById('artisticQuality').value = adminSettings.radar.artisticQuality || 80;
+            document.getElementById('socialAbility').value = adminSettings.radar.socialAbility || 85;
+            document.getElementById('independentLiving').value = adminSettings.radar.independentLiving || 78;
         }
         
         // 填充五维详细分析
@@ -476,16 +484,6 @@ function loadAdminSettings() {
                 if (academicSuggestions) academicSuggestions.value = adminSettings.detailedAnalysis.academic.suggestions || '';
             }
             
-            // 学术潜力
-            if (adminSettings.detailedAnalysis.potential) {
-                const potentialStrengths = document.getElementById('potentialStrengths');
-                const potentialWeaknesses = document.getElementById('potentialWeaknesses');
-                const potentialSuggestions = document.getElementById('potentialSuggestions');
-                if (potentialStrengths) potentialStrengths.value = adminSettings.detailedAnalysis.potential.strengths || '';
-                if (potentialWeaknesses) potentialWeaknesses.value = adminSettings.detailedAnalysis.potential.weaknesses || '';
-                if (potentialSuggestions) potentialSuggestions.value = adminSettings.detailedAnalysis.potential.suggestions || '';
-            }
-            
             // 语言能力
             if (adminSettings.detailedAnalysis.language) {
                 const languageStrengths = document.getElementById('languageStrengths');
@@ -496,24 +494,34 @@ function loadAdminSettings() {
                 if (languageSuggestions) languageSuggestions.value = adminSettings.detailedAnalysis.language.suggestions || '';
             }
             
-            // 综合素养
-            if (adminSettings.detailedAnalysis.quality) {
-                const qualityStrengths = document.getElementById('qualityStrengths');
-                const qualityWeaknesses = document.getElementById('qualityWeaknesses');
-                const qualitySuggestions = document.getElementById('qualitySuggestions');
-                if (qualityStrengths) qualityStrengths.value = adminSettings.detailedAnalysis.quality.strengths || '';
-                if (qualityWeaknesses) qualityWeaknesses.value = adminSettings.detailedAnalysis.quality.weaknesses || '';
-                if (qualitySuggestions) qualitySuggestions.value = adminSettings.detailedAnalysis.quality.suggestions || '';
+            // 文体素养
+            if (adminSettings.detailedAnalysis.artistic) {
+                const artisticStrengths = document.getElementById('artisticStrengths');
+                const artisticWeaknesses = document.getElementById('artisticWeaknesses');
+                const artisticSuggestions = document.getElementById('artisticSuggestions');
+                if (artisticStrengths) artisticStrengths.value = adminSettings.detailedAnalysis.artistic.strengths || '';
+                if (artisticWeaknesses) artisticWeaknesses.value = adminSettings.detailedAnalysis.artistic.weaknesses || '';
+                if (artisticSuggestions) artisticSuggestions.value = adminSettings.detailedAnalysis.artistic.suggestions || '';
             }
             
-            // 目标匹配度
-            if (adminSettings.detailedAnalysis.matching) {
-                const matchingStrengths = document.getElementById('matchingStrengths');
-                const matchingWeaknesses = document.getElementById('matchingWeaknesses');
-                const matchingSuggestions = document.getElementById('matchingSuggestions');
-                if (matchingStrengths) matchingStrengths.value = adminSettings.detailedAnalysis.matching.strengths || '';
-                if (matchingWeaknesses) matchingWeaknesses.value = adminSettings.detailedAnalysis.matching.weaknesses || '';
-                if (matchingSuggestions) matchingSuggestions.value = adminSettings.detailedAnalysis.matching.suggestions || '';
+            // 社交能力
+            if (adminSettings.detailedAnalysis.social) {
+                const socialStrengths = document.getElementById('socialStrengths');
+                const socialWeaknesses = document.getElementById('socialWeaknesses');
+                const socialSuggestions = document.getElementById('socialSuggestions');
+                if (socialStrengths) socialStrengths.value = adminSettings.detailedAnalysis.social.strengths || '';
+                if (socialWeaknesses) socialWeaknesses.value = adminSettings.detailedAnalysis.social.weaknesses || '';
+                if (socialSuggestions) socialSuggestions.value = adminSettings.detailedAnalysis.social.suggestions || '';
+            }
+            
+            // 独立生活能力
+            if (adminSettings.detailedAnalysis.living) {
+                const livingStrengths = document.getElementById('livingStrengths');
+                const livingWeaknesses = document.getElementById('livingWeaknesses');
+                const livingSuggestions = document.getElementById('livingSuggestions');
+                if (livingStrengths) livingStrengths.value = adminSettings.detailedAnalysis.living.strengths || '';
+                if (livingWeaknesses) livingWeaknesses.value = adminSettings.detailedAnalysis.living.weaknesses || '';
+                if (livingSuggestions) livingSuggestions.value = adminSettings.detailedAnalysis.living.suggestions || '';
             }
         }
         
@@ -643,4 +651,964 @@ function clearAllData() {
         localStorage.removeItem('reportData');
         location.reload();
     }
-} 
+}
+
+// ==================== Excel文件处理功能 ====================
+
+// 处理Excel文件
+function processXlsxFile() {
+    const fileInput = document.getElementById('xlsxFile');
+    const file = fileInput.files[0];
+    
+    if (!file) {
+        alert('请选择Excel文件');
+        return;
+    }
+    
+    // 显示加载状态
+    const processBtn = document.getElementById('processBtn');
+    processBtn.disabled = true;
+    processBtn.textContent = '处理中...';
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, {type: 'array'});
+            
+            // 获取第一个工作表
+            const firstSheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[firstSheetName];
+            
+            // 转换为JSON
+            const jsonData = XLSX.utils.sheet_to_json(worksheet, {header: 1});
+            
+            // 处理数据
+            processExcelData(jsonData);
+            
+        } catch (error) {
+            console.error('Excel处理错误:', error);
+            alert('Excel文件处理失败，请检查文件格式是否正确');
+        } finally {
+            // 恢复按钮状态
+            processBtn.disabled = false;
+            processBtn.textContent = '处理Excel文件';
+        }
+    };
+    
+    reader.onerror = function() {
+        alert('文件读取失败');
+        processBtn.disabled = false;
+        processBtn.textContent = '处理Excel文件';
+    };
+    
+    reader.readAsArrayBuffer(file);
+}
+
+// 处理Excel数据
+function processExcelData(jsonData) {
+    if (!jsonData || jsonData.length < 2) {
+        alert('Excel文件数据不足，至少需要标题行和一行数据');
+        return;
+    }
+    
+    // 第一行是标题
+    excelHeaders = jsonData[0];
+    
+    // 从第二行开始是数据
+    excelData = jsonData.slice(1).map((row, index) => {
+        const rowData = {};
+        excelHeaders.forEach((header, colIndex) => {
+            rowData[header] = row[colIndex] || '';
+        });
+        rowData._rowIndex = index + 1; // 添加行号
+        return rowData;
+    });
+    
+    // 显示文件信息
+    showFileInfo();
+    
+    // 显示数据预览
+    showDataPreview();
+    
+    // 显示相关按钮
+    const fillFormBtn = document.getElementById('fillFormBtn');
+    if (fillFormBtn) {
+        fillFormBtn.style.display = 'inline-block';
+    }
+    
+    console.log('Excel数据已加载:', excelData.length, '行数据');
+    
+    // 显示成功提示
+    const fileInfo = document.getElementById('fileInfo');
+    if (fileInfo) {
+        fileInfo.innerHTML = `
+            <div style="background-color: #e8f5e8; border: 1px solid #4caf50; color: #2e7d32; padding: 12px; border-radius: 8px; margin: 12px 0;">
+                <strong>✅ Excel文件处理成功！</strong><br>
+                共加载 ${excelData.length} 行数据，${excelHeaders.length} 列
+            </div>
+        `;
+    }
+}
+
+// 显示文件信息
+function showFileInfo() {
+    const fileInfo = document.getElementById('fileInfo');
+    const fileDetails = document.getElementById('fileDetails');
+    
+    // 生成带序号的列名列表
+    const numberedHeaders = excelHeaders.map((header, index) => 
+        `${index + 1}. ${header}`
+    ).join('<br>');
+    
+    fileDetails.innerHTML = `
+        <p><strong>总行数：</strong>${excelData.length}</p>
+        <p><strong>总列数：</strong>${excelHeaders.length}</p>
+        <p><strong>列名（带序号）：</strong></p>
+        <div style="max-height: 200px; overflow-y: auto; background: #f8f9fa; padding: 10px; border-radius: 6px; font-size: 0.9rem; line-height: 1.4;">
+            ${numberedHeaders}
+        </div>
+    `;
+    
+    fileInfo.style.display = 'block';
+}
+
+// 显示数据预览
+function showDataPreview() {
+    const dataPreview = document.getElementById('dataPreview');
+    const tableHeader = document.getElementById('tableHeader');
+    const tableBody = document.getElementById('tableBody');
+    
+    // 创建表头（包含列序号）
+    tableHeader.innerHTML = '';
+    excelHeaders.forEach((header, index) => {
+        const th = document.createElement('th');
+        th.innerHTML = `
+            <span class="column-number" title="点击复制列序号" onclick="copyColumnNumber(${index + 1})">${index + 1}</span>
+            <span class="column-name">${header}</span>
+        `;
+        tableHeader.appendChild(th);
+    });
+    
+    // 创建表格内容（只显示前5行作为预览）
+    tableBody.innerHTML = '';
+    const previewRows = excelData.slice(0, 5);
+    
+    previewRows.forEach((row, index) => {
+        const tr = document.createElement('tr');
+        excelHeaders.forEach(header => {
+            const td = document.createElement('td');
+            td.textContent = row[header] || '';
+            tr.appendChild(td);
+        });
+        tableBody.appendChild(tr);
+    });
+    
+    if (excelData.length > 5) {
+        const moreRow = document.createElement('tr');
+        const moreCell = document.createElement('td');
+        moreCell.colSpan = excelHeaders.length;
+        moreCell.textContent = `... 还有 ${excelData.length - 5} 行数据`;
+        moreCell.style.textAlign = 'center';
+        moreCell.style.color = '#666';
+        moreRow.appendChild(moreCell);
+        tableBody.appendChild(moreRow);
+    }
+    
+    dataPreview.style.display = 'block';
+}
+
+// 导出为JSON
+function exportToJson() {
+    const dataStr = JSON.stringify(excelData, null, 2);
+    const dataBlob = new Blob([dataStr], {type: 'application/json'});
+    const url = URL.createObjectURL(dataBlob);
+    
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'excel_data.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    alert('JSON文件已导出');
+}
+
+// 从Excel数据生成报告
+function generateReportsFromExcel() {
+    if (!excelData || excelData.length === 0) {
+        alert('没有可用的Excel数据');
+        return;
+    }
+    
+    // 获取当前管理设置
+    const savedAdminSettings = localStorage.getItem('adminSettings');
+    const adminSettings = savedAdminSettings ? JSON.parse(savedAdminSettings) : {};
+    
+    let successCount = 0;
+    let errorCount = 0;
+    
+    excelData.forEach((rowData, index) => {
+        try {
+            // 转换Excel数据为系统格式
+            const studentData = convertExcelToStudentData(rowData);
+            
+            // 生成雷达图数据（这里可以根据具体规则计算）
+            const radarData = generateRadarDataFromExcel(rowData);
+            
+            // 构建报告数据
+            const reportData = {
+                student: studentData,
+                admin: {
+                    ...adminSettings,
+                    radar: radarData,
+                    detailedAnalysis: generateAnalysisFromRadar(radarData)
+                }
+            };
+            
+            // 保存报告数据
+            localStorage.setItem(`reportData_${index}`, JSON.stringify(reportData));
+            
+            successCount++;
+            
+        } catch (error) {
+            console.error(`第${index + 1}行数据处理失败:`, error);
+            errorCount++;
+        }
+    });
+    
+    alert(`报告生成完成！\n成功：${successCount}个\n失败：${errorCount}个\n\n请点击"查看所有报告"查看生成的报告。`);
+    
+    // 显示查看报告按钮
+    const viewReportsBtn = document.getElementById('viewReportsBtn');
+    if (viewReportsBtn) {
+        viewReportsBtn.style.display = 'inline-block';
+    }
+}
+
+// 将Excel数据填入学生信息录入表单
+function fillStudentFormFromExcel(rowIndex = 0) {
+    if (!excelData || excelData.length === 0) {
+        alert('没有可用的Excel数据');
+        return;
+    }
+    
+    // 如果只传入一个参数且为0，让用户选择行
+    if (arguments.length === 1 && rowIndex === 0) {
+        let rowList = '请选择要填入表单的数据行：\n\n';
+        excelData.forEach((row, index) => {
+            const studentName = row[excelHeaders[7]] || `学生${index + 1}`; // 第8列是学生姓名
+            rowList += `${index + 1}. ${studentName}\n`;
+        });
+        
+        const choice = prompt(rowList);
+        if (choice && !isNaN(choice)) {
+            rowIndex = parseInt(choice) - 1;
+        } else {
+            return; // 用户取消
+        }
+    }
+    
+    if (rowIndex >= excelData.length || rowIndex < 0) {
+        alert('行索引超出范围');
+        return;
+    }
+    
+    const rowData = excelData[rowIndex];
+    
+    // 根据你提供的映射关系填充表单
+    // 列8对应studentName
+    const studentNameField = document.getElementById('studentName');
+    if (studentNameField) {
+        studentNameField.value = rowData[excelHeaders[7]] || ''; // 第8列（索引7）
+    }
+    
+    // 列9对应gender
+    const genderField = document.getElementById('gender');
+    if (genderField) {
+        genderField.value = rowData[excelHeaders[8]] || ''; // 第9列（索引8）
+    }
+    
+    // 列10对应grade
+    const gradeField = document.getElementById('grade');
+    if (gradeField) {
+        gradeField.value = rowData[excelHeaders[9]] || ''; // 第10列（索引9）
+    }
+    
+    // 列11对应school
+    const schoolField = document.getElementById('school');
+    if (schoolField) {
+        schoolField.value = rowData[excelHeaders[10]] || ''; // 第11列（索引10）
+    }
+    
+    // 列12对应subjectGroup
+    const subjectGroupField = document.getElementById('subjectGroup');
+    if (subjectGroupField) {
+        subjectGroupField.value = rowData[excelHeaders[11]] || ''; // 第12列（索引11）
+    }
+    
+    // 填充成绩字段（Excel的13-21列对应前9个成绩字段）
+    const scoreFields = [
+        'currentChinese',   // 语文
+        'currentMath',      // 数学
+        'currentEnglish',   // 英语
+        'currentPhysics',   // 物理
+        'currentBiology',   // 生物
+        'currentChemistry', // 化学
+        'currentHistory',   // 历史
+        'currentPolitics',  // 政治
+        'currentGeography'  // 地理
+    ];
+    
+    let totalScore = 0;
+    
+    scoreFields.forEach((fieldName, index) => {
+        const field = document.getElementById(fieldName);
+        if (field) {
+            const score = parseFloat(rowData[excelHeaders[12 + index]]) || 0; // 第13-21列（索引12-20）
+            field.value = score;
+            totalScore += score;
+        }
+    });
+    
+    // 自动计算并填充当前成绩总分
+    const currentTotalField = document.getElementById('currentTotal');
+    if (currentTotalField) {
+        currentTotalField.value = totalScore;
+    }
+    
+    // 填充预测成绩字段（Excel的22-30列对应预测成绩）
+    const predictedScoreFields = [
+        'predictedChinese',   // 语文
+        'predictedMath',      // 数学
+        'predictedEnglish',   // 英语
+        'predictedPhysics',   // 物理
+        'predictedBiology',   // 生物
+        'predictedChemistry', // 化学
+        'predictedHistory',   // 历史
+        'predictedPolitics',  // 政治
+        'predictedGeography'  // 地理
+    ];
+    
+    let predictedTotalScore = 0;
+    
+    predictedScoreFields.forEach((fieldName, index) => {
+        const field = document.getElementById(fieldName);
+        if (field) {
+            const score = parseFloat(rowData[excelHeaders[21 + index]]) || 0; // 第22-30列（索引21-29）
+            field.value = score;
+            predictedTotalScore += score;
+        }
+    });
+    
+    // 自动计算并填充预测成绩总分
+    const predictedTotalField = document.getElementById('predictedTotal');
+    if (predictedTotalField) {
+        predictedTotalField.value = predictedTotalScore;
+    }
+    
+    // 填充补习情况字段（Excel的35-36列对应补习情况）
+    // 列35对应是否进行学科补习
+    const hasTutoringField = document.getElementById('hasTutoring');
+    if (hasTutoringField) {
+        hasTutoringField.value = rowData[excelHeaders[34]] || ''; // 第35列（索引34）
+    }
+    
+    // 列36对应正在补习的科目
+    const tutoringSubjectsField = document.getElementById('tutoringSubjects');
+    if (tutoringSubjectsField) {
+        tutoringSubjectsField.value = rowData[excelHeaders[35]] || ''; // 第36列（索引35）
+    }
+    
+    // 列37对应专业倾向（多选，用"┋"分隔）
+    const majorPreferenceData = rowData[excelHeaders[36]] || ''; // 第37列（索引36）
+    if (majorPreferenceData) {
+        const majorPreferences = majorPreferenceData.split('┋').map(p => p.trim()).filter(p => p);
+        setMajorPreferences(majorPreferences);
+    }
+    
+    // 列39-43对应英语成绩详细分数
+    const englishScoreFields = [
+        'englishTotalScore',  // 总分
+        'englishListening',   // 听力
+        'englishReading',     // 阅读
+        'englishSpeaking',    // 口语
+        'englishWriting'      // 写作
+    ];
+    
+    // 列38对应国际英语成绩类型
+    const englishTestTypeField = document.getElementById('englishTestType');
+    if (englishTestTypeField) {
+        const testType = rowData[excelHeaders[37]] || ''; // 第38列（索引37）
+        if (testType === '没有任何国际英语考试成绩') {
+            englishTestTypeField.value = '暂无';
+            // 当选择"暂无"时，清空所有成绩字段
+            englishScoreFields.forEach(fieldName => {
+                const field = document.getElementById(fieldName);
+                if (field) {
+                    field.value = '';
+                    field.disabled = true;
+                }
+            });
+        } else {
+            englishTestTypeField.value = testType;
+            // 当选择其他类型时，启用成绩字段
+            englishScoreFields.forEach(fieldName => {
+                const field = document.getElementById(fieldName);
+                if (field) {
+                    field.disabled = false;
+                }
+            });
+        }
+    }
+    
+    englishScoreFields.forEach((fieldName, index) => {
+        const field = document.getElementById(fieldName);
+        if (field) {
+            const score = rowData[excelHeaders[38 + index]] || ''; // 第39-43列（索引38-42）
+            if (score === '（跳过）') {
+                field.value = '';
+            } else {
+                field.value = score;
+            }
+        }
+    });
+    
+    // 列44对应留学意向国家/地区（多选，用"┋"分隔）
+    const studyDestinationData = rowData[excelHeaders[43]] || ''; // 第44列（索引43）
+    console.log('Excel第44列原始数据:', studyDestinationData);
+    if (studyDestinationData) {
+        const destinations = studyDestinationData.split('┋').map(d => d.trim()).filter(d => d);
+        console.log('解析后的留学意向:', destinations);
+        setStudyDestinations(destinations);
+    }
+    
+    // 列45对应预期留学投入费用
+    const budgetField = document.getElementById('budget');
+    if (budgetField) {
+        budgetField.value = rowData[excelHeaders[44]] || ''; // 第45列（索引44）
+    }
+    
+    // 列46对应是否参加学校社团
+    const hasClubField = document.getElementById('hasClub');
+    if (hasClubField) {
+        hasClubField.value = rowData[excelHeaders[45]] || ''; // 第46列（索引45）
+    }
+    
+    // 列47对应参加的社团
+    const clubActivitiesField = document.getElementById('clubActivities');
+    if (clubActivitiesField) {
+        clubActivitiesField.value = rowData[excelHeaders[46]] || ''; // 第47列（索引46）
+    }
+    
+    // 列48对应是否有维持3年以上的兴趣爱好
+    const hasLongTermHobbyField = document.getElementById('hasLongTermHobby');
+    if (hasLongTermHobbyField) {
+        hasLongTermHobbyField.value = rowData[excelHeaders[47]] || ''; // 第48列（索引47）
+    }
+    
+    // 列49对应兴趣爱好
+    const hobbiesField = document.getElementById('hobbies');
+    if (hobbiesField) {
+        hobbiesField.value = rowData[excelHeaders[48]] || ''; // 第49列（索引48）
+    }
+    
+    // 列50对应经常来往的好友数量
+    const friendsCountField = document.getElementById('friendsCount');
+    if (friendsCountField) {
+        friendsCountField.value = rowData[excelHeaders[49]] || ''; // 第50列（索引49）
+    }
+    
+    // 列51对应才艺（多选，用"┋"分隔）
+    const talentsData = rowData[excelHeaders[50]] || ''; // 第51列（索引50）
+    console.log('Excel第51列原始数据:', talentsData);
+    if (talentsData) {
+        const talents = talentsData.split('┋').map(t => t.trim()).filter(t => t);
+        console.log('解析后的才艺:', talents);
+        setTalents(talents);
+    }
+    
+    // 列52对应才艺证书资质或奖项
+    const certificatesField = document.getElementById('certificates');
+    if (certificatesField) {
+        certificatesField.value = rowData[excelHeaders[51]] || ''; // 第52列（索引51）
+    }
+    
+    // 列53对应整理生活和工作空间频率
+    const organizationFrequencyField = document.getElementById('organizationFrequency');
+    if (organizationFrequencyField) {
+        organizationFrequencyField.value = rowData[excelHeaders[52]] || ''; // 第53列（索引52）
+    }
+    
+    // 列54对应遇到困难是否向周围的人求助
+    const askForHelpField = document.getElementById('askForHelp');
+    if (askForHelpField) {
+        askForHelpField.value = rowData[excelHeaders[53]] || ''; // 第54列（索引53）
+    }
+    
+    // 列55对应是否会自己做饭
+    const canCookField = document.getElementById('canCook');
+    if (canCookField) {
+        canCookField.value = rowData[excelHeaders[54]] || ''; // 第55列（索引54）
+    }
+    
+    // 列56对应每天课外阅读时间
+    const readingTimeField = document.getElementById('readingTime');
+    if (readingTimeField) {
+        readingTimeField.value = rowData[excelHeaders[55]] || ''; // 第56列（索引55）
+    }
+    
+    console.log(`已填充第${rowIndex + 1}行数据到学生信息表单`);
+    console.log('填充的数据:', {
+        studentName: rowData[excelHeaders[7]],
+        gender: rowData[excelHeaders[8]],
+        grade: rowData[excelHeaders[9]],
+        school: rowData[excelHeaders[10]],
+        subjectGroup: rowData[excelHeaders[11]],
+        currentScores: scoreFields.map((field, index) => ({
+            field: field,
+            value: rowData[excelHeaders[12 + index]]
+        })),
+        currentTotalScore: totalScore,
+        predictedScores: predictedScoreFields.map((field, index) => ({
+            field: field,
+            value: rowData[excelHeaders[21 + index]]
+        })),
+        predictedTotalScore: predictedTotalScore,
+        hasTutoring: rowData[excelHeaders[34]],
+        tutoringSubjects: rowData[excelHeaders[35]],
+        majorPreference: rowData[excelHeaders[36]],
+        englishTestType: rowData[excelHeaders[37]],
+        englishScores: englishScoreFields.map((field, index) => ({
+            field: field,
+            value: rowData[excelHeaders[38 + index]]
+        })),
+        studyDestination: rowData[excelHeaders[43]],
+        budget: rowData[excelHeaders[44]],
+        hasClub: rowData[excelHeaders[45]],
+        clubActivities: rowData[excelHeaders[46]],
+        hasLongTermHobby: rowData[excelHeaders[47]],
+        hobbies: rowData[excelHeaders[48]],
+        friendsCount: rowData[excelHeaders[49]],
+        talents: rowData[excelHeaders[50]],
+        certificates: rowData[excelHeaders[51]],
+        organizationFrequency: rowData[excelHeaders[52]],
+        askForHelp: rowData[excelHeaders[53]],
+        canCook: rowData[excelHeaders[54]],
+        readingTime: rowData[excelHeaders[55]]
+    });
+    
+    alert(`已成功将第${rowIndex + 1}行数据填入学生信息录入表单！\n\n学生姓名: ${rowData[excelHeaders[7]] || '未填写'}\n当前总分: ${totalScore}分\n预测总分: ${predictedTotalScore}分`);
+}
+
+// 转换Excel数据为学生数据格式
+function convertExcelToStudentData(rowData) {
+    return {
+        studentName: rowData['1、学生姓名：'] || '',
+        gender: rowData['2、学生性别：'] || '',
+        grade: rowData['3、所在年级：'] || '',
+        school: rowData['4、您所在的学校名称：'] || '',
+        subjectGroup: rowData['5、学生的学科分组是？'] || '',
+        studyDestination: rowData['15、请选择学生有留学意愿的国家或地区'] || '',
+        majorPreference: rowData['12、请选择学生大学倾向就读的专业方向'] || '',
+        englishTestType: rowData['13、请选择学生目前已有成绩的国际英语考试'] || '',
+        englishScore: rowData['14、请填写其中一项国际英语考试的成绩—总分'] || '',
+        budget: rowData['16、预期留学投入费用（含学费和生活费）'] || '',
+        hasClub: rowData['17、学生是否有在学校参加社团？'] || '',
+        clubActivities: rowData['18、请填写学生参加的社团'] || '',
+        hasLongTermHobby: rowData['19、学生是否有一项持续3年以上的兴趣爱好？'] || '',
+        hobbies: rowData['20、请填写学生持续3年以上的兴趣或爱好'] || '',
+        friendsCount: rowData['21、除了同学，学生在外有多少个经常来往的朋友？'] || '',
+        talents: rowData['22、学生是否有持续学习3年以上音乐、舞蹈、体育、艺术等各方面的才艺？'] || '',
+        certificates: rowData['23、请填写学生有在才艺相关的领域获得的证书、资质或奖项？'] || '',
+        organizationFrequency: rowData['24、学生多久会整理一次自己的生活与工作空间？'] || '',
+        askForHelp: rowData['25、学生在遇到困难时，是否会主动向身边的人进行求助？'] || '',
+        canCook: rowData['26、学生是否会自己做饭？'] || '',
+        readingTime: rowData['27、学生平均每天课外阅读的时间'] || '',
+        currentTotal: calculateCurrentTotal(rowData),
+        predictedTotal: calculatePredictedTotal(rowData),
+        // 保存原始Excel数据用于后续分析
+        rawData: rowData
+    };
+}
+
+// 计算当前总分
+function calculateCurrentTotal(rowData) {
+    const subjects = ['语文', '数学', '英语', '物理', '生物', '化学', '历史', '政治', '地理'];
+    let total = 0;
+    
+    subjects.forEach(subject => {
+        const score = parseFloat(rowData[`6、${subject}`]) || 0;
+        total += score;
+    });
+    
+    return total.toString();
+}
+
+// 计算预测总分
+function calculatePredictedTotal(rowData) {
+    const subjects = ['语文', '数学', '英语', '物理', '生物', '化学', '历史', '政治', '地理'];
+    let total = 0;
+    
+    subjects.forEach(subject => {
+        const score = parseFloat(rowData[`7、${subject}`]) || 0;
+        total += score;
+    });
+    
+    return total.toString();
+}
+
+// 根据Excel数据生成雷达图数据
+function generateRadarDataFromExcel(rowData) {
+    // 这里可以根据具体的计算规则来生成雷达图数据
+    // 暂时使用默认值，后续可以根据你的规则进行调整
+    return {
+        academicAbility: 75,
+        languageAbility: 70,
+        artisticQuality: 80,
+        socialAbility: 85,
+        independentLiving: 78
+    };
+}
+
+// 根据雷达图数据生成分析
+function generateAnalysisFromRadar(radarData) {
+    return {
+        academic: getAbilityEvaluation('academic', radarData.academicAbility),
+        language: getAbilityEvaluation('language', radarData.languageAbility),
+        artistic: getAbilityEvaluation('artistic', radarData.artisticQuality),
+        social: getAbilityEvaluation('social', radarData.socialAbility),
+        living: getAbilityEvaluation('living', radarData.independentLiving)
+    };
+}
+
+// 复制列序号到剪贴板
+function copyColumnNumber(columnNumber) {
+    navigator.clipboard.writeText(columnNumber.toString()).then(() => {
+        // 显示临时提示
+        const tooltip = document.createElement('div');
+        tooltip.textContent = `列序号 ${columnNumber} 已复制`;
+        tooltip.style.cssText = `
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--primary-color);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            z-index: 10000;
+            pointer-events: none;
+        `;
+        document.body.appendChild(tooltip);
+        
+        setTimeout(() => {
+            document.body.removeChild(tooltip);
+        }, 1500);
+    }).catch(err => {
+        console.error('复制失败:', err);
+        alert(`列序号 ${columnNumber}`);
+    });
+}
+
+// 查看所有报告
+function viewAllReports() {
+    // 检查有多少个报告
+    const reportKeys = [];
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('reportData_')) {
+            reportKeys.push(key);
+        }
+    }
+    
+    if (reportKeys.length === 0) {
+        alert('没有找到生成的报告');
+        return;
+    }
+    
+    // 创建报告列表
+    let reportList = '已生成的报告列表：\n\n';
+    reportKeys.forEach((key, index) => {
+        try {
+            const reportData = JSON.parse(localStorage.getItem(key));
+            const studentName = reportData.student?.studentName || `学生${index + 1}`;
+            reportList += `${index + 1}. ${studentName}\n`;
+        } catch (error) {
+            reportList += `${index + 1}. 报告${index + 1}（数据格式错误）\n`;
+        }
+    });
+    
+    reportList += '\n请选择要查看的报告：';
+    
+    const choice = prompt(reportList);
+    if (choice && !isNaN(choice)) {
+        const index = parseInt(choice) - 1;
+        if (index >= 0 && index < reportKeys.length) {
+            const key = reportKeys[index];
+            const studentIndex = key.replace('reportData_', '');
+            window.open(`report.html?student=${studentIndex}`, '_blank');
+        }
+    }
+}
+
+// 自动计算当前成绩总分
+function calculateCurrentTotalScore() {
+    const scoreFields = [
+        'currentChinese',   // 语文
+        'currentMath',      // 数学
+        'currentEnglish',   // 英语
+        'currentPhysics',   // 物理
+        'currentBiology',   // 生物
+        'currentChemistry', // 化学
+        'currentHistory',   // 历史
+        'currentPolitics',  // 政治
+        'currentGeography'  // 地理
+    ];
+    
+    let totalScore = 0;
+    
+    scoreFields.forEach(fieldName => {
+        const field = document.getElementById(fieldName);
+        if (field) {
+            const score = parseFloat(field.value) || 0;
+            totalScore += score;
+        }
+    });
+    
+    const currentTotalField = document.getElementById('currentTotal');
+    if (currentTotalField) {
+        currentTotalField.value = totalScore;
+    }
+    
+    return totalScore;
+}
+
+// 自动计算预测成绩总分
+function calculatePredictedTotalScore() {
+    const scoreFields = [
+        'predictedChinese',   // 语文
+        'predictedMath',      // 数学
+        'predictedEnglish',   // 英语
+        'predictedPhysics',   // 物理
+        'predictedBiology',   // 生物
+        'predictedChemistry', // 化学
+        'predictedHistory',   // 历史
+        'predictedPolitics',  // 政治
+        'predictedGeography'  // 地理
+    ];
+    
+    let totalScore = 0;
+    
+    scoreFields.forEach(fieldName => {
+        const field = document.getElementById(fieldName);
+        if (field) {
+            const score = parseFloat(field.value) || 0;
+            totalScore += score;
+        }
+    });
+    
+    const predictedTotalField = document.getElementById('predictedTotal');
+    if (predictedTotalField) {
+        predictedTotalField.value = totalScore;
+    }
+    
+    return totalScore;
+}
+
+// 自动计算总分（兼容旧版本）
+function calculateTotalScore() {
+    calculateCurrentTotalScore();
+}
+
+// 获取选中的专业倾向值
+function getSelectedMajorPreferences() {
+    const checkboxes = document.querySelectorAll('input[name="majorPreference"]:checked');
+    return Array.from(checkboxes).map(checkbox => checkbox.value);
+}
+
+// 设置专业倾向复选框
+function setMajorPreferences(preferences) {
+    // 清除所有复选框的选中状态
+    const checkboxes = document.querySelectorAll('input[name="majorPreference"]');
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = false;
+    });
+    
+    // 选中指定的复选框
+    if (Array.isArray(preferences)) {
+        preferences.forEach(preference => {
+            const checkbox = document.querySelector(`input[name="majorPreference"][value="${preference}"]`);
+            if (checkbox) {
+                checkbox.checked = true;
+            }
+        });
+    }
+}
+
+// 获取选中的留学意向
+function getSelectedStudyDestinations() {
+    const checkboxes = document.querySelectorAll('input[name="studyDestination"]:checked');
+    return Array.from(checkboxes).map(checkbox => checkbox.value);
+}
+
+// 设置留学意向复选框
+function setStudyDestinations(destinations) {
+    console.log('设置留学意向:', destinations);
+    
+    // 清除所有复选框的选中状态
+    const checkboxes = document.querySelectorAll('input[name="studyDestination"]');
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = false;
+    });
+    
+    // 选中指定的复选框
+    if (Array.isArray(destinations)) {
+        destinations.forEach(destination => {
+            console.log('尝试选中:', destination);
+            const checkbox = document.querySelector(`input[name="studyDestination"][value="${destination}"]`);
+            if (checkbox) {
+                checkbox.checked = true;
+                console.log('成功选中:', destination);
+            } else {
+                console.log('未找到复选框:', destination);
+            }
+        });
+    }
+    
+    // 显示所有可用的复选框值
+    const allCheckboxes = document.querySelectorAll('input[name="studyDestination"]');
+    console.log('所有可用的复选框值:');
+    allCheckboxes.forEach(checkbox => {
+        console.log('-', checkbox.value);
+    });
+}
+
+// 获取选中的才艺
+function getSelectedTalents() {
+    const checkboxes = document.querySelectorAll('input[name="talents"]:checked');
+    return Array.from(checkboxes).map(checkbox => checkbox.value);
+}
+
+// 设置才艺复选框
+function setTalents(talents) {
+    console.log('设置才艺:', talents);
+    
+    // 清除所有复选框的选中状态
+    const checkboxes = document.querySelectorAll('input[name="talents"]');
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = false;
+    });
+    
+    // 选中指定的复选框
+    if (Array.isArray(talents)) {
+        talents.forEach(talent => {
+            console.log('尝试选中才艺:', talent);
+            const checkbox = document.querySelector(`input[name="talents"][value="${talent}"]`);
+            if (checkbox) {
+                checkbox.checked = true;
+                console.log('成功选中才艺:', talent);
+            } else {
+                console.log('未找到才艺复选框:', talent);
+            }
+        });
+    }
+    
+    // 显示所有可用的复选框值
+    const allCheckboxes = document.querySelectorAll('input[name="talents"]');
+    console.log('所有可用的才艺复选框值:');
+    allCheckboxes.forEach(checkbox => {
+        console.log('-', checkbox.value);
+    });
+}
+
+// 文件选择事件处理
+document.addEventListener('DOMContentLoaded', function() {
+    const fileInput = document.getElementById('xlsxFile');
+    if (fileInput) {
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const processBtn = document.getElementById('processBtn');
+            
+            if (file) {
+                processBtn.disabled = false;
+                console.log('已选择文件:', file.name);
+            } else {
+                processBtn.disabled = true;
+            }
+        });
+    }
+    
+    // 为当前成绩字段添加自动计算总分的监听器
+    const currentScoreFields = [
+        'currentChinese', 'currentMath', 'currentEnglish', 'currentPhysics', 
+        'currentBiology', 'currentChemistry', 'currentHistory', 'currentPolitics', 'currentGeography'
+    ];
+    
+    currentScoreFields.forEach(fieldName => {
+        const field = document.getElementById(fieldName);
+        if (field) {
+            field.addEventListener('input', calculateCurrentTotalScore);
+        }
+    });
+    
+    // 为预测成绩字段添加自动计算总分的监听器
+    const predictedScoreFields = [
+        'predictedChinese', 'predictedMath', 'predictedEnglish', 'predictedPhysics', 
+        'predictedBiology', 'predictedChemistry', 'predictedHistory', 'predictedPolitics', 'predictedGeography'
+    ];
+    
+    predictedScoreFields.forEach(fieldName => {
+        const field = document.getElementById(fieldName);
+        if (field) {
+            field.addEventListener('input', calculatePredictedTotalScore);
+        }
+    });
+    
+    // 为英语成绩类型添加监听器
+    const englishTestTypeField = document.getElementById('englishTestType');
+    if (englishTestTypeField) {
+        englishTestTypeField.addEventListener('change', function() {
+            const englishScoreFields = [
+                'englishTotalScore', 'englishListening', 'englishReading', 'englishSpeaking', 'englishWriting'
+            ];
+            
+            if (this.value === '暂无') {
+                // 当选择"暂无"时，清空并禁用所有成绩字段
+                englishScoreFields.forEach(fieldName => {
+                    const field = document.getElementById(fieldName);
+                    if (field) {
+                        field.value = '';
+                        field.disabled = true;
+                    }
+                });
+            } else {
+                // 当选择其他类型时，启用成绩字段
+                englishScoreFields.forEach(fieldName => {
+                    const field = document.getElementById(fieldName);
+                    if (field) {
+                        field.disabled = false;
+                    }
+                });
+            }
+        });
+    }
+    
+    // 检查是否有已生成的报告
+    const reportKeys = [];
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('reportData_')) {
+            reportKeys.push(key);
+        }
+    }
+    
+    if (reportKeys.length > 0) {
+        const viewReportsBtn = document.getElementById('viewReportsBtn');
+        if (viewReportsBtn) {
+            viewReportsBtn.style.display = 'inline-block';
+        }
+    }
+}); 

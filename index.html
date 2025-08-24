@@ -6,6 +6,8 @@
     <title>留学潜力报告生成系统</title>
     <link rel="stylesheet" href="styles/main.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- 添加xlsx库 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -15,12 +17,56 @@
         </header>
 
         <nav class="nav-tabs">
-            <button class="tab-btn active" onclick="showTab('input')">学生信息录入</button>
+            <button class="tab-btn active" onclick="showTab('excel')">Excel导入</button>
+            <button class="tab-btn" onclick="showTab('input')">学生信息录入</button>
             <button class="tab-btn" onclick="showTab('admin')">后台管理</button>
         </nav>
 
+        <!-- Excel导入页面 -->
+        <div id="excel-tab" class="tab-content active">
+            <div class="form-container">
+                <h2>Excel文件导入</h2>
+                <div class="upload-section">
+                    <div class="upload-area">
+                        <input type="file" id="xlsxFile" accept=".xlsx,.xls" style="display: none;" />
+                        <div class="upload-box" onclick="document.getElementById('xlsxFile').click()">
+                            <div class="upload-icon">📁</div>
+                            <div class="upload-text">
+                                <p>点击选择Excel文件</p>
+                                <p class="upload-hint">支持 .xlsx 和 .xls 格式</p>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" onclick="processXlsxFile()" id="processBtn" disabled>处理Excel文件</button>
+                    </div>
+                    
+                    <div class="file-info" id="fileInfo" style="display: none;">
+                        <h3>文件信息</h3>
+                        <div id="fileDetails"></div>
+                    </div>
+                </div>
+
+                <div class="data-preview" id="dataPreview" style="display: none;">
+                    <h3>数据预览</h3>
+                    <div class="preview-controls">
+                        <button class="btn btn-secondary" onclick="exportToJson()">导出为JSON</button>
+                        <button class="btn btn-primary" onclick="generateReportsFromExcel()">生成所有报告</button>
+                        <button class="btn btn-secondary" onclick="viewAllReports()" id="viewReportsBtn" style="display: none;">查看所有报告</button>
+                        <button class="btn btn-primary" onclick="fillStudentFormFromExcel(0)" id="fillFormBtn" style="display: none;">填入学生信息表单</button>
+                    </div>
+                    <div class="table-container">
+                        <table id="previewTable" class="data-table">
+                            <thead>
+                                <tr id="tableHeader"></tr>
+                            </thead>
+                            <tbody id="tableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- 学生信息录入页面 -->
-        <div id="input-tab" class="tab-content active">
+        <div id="input-tab" class="tab-content">
             <div class="form-container">
                 <h2>学生基本信息</h2>
                 <form id="student-form">
@@ -97,13 +143,13 @@
                                 <input type="number" id="currentHistory" name="currentHistory" min="0" max="100">
                             </div>
                             <div class="form-group">
-                                <label for="currentGeography">地理</label>
-                                <input type="number" id="currentGeography" name="currentGeography" min="0" max="100">
-                            </div>
-                            <div class="form-group">
                                 <label for="currentPolitics">政治</label>
                                 <input type="number" id="currentPolitics" name="currentPolitics" min="0" max="100">
                             </div>
+                            <div class="form-group">
+                                <label for="currentGeography">地理</label>
+                                <input type="number" id="currentGeography" name="currentGeography" min="0" max="100">
+                            </div>                     
                             <div class="form-group">
                                 <label for="currentTotal">总分</label>
                                 <input type="number" id="currentTotal" name="currentTotal" min="0" max="750">
@@ -123,6 +169,30 @@
                             <div class="form-group">
                                 <label for="predictedEnglish">英语</label>
                                 <input type="number" id="predictedEnglish" name="predictedEnglish" min="0" max="150">
+                            </div>
+                            <div class="form-group">
+                                <label for="predictedPhysics">物理</label>
+                                <input type="number" id="predictedPhysics" name="predictedPhysics" min="0" max="100">
+                            </div>
+                            <div class="form-group">
+                                <label for="predictedBiology">生物</label>
+                                <input type="number" id="predictedBiology" name="predictedBiology" min="0" max="100">
+                            </div>
+                            <div class="form-group">
+                                <label for="predictedChemistry">化学</label>
+                                <input type="number" id="predictedChemistry" name="predictedChemistry" min="0" max="100">
+                            </div>
+                            <div class="form-group">
+                                <label for="predictedHistory">历史</label>
+                                <input type="number" id="predictedHistory" name="predictedHistory" min="0" max="100">
+                            </div>
+                            <div class="form-group">
+                                <label for="predictedPolitics">政治</label>
+                                <input type="number" id="predictedPolitics" name="predictedPolitics" min="0" max="100">
+                            </div>
+                            <div class="form-group">
+                                <label for="predictedGeography">地理</label>
+                                <input type="number" id="predictedGeography" name="predictedGeography" min="0" max="100">
                             </div>
                             <div class="form-group">
                                 <label for="predictedTotal">总分</label>
@@ -150,21 +220,51 @@
                     <h3>专业倾向与留学意向</h3>
                     <div class="form-grid">
                         <div class="form-group">
-                            <label for="majorPreference">大学倾向专业方向</label>
-                            <select id="majorPreference" name="majorPreference">
-                                <option value="">请选择</option>
-                                <option value="建筑">建筑</option>
-                                <option value="理科">理科</option>
-                                <option value="工科">工科</option>
-                                <option value="商科">商科</option>
-                                <option value="文科">文科</option>
-                                <option value="医护">医护</option>
-                                <option value="音乐">音乐</option>
-                                <option value="美术">美术</option>
-                                <option value="其他">其他</option>
-                            </select>
+                            <label>大学倾向专业方向</label>
+                            <div class="checkbox-group" id="majorPreferenceGroup">
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="major_building" name="majorPreference" value="建筑">
+                                    <label for="major_building">建筑</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="major_science" name="majorPreference" value="理科">
+                                    <label for="major_science">理科</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="major_engineering" name="majorPreference" value="工科">
+                                    <label for="major_engineering">工科</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="major_business" name="majorPreference" value="商科">
+                                    <label for="major_business">商科</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="major_liberal" name="majorPreference" value="文科">
+                                    <label for="major_liberal">文科</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="major_medical" name="majorPreference" value="医护">
+                                    <label for="major_medical">医护</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="major_music" name="majorPreference" value="音乐">
+                                    <label for="major_music">音乐</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="major_art" name="majorPreference" value="美术">
+                                    <label for="major_art">美术</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="major_other" name="majorPreference" value="其他">
+                                    <label for="major_other">其他</label>
+                                </div>
+                            </div>
                         </div>
                         
+                    </div>
+
+                    <h3>国际英语成绩</h3>
+                    <div class="form-grid">
                         <div class="form-group">
                             <label for="englishTestType">国际英语成绩类型</label>
                             <select id="englishTestType" name="englishTestType">
@@ -178,25 +278,78 @@
                         </div>
                         
                         <div class="form-group">
-                            <label for="englishScore">英语考试成绩</label>
-                            <input type="text" id="englishScore" name="englishScore" placeholder="请输入成绩">
+                            <label for="englishTotalScore">总分</label>
+                            <input type="text" id="englishTotalScore" name="englishTotalScore" placeholder="请输入总分">
                         </div>
                         
                         <div class="form-group">
-                            <label for="studyDestination">留学意向国家/地区</label>
-                            <select id="studyDestination" name="studyDestination">
-                                <option value="">请选择</option>
-                                <option value="美国">美国</option>
-                                <option value="英国">英国</option>
-                                <option value="澳大利亚">澳大利亚</option>
-                                <option value="中国香港">中国香港</option>
-                                <option value="中国澳门">中国澳门</option>
-                                <option value="新加坡">新加坡</option>
-                                <option value="马来西亚">马来西亚</option>
-                                <option value="爱尔兰">爱尔兰</option>
-                                <option value="荷兰">荷兰</option>
-                                <option value="新西兰">新西兰</option>
-                            </select>
+                            <label for="englishListening">听力</label>
+                            <input type="text" id="englishListening" name="englishListening" placeholder="请输入听力成绩">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="englishReading">阅读</label>
+                            <input type="text" id="englishReading" name="englishReading" placeholder="请输入阅读成绩">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="englishSpeaking">口语</label>
+                            <input type="text" id="englishSpeaking" name="englishSpeaking" placeholder="请输入口语成绩">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="englishWriting">写作</label>
+                            <input type="text" id="englishWriting" name="englishWriting" placeholder="请输入写作成绩">
+                        </div>
+                    </div>
+
+                    <h3>留学意向</h3>
+                    <div class="form-grid">
+                        
+                        <div class="form-group">
+                            <label>留学意向国家/地区</label>
+                            <div class="checkbox-group" id="studyDestinationGroup">
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="destination_usa" name="studyDestination" value="美国">
+                                    <label for="destination_usa">🇺🇸 美国</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="destination_uk" name="studyDestination" value="英国">
+                                    <label for="destination_uk">🇬🇧 英国</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="destination_australia" name="studyDestination" value="澳大利亚">
+                                    <label for="destination_australia">🇦🇺 澳大利亚</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="destination_hongkong" name="studyDestination" value="中国香港">
+                                    <label for="destination_hongkong">🇭🇰 中国香港</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="destination_macao" name="studyDestination" value="中国澳门">
+                                    <label for="destination_macao">🇲🇴 中国澳门</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="destination_singapore" name="studyDestination" value="新加坡">
+                                    <label for="destination_singapore">🇸🇬 新加坡</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="destination_malaysia" name="studyDestination" value="马来西亚">
+                                    <label for="destination_malaysia">🇲🇾 马来西亚</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="destination_ireland" name="studyDestination" value="爱尔兰">
+                                    <label for="destination_ireland">🇮🇪 爱尔兰</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="destination_netherlands" name="studyDestination" value="荷兰">
+                                    <label for="destination_netherlands">🇳🇱 荷兰</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="destination_newzealand" name="studyDestination" value="新西兰">
+                                    <label for="destination_newzealand">🇳🇿 新西兰</label>
+                                </div>
+                            </div>
                         </div>
                         
                         <div class="form-group">
@@ -245,12 +398,33 @@
                         
                         <div class="form-group">
                             <label for="friendsCount">经常来往的好友数量</label>
-                            <input type="number" id="friendsCount" name="friendsCount" min="0">
+                            <input type="text" id="friendsCount" name="friendsCount" placeholder="请输入好友数量">
                         </div>
                         
                         <div class="form-group">
-                            <label for="talents">音乐、美术、体育、艺术才艺</label>
-                            <input type="text" id="talents" name="talents" placeholder="多个才艺请用逗号分隔">
+                            <label>音乐、美术、体育、艺术才艺</label>
+                            <div class="checkbox-group" id="talentsGroup">
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="talent_music" name="talents" value="音乐">
+                                    <label for="talent_music">🎵 音乐</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="talent_dance" name="talents" value="舞蹈">
+                                    <label for="talent_dance">💃 舞蹈</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="talent_sports" name="talents" value="体育">
+                                    <label for="talent_sports">⚽ 体育</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="talent_art" name="talents" value="艺术">
+                                    <label for="talent_art">🎨 艺术</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="talent_none" name="talents" value="否">
+                                    <label for="talent_none">❌ 否</label>
+                                </div>
+                            </div>
                         </div>
                         
                         <div class="form-group">
@@ -262,10 +436,11 @@
                             <label for="organizationFrequency">整理生活和工作空间频率</label>
                             <select id="organizationFrequency" name="organizationFrequency">
                                 <option value="">请选择</option>
-                                <option value="每天">每天</option>
-                                <option value="每周">每周</option>
-                                <option value="每月">每月</option>
-                                <option value="很少">很少</option>
+                                <option value="每天至少一次">每天至少一次</option>
+                                <option value="每周至少一次">每周至少一次</option>
+                                <option value="每月至少一次">每月至少一次</option>
+                                <option value="半年至少一次">半年至少一次</option>
+                                <option value="从不整理">从不整理</option>
                             </select>
                         </div>
                         
@@ -273,10 +448,9 @@
                             <label for="askForHelp">遇到困难是否向周围的人求助</label>
                             <select id="askForHelp" name="askForHelp">
                                 <option value="">请选择</option>
-                                <option value="经常">经常</option>
-                                <option value="偶尔">偶尔</option>
-                                <option value="很少">很少</option>
-                                <option value="从不">从不</option>
+                                <option value="会马上向身边的人求助">会马上向身边的人求助</option>
+                                <option value="先自己尝试努力，无法解决时再求助">先自己尝试努力，无法解决时再求助</option>
+                                <option value="无论如何都要靠自己，不希望麻烦别人">无论如何都要靠自己，不希望麻烦别人</option>
                             </select>
                         </div>
                         
@@ -291,7 +465,7 @@
                         
                         <div class="form-group">
                             <label for="readingTime">每天课外阅读时间（小时）</label>
-                            <input type="number" id="readingTime" name="readingTime" min="0" max="24" step="0.5">
+                            <input type="number" id="readingTime" name="readingTime" min="0" max="8" step="1" placeholder="请输入0-8的整数">
                         </div>
                     </div>
 
@@ -324,20 +498,20 @@
                             <input type="number" id="academicAbility" name="academicAbility" min="0" max="100" value="75">
                         </div>
                         <div class="form-group">
-                            <label for="academicPotential">学术潜力 (0-100)</label>
-                            <input type="number" id="academicPotential" name="academicPotential" min="0" max="100" value="80">
-                        </div>
-                        <div class="form-group">
                             <label for="languageAbility">语言能力 (0-100)</label>
                             <input type="number" id="languageAbility" name="languageAbility" min="0" max="100" value="70">
                         </div>
                         <div class="form-group">
-                            <label for="comprehensiveQuality">综合素养 (0-100)</label>
-                            <input type="number" id="comprehensiveQuality" name="comprehensiveQuality" min="0" max="100" value="85">
+                            <label for="artisticQuality">文体素养 (0-100)</label>
+                            <input type="number" id="artisticQuality" name="artisticQuality" min="0" max="100" value="80">
                         </div>
                         <div class="form-group">
-                            <label for="goalMatching">目标匹配度 (0-100)</label>
-                            <input type="number" id="goalMatching" name="goalMatching" min="0" max="100" value="78">
+                            <label for="socialAbility">社交能力 (0-100)</label>
+                            <input type="number" id="socialAbility" name="socialAbility" min="0" max="100" value="85">
+                        </div>
+                        <div class="form-group">
+                            <label for="independentLiving">独立生活能力 (0-100)</label>
+                            <input type="number" id="independentLiving" name="independentLiving" min="0" max="100" value="78">
                         </div>
                     </div>
                 </div>
@@ -365,25 +539,6 @@
                         </div>
                     </div>
 
-                    <!-- 学术潜力分析 -->
-                    <div class="ability-analysis">
-                        <h4>🚀 学术潜力分析</h4>
-                        <div class="analysis-grid">
-                            <div class="form-group">
-                                <label for="potentialStrengths">优势</label>
-                                <textarea id="potentialStrengths" name="potentialStrengths" rows="2" placeholder="留空则根据分数自动生成"></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="potentialWeaknesses">不足</label>
-                                <textarea id="potentialWeaknesses" name="potentialWeaknesses" rows="2" placeholder="留空则根据分数自动生成"></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="potentialSuggestions">可行性建议</label>
-                                <textarea id="potentialSuggestions" name="potentialSuggestions" rows="2" placeholder="留空则根据分数自动生成"></textarea>
-                            </div>
-                        </div>
-                    </div>
-
                     <!-- 语言能力分析 -->
                     <div class="ability-analysis">
                         <h4>🌍 语言能力分析</h4>
@@ -403,40 +558,59 @@
                         </div>
                     </div>
 
-                    <!-- 综合素养分析 -->
+                    <!-- 文体素养分析 -->
                     <div class="ability-analysis">
-                        <h4>⭐ 综合素养分析</h4>
+                        <h4>🎨 文体素养分析</h4>
                         <div class="analysis-grid">
                             <div class="form-group">
-                                <label for="qualityStrengths">优势</label>
-                                <textarea id="qualityStrengths" name="qualityStrengths" rows="2" placeholder="留空则根据分数自动生成"></textarea>
+                                <label for="artisticStrengths">优势</label>
+                                <textarea id="artisticStrengths" name="artisticStrengths" rows="2" placeholder="留空则根据分数自动生成"></textarea>
                             </div>
                             <div class="form-group">
-                                <label for="qualityWeaknesses">不足</label>
-                                <textarea id="qualityWeaknesses" name="qualityWeaknesses" rows="2" placeholder="留空则根据分数自动生成"></textarea>
+                                <label for="artisticWeaknesses">不足</label>
+                                <textarea id="artisticWeaknesses" name="artisticWeaknesses" rows="2" placeholder="留空则根据分数自动生成"></textarea>
                             </div>
                             <div class="form-group">
-                                <label for="qualitySuggestions">可行性建议</label>
-                                <textarea id="qualitySuggestions" name="qualitySuggestions" rows="2" placeholder="留空则根据分数自动生成"></textarea>
+                                <label for="artisticSuggestions">可行性建议</label>
+                                <textarea id="artisticSuggestions" name="artisticSuggestions" rows="2" placeholder="留空则根据分数自动生成"></textarea>
                             </div>
                         </div>
                     </div>
 
-                    <!-- 目标匹配度分析 -->
+                    <!-- 社交能力分析 -->
                     <div class="ability-analysis">
-                        <h4>🎯 目标匹配度分析</h4>
+                        <h4>🤝 社交能力分析</h4>
                         <div class="analysis-grid">
                             <div class="form-group">
-                                <label for="matchingStrengths">优势</label>
-                                <textarea id="matchingStrengths" name="matchingStrengths" rows="2" placeholder="留空则根据分数自动生成"></textarea>
+                                <label for="socialStrengths">优势</label>
+                                <textarea id="socialStrengths" name="socialStrengths" rows="2" placeholder="留空则根据分数自动生成"></textarea>
                             </div>
                             <div class="form-group">
-                                <label for="matchingWeaknesses">不足</label>
-                                <textarea id="matchingWeaknesses" name="matchingWeaknesses" rows="2" placeholder="留空则根据分数自动生成"></textarea>
+                                <label for="socialWeaknesses">不足</label>
+                                <textarea id="socialWeaknesses" name="socialWeaknesses" rows="2" placeholder="留空则根据分数自动生成"></textarea>
                             </div>
                             <div class="form-group">
-                                <label for="matchingSuggestions">可行性建议</label>
-                                <textarea id="matchingSuggestions" name="matchingSuggestions" rows="2" placeholder="留空则根据分数自动生成"></textarea>
+                                <label for="socialSuggestions">可行性建议</label>
+                                <textarea id="socialSuggestions" name="socialSuggestions" rows="2" placeholder="留空则根据分数自动生成"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 独立生活能力分析 -->
+                    <div class="ability-analysis">
+                        <h4>🏠 独立生活能力分析</h4>
+                        <div class="analysis-grid">
+                            <div class="form-group">
+                                <label for="livingStrengths">优势</label>
+                                <textarea id="livingStrengths" name="livingStrengths" rows="2" placeholder="留空则根据分数自动生成"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="livingWeaknesses">不足</label>
+                                <textarea id="livingWeaknesses" name="livingWeaknesses" rows="2" placeholder="留空则根据分数自动生成"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="livingSuggestions">可行性建议</label>
+                                <textarea id="livingSuggestions" name="livingSuggestions" rows="2" placeholder="留空则根据分数自动生成"></textarea>
                             </div>
                         </div>
                     </div>
