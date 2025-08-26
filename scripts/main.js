@@ -150,6 +150,93 @@ const abilityEvaluations = {
                 suggestions: '建议申请最理想的院校，同时准备充分的备选方案，保持学习和活动的高水准。'
             }
         ]
+    },
+    artistic: {
+        name: '文体素养',
+        ranges: [
+            {
+                min: 0, max: 60,
+                strengths: '具备基本的文体活动参与意识。',
+                weaknesses: '文体特长发展不足，缺乏持续的兴趣爱好，在艺术和体育方面表现平平。',
+                suggestions: '建议培养1-2项文体兴趣爱好，参加相关培训班或社团活动，提升文体素养。'
+            },
+            {
+                min: 60, max: 80,
+                strengths: '具备一定的文体特长，有稳定的兴趣爱好，在某个领域表现不错。',
+                weaknesses: '文体技能还需要进一步提升，缺乏相关证书或奖项，在专业水平上还有发展空间。',
+                suggestions: '建议深化文体特长发展，参加相关比赛和考级，争取获得证书或奖项。'
+            },
+            {
+                min: 80, max: 90,
+                strengths: '文体素养优秀，具备突出的特长，在相关领域有良好表现和认可。',
+                weaknesses: '可能在某些文体项目上还可以进一步拓展，增加多样化的文体技能。',
+                suggestions: '建议在优势领域继续精进，同时尝试新的文体项目，丰富个人才艺。'
+            },
+            {
+                min: 90, max: 100,
+                strengths: '文体素养卓越，具备多项文体特长，在相关领域有突出成就和影响力。',
+                weaknesses: '需要注意平衡文体活动与学术学习，避免过度投入影响其他方面发展。',
+                suggestions: '建议在文体领域建立个人品牌，考虑相关专业发展，充分发挥文体优势。'
+            }
+        ]
+    },
+    social: {
+        name: '社交能力',
+        ranges: [
+            {
+                min: 0, max: 60,
+                strengths: '具备基本的社交意识，能够进行日常交流。',
+                weaknesses: '社交能力相对薄弱，人际交往范围有限，团队协作能力有待提升。',
+                suggestions: '建议多参与社交活动，加入社团组织，练习与人沟通交流，培养团队合作精神。'
+            },
+            {
+                min: 60, max: 80,
+                strengths: '社交能力较好，人际关系和谐，具备一定的团队协作能力。',
+                weaknesses: '在领导力和公众表达方面还有提升空间，社交圈相对固定。',
+                suggestions: '建议在团队中承担更多责任，练习公众演讲，拓展社交圈，提升领导力。'
+            },
+            {
+                min: 80, max: 90,
+                strengths: '社交能力出色，人际关系广泛，具备良好的领导力和团队协作能力。',
+                weaknesses: '可能在某些特定社交场景下还需要进一步提升应变能力。',
+                suggestions: '建议参与更多跨文化交流活动，提升国际化社交能力，建立更广泛的人脉网络。'
+            },
+            {
+                min: 90, max: 100,
+                strengths: '社交能力卓越，具备强大的领导力和人际影响力，在团队中发挥核心作用。',
+                weaknesses: '需要注意保持真诚的社交态度，避免过度社交影响个人发展。',
+                suggestions: '建议在社交领域建立个人影响力，考虑相关专业发展，充分发挥社交优势。'
+            }
+        ]
+    },
+    living: {
+        name: '独立生活能力',
+        ranges: [
+            {
+                min: 0, max: 60,
+                strengths: '具备基本的生活自理能力。',
+                weaknesses: '独立生活能力较弱，时间管理能力不足，自我管理意识有待提升。',
+                suggestions: '建议培养独立生活技能，学习时间管理，提升自我管理能力，为留学做好准备。'
+            },
+            {
+                min: 60, max: 80,
+                strengths: '独立生活能力较好，具备基本的时间管理和自我管理能力。',
+                weaknesses: '在某些生活技能方面还需要进一步提升，适应新环境的能力有待加强。',
+                suggestions: '建议学习更多生活技能，提升适应能力，培养独立解决问题的能力。'
+            },
+            {
+                min: 80, max: 90,
+                strengths: '独立生活能力出色，具备良好的时间管理和自我管理能力，适应能力强。',
+                weaknesses: '可能在某些特定生活场景下还需要进一步提升应变能力。',
+                suggestions: '建议参与更多独立生活实践，提升跨文化适应能力，为海外生活做好充分准备。'
+            },
+            {
+                min: 90, max: 100,
+                strengths: '独立生活能力卓越，具备强大的自我管理能力和适应能力，能够快速适应新环境。',
+                weaknesses: '需要注意保持独立生活技能，避免过度依赖他人。',
+                suggestions: '建议在独立生活方面建立个人优势，考虑相关专业发展，充分发挥独立生活能力。'
+            }
+        ]
     }
 };
 
@@ -234,6 +321,25 @@ function handleFormSubmit(event) {
         studentData[key] = value;
     }
     
+    // 手动处理checkbox数据（FormData只保留最后一个同名checkbox的值）
+    // 处理留学意向
+    const selectedDestinations = getSelectedStudyDestinations();
+    if (selectedDestinations.length > 0) {
+        studentData.studyDestination = selectedDestinations.join('┋');
+    }
+    
+    // 处理专业意向
+    const selectedMajors = getSelectedMajorPreferences();
+    if (selectedMajors.length > 0) {
+        studentData.majorPreference = selectedMajors.join('┋');
+    }
+    
+    // 处理才艺
+    const selectedTalents = getSelectedTalents();
+    if (selectedTalents.length > 0) {
+        studentData.talents = selectedTalents.join('┋');
+    }
+    
     // 验证必填字段
     if (!validateRequiredFields()) {
         alert('请填写所有必填字段！');
@@ -298,6 +404,21 @@ function generateIntelligentAnalysis() {
         return element ? element.value : defaultValue;
     }
     
+    // 先计算学术能力
+    calculateAcademicAbility();
+    
+    // 计算语言能力
+    calculateLanguageAbility();
+    
+    // 计算文体素养
+    calculateArtisticQuality();
+    
+    // 计算社交能力
+    calculateSocialAbility();
+    
+    // 计算独立生活能力
+    calculateIndependentLiving();
+    
     const radar = {
         academicAbility: parseInt(safeGetValue('academicAbility', '75')) || 75,
         languageAbility: parseInt(safeGetValue('languageAbility', '70')) || 70,
@@ -308,29 +429,29 @@ function generateIntelligentAnalysis() {
 
     const analysis = {
         academic: {
-            strengths: safeGetValue('academicStrengths') || getAbilityEvaluation('academic', radar.academicAbility).strengths,
-            weaknesses: safeGetValue('academicWeaknesses') || getAbilityEvaluation('academic', radar.academicAbility).weaknesses,
-            suggestions: safeGetValue('academicSuggestions') || getAbilityEvaluation('academic', radar.academicAbility).suggestions
+            strengths: safeGetValue('academicStrengths') || (getAbilityEvaluation('academic', radar.academicAbility)?.strengths || '学术能力有待提升'),
+            weaknesses: safeGetValue('academicWeaknesses') || (getAbilityEvaluation('academic', radar.academicAbility)?.weaknesses || '学术基础需要加强'),
+            suggestions: safeGetValue('academicSuggestions') || (getAbilityEvaluation('academic', radar.academicAbility)?.suggestions || '建议加强学术学习')
         },
         language: {
-            strengths: safeGetValue('languageStrengths') || getAbilityEvaluation('language', radar.languageAbility).strengths,
-            weaknesses: safeGetValue('languageWeaknesses') || getAbilityEvaluation('language', radar.languageAbility).weaknesses,
-            suggestions: safeGetValue('languageSuggestions') || getAbilityEvaluation('language', radar.languageAbility).suggestions
+            strengths: safeGetValue('languageStrengths') || (getAbilityEvaluation('language', radar.languageAbility)?.strengths || '语言能力有待提升'),
+            weaknesses: safeGetValue('languageWeaknesses') || (getAbilityEvaluation('language', radar.languageAbility)?.weaknesses || '语言基础需要加强'),
+            suggestions: safeGetValue('languageSuggestions') || (getAbilityEvaluation('language', radar.languageAbility)?.suggestions || '建议加强语言学习')
         },
         artistic: {
-            strengths: safeGetValue('artisticStrengths') || getAbilityEvaluation('artistic', radar.artisticQuality).strengths,
-            weaknesses: safeGetValue('artisticWeaknesses') || getAbilityEvaluation('artistic', radar.artisticQuality).weaknesses,
-            suggestions: safeGetValue('artisticSuggestions') || getAbilityEvaluation('artistic', radar.artisticQuality).suggestions
+            strengths: safeGetValue('artisticStrengths') || (getAbilityEvaluation('artistic', radar.artisticQuality)?.strengths || '文体素养有待提升'),
+            weaknesses: safeGetValue('artisticWeaknesses') || (getAbilityEvaluation('artistic', radar.artisticQuality)?.weaknesses || '文体基础需要加强'),
+            suggestions: safeGetValue('artisticSuggestions') || (getAbilityEvaluation('artistic', radar.artisticQuality)?.suggestions || '建议加强文体素养')
         },
         social: {
-            strengths: safeGetValue('socialStrengths') || getAbilityEvaluation('social', radar.socialAbility).strengths,
-            weaknesses: safeGetValue('socialWeaknesses') || getAbilityEvaluation('social', radar.socialAbility).weaknesses,
-            suggestions: safeGetValue('socialSuggestions') || getAbilityEvaluation('social', radar.socialAbility).suggestions
+            strengths: safeGetValue('socialStrengths') || (getAbilityEvaluation('social', radar.socialAbility)?.strengths || '社交能力有待提升'),
+            weaknesses: safeGetValue('socialWeaknesses') || (getAbilityEvaluation('social', radar.socialAbility)?.weaknesses || '社交基础需要加强'),
+            suggestions: safeGetValue('socialSuggestions') || (getAbilityEvaluation('social', radar.socialAbility)?.suggestions || '建议加强社交能力')
         },
         living: {
-            strengths: safeGetValue('livingStrengths') || getAbilityEvaluation('living', radar.independentLiving).strengths,
-            weaknesses: safeGetValue('livingWeaknesses') || getAbilityEvaluation('living', radar.independentLiving).weaknesses,
-            suggestions: safeGetValue('livingSuggestions') || getAbilityEvaluation('living', radar.independentLiving).suggestions
+            strengths: safeGetValue('livingStrengths') || (getAbilityEvaluation('living', radar.independentLiving)?.strengths || '独立生活能力有待提升'),
+            weaknesses: safeGetValue('livingWeaknesses') || (getAbilityEvaluation('living', radar.independentLiving)?.weaknesses || '独立生活基础需要加强'),
+            suggestions: safeGetValue('livingSuggestions') || (getAbilityEvaluation('living', radar.independentLiving)?.suggestions || '建议加强独立生活能力')
         }
     };
 
@@ -1199,6 +1320,21 @@ function fillStudentFormFromExcel(rowIndex = 0) {
         readingTime: rowData[excelHeaders[55]]
     });
     
+    // 计算并更新学术能力
+    calculateAcademicAbility();
+    
+    // 计算并更新语言能力
+    calculateLanguageAbility();
+    
+    // 计算并更新文体素养
+    calculateArtisticQuality();
+    
+    // 计算并更新社交能力
+    calculateSocialAbility();
+    
+    // 计算并更新独立生活能力
+    calculateIndependentLiving();
+    
     alert(`已成功将第${rowIndex + 1}行数据填入学生信息录入表单！\n\n学生姓名: ${rowData[excelHeaders[7]] || '未填写'}\n当前总分: ${totalScore}分\n预测总分: ${predictedTotalScore}分`);
 }
 
@@ -1275,11 +1411,31 @@ function generateRadarDataFromExcel(rowData) {
 // 根据雷达图数据生成分析
 function generateAnalysisFromRadar(radarData) {
     return {
-        academic: getAbilityEvaluation('academic', radarData.academicAbility),
-        language: getAbilityEvaluation('language', radarData.languageAbility),
-        artistic: getAbilityEvaluation('artistic', radarData.artisticQuality),
-        social: getAbilityEvaluation('social', radarData.socialAbility),
-        living: getAbilityEvaluation('living', radarData.independentLiving)
+        academic: getAbilityEvaluation('academic', radarData.academicAbility) || {
+            strengths: '学术能力有待提升',
+            weaknesses: '学术基础需要加强',
+            suggestions: '建议加强学术学习'
+        },
+        language: getAbilityEvaluation('language', radarData.languageAbility) || {
+            strengths: '语言能力有待提升',
+            weaknesses: '语言基础需要加强',
+            suggestions: '建议加强语言学习'
+        },
+        artistic: getAbilityEvaluation('artistic', radarData.artisticQuality) || {
+            strengths: '文体素养有待提升',
+            weaknesses: '文体基础需要加强',
+            suggestions: '建议加强文体素养'
+        },
+        social: getAbilityEvaluation('social', radarData.socialAbility) || {
+            strengths: '社交能力有待提升',
+            weaknesses: '社交基础需要加强',
+            suggestions: '建议加强社交能力'
+        },
+        living: getAbilityEvaluation('living', radarData.independentLiving) || {
+            strengths: '独立生活能力有待提升',
+            weaknesses: '独立生活基础需要加强',
+            suggestions: '建议加强独立生活能力'
+        }
     };
 }
 
@@ -1415,7 +1571,249 @@ function calculatePredictedTotalScore() {
         predictedTotalField.value = totalScore;
     }
     
+    // 计算并更新学术能力
+    calculateAcademicAbility();
+    
+    // 计算并更新语言能力
+    calculateLanguageAbility();
+    
+    // 计算并更新文体素养
+    calculateArtisticQuality();
+    
+    // 计算并更新社交能力
+    calculateSocialAbility();
+    
+    // 计算并更新独立生活能力
+    calculateIndependentLiving();
+    
     return totalScore;
+}
+
+// 计算学术能力
+function calculateAcademicAbility() {
+    const predictedTotalField = document.getElementById('predictedTotal');
+    const subjectGroupField = document.getElementById('subjectGroup');
+    const academicAbilityField = document.getElementById('academicAbility');
+    
+    if (!predictedTotalField || !subjectGroupField || !academicAbilityField) {
+        return;
+    }
+    
+    const predictedTotal = parseFloat(predictedTotalField.value) || 0;
+    const subjectGroup = subjectGroupField.value;
+    
+    // 根据学科分组确定基准分
+    let baseScore;
+    if (subjectGroup === '物理组') {
+        baseScore = 430;
+    } else if (subjectGroup === '历史组') {
+        baseScore = 460;
+    } else {
+        // 如果未选择学科分组，不计算学术能力
+        return;
+    }
+    
+    // 计算公式：60 + 0.2 * (预测总分 - 基准分)
+    let academicAbility = 60 + 0.2 * (predictedTotal - baseScore);
+    
+    // 限制在0-100范围内
+    academicAbility = Math.max(0, Math.min(100, academicAbility));
+    
+    // 更新学术能力字段
+    academicAbilityField.value = Math.round(academicAbility);
+}
+
+// 计算语言能力
+function calculateLanguageAbility() {
+    const englishTestTypeField = document.getElementById('englishTestType');
+    const englishTotalScoreField = document.getElementById('englishTotalScore');
+    const predictedEnglishField = document.getElementById('predictedEnglish');
+    const languageAbilityField = document.getElementById('languageAbility');
+    
+    if (!englishTestTypeField || !languageAbilityField) {
+        return;
+    }
+    
+    const englishTestType = englishTestTypeField.value;
+    let languageAbility = 0;
+    
+    if (englishTestType === '雅思') {
+        const totalScore = parseFloat(englishTotalScoreField?.value) || 0;
+        languageAbility = (totalScore / 9) * 100;
+    } else if (englishTestType === '托福') {
+        const totalScore = parseFloat(englishTotalScoreField?.value) || 0;
+        languageAbility = (totalScore / 120) * 100;
+    } else if (englishTestType === 'PTE') {
+        const totalScore = parseFloat(englishTotalScoreField?.value) || 0;
+        languageAbility = (totalScore / 90) * 100;
+    } else if (englishTestType === '多邻国') {
+        const totalScore = parseFloat(englishTotalScoreField?.value) || 0;
+        languageAbility = (totalScore / 160) * 100;
+    } else if (englishTestType === '暂无') {
+        const predictedEnglish = parseFloat(predictedEnglishField?.value) || 0;
+        let ieltsScore = 0;
+        
+        if (predictedEnglish >= 140) {
+            ieltsScore = 6.5;
+        } else if (predictedEnglish >= 130) {
+            ieltsScore = 6.0;
+        } else if (predictedEnglish >= 120) {
+            ieltsScore = 5.5;
+        } else if (predictedEnglish >= 110) {
+            ieltsScore = 5.0;
+        } else {
+            // 小于110分的情况：按分数/110 * 5 计算，然后向下取整到0.5的倍数
+            const rawScore = (predictedEnglish / 110) * 5;
+            ieltsScore = Math.floor(rawScore * 2) / 2; // 向下取整到0.5的倍数
+        }
+        
+        languageAbility = (ieltsScore / 9) * 100;
+    }
+    
+    // 限制在0-100范围内并取整
+    languageAbility = Math.max(0, Math.min(100, languageAbility));
+    languageAbilityField.value = Math.round(languageAbility);
+}
+
+// 计算文体素养
+function calculateArtisticQuality() {
+    const hasClubField = document.getElementById('hasClub');
+    const hasLongTermHobbyField = document.getElementById('hasLongTermHobby');
+    const talentsGroup = document.querySelectorAll('input[name="talents"]');
+    const readingTimeField = document.getElementById('readingTime');
+    const artisticQualityField = document.getElementById('artisticQuality');
+    
+    if (!artisticQualityField) {
+        return;
+    }
+    
+    let totalScore = 0;
+    
+    // 第一项：hasClub（25分）
+    const hasClub = hasClubField?.value;
+    if (hasClub === '是') {
+        totalScore += 25;
+    }
+    
+    // 第二项：hasLongTermHobby（25分）
+    const hasLongTermHobby = hasLongTermHobbyField?.value;
+    if (hasLongTermHobby === '是') {
+        totalScore += 25;
+    }
+    
+    // 第三项：talentsGroup（25分）
+    let hasTalents = true;
+    talentsGroup.forEach(checkbox => {
+        if (checkbox.value === '否' && checkbox.checked) {
+            hasTalents = false;
+        }
+    });
+    if (hasTalents) {
+        totalScore += 25;
+    }
+    
+    // 第四项：readingTime（25分，按比例计算）
+    const readingTime = parseFloat(readingTimeField?.value) || 0;
+    const readingScore = Math.min(25, (readingTime / 8) * 25);
+    totalScore += readingScore;
+    
+    // 限制在0-100范围内并取整
+    totalScore = Math.max(0, Math.min(100, totalScore));
+    artisticQualityField.value = Math.round(totalScore);
+}
+
+// 计算社交能力
+function calculateSocialAbility() {
+    const hasClubField = document.getElementById('hasClub');
+    const friendsCountField = document.getElementById('friendsCount');
+    const askForHelpField = document.getElementById('askForHelp');
+    const socialAbilityField = document.getElementById('socialAbility');
+    
+    if (!socialAbilityField) {
+        return;
+    }
+    
+    let totalScore = 0;
+    
+    // 第一项：hasClub（25分）
+    const hasClub = hasClubField?.value;
+    if (hasClub === '是') {
+        totalScore += 25;
+    }
+    
+    // 第二项：friendsCount（50分）
+    const friendsCount = friendsCountField?.value;
+    if (friendsCount === '没有') {
+        totalScore += 0;
+    } else if (friendsCount === '1-3个') {
+        totalScore += 25;
+    } else if (friendsCount === '3-5个') {
+        totalScore += 35;
+    } else if (friendsCount === '5个以上') {
+        totalScore += 50;
+    }
+    
+    // 第三项：askForHelp（25分）
+    const askForHelp = askForHelpField?.value;
+    if (askForHelp === '会马上向身边的人求助') {
+        totalScore += 25;
+    } else if (askForHelp === '先自己尝试努力，无法解决时再求助') {
+        totalScore += 12.5;
+    } else if (askForHelp === '无论如何都要靠自己，不希望麻烦别人') {
+        totalScore += 0;
+    }
+    
+    // 限制在0-100范围内并取整
+    totalScore = Math.max(0, Math.min(100, totalScore));
+    socialAbilityField.value = Math.round(totalScore);
+}
+
+// 计算独立生活能力
+function calculateIndependentLiving() {
+    const organizationFrequencyField = document.getElementById('organizationFrequency');
+    const askForHelpField = document.getElementById('askForHelp');
+    const canCookField = document.getElementById('canCook');
+    const independentLivingField = document.getElementById('independentLiving');
+    
+    if (!independentLivingField) {
+        return;
+    }
+    
+    let totalScore = 0;
+    
+    // 第一项：organizationFrequency（50分）
+    const organizationFrequency = organizationFrequencyField?.value;
+    if (organizationFrequency === '从不整理') {
+        totalScore += 0;
+    } else if (organizationFrequency === '半年至少一次') {
+        totalScore += 12;
+    } else if (organizationFrequency === '每月至少一次') {
+        totalScore += 25;
+    } else if (organizationFrequency === '每周至少一次') {
+        totalScore += 40;
+    } else if (organizationFrequency === '每天至少一次') {
+        totalScore += 50;
+    }
+    
+    // 第二项：askForHelp（25分）
+    const askForHelp = askForHelpField?.value;
+    if (askForHelp === '会马上向身边的人求助') {
+        totalScore += 12;
+    } else if (askForHelp === '先自己尝试努力，无法解决时再求助') {
+        totalScore += 25;
+    } else if (askForHelp === '无论如何都要靠自己，不希望麻烦别人') {
+        totalScore += 12;
+    }
+    
+    // 第三项：canCook（25分）
+    const canCook = canCookField?.value;
+    if (canCook === '是') {
+        totalScore += 25;
+    }
+    
+    // 限制在0-100范围内并取整
+    totalScore = Math.max(0, Math.min(100, totalScore));
+    independentLivingField.value = Math.round(totalScore);
 }
 
 // 自动计算总分（兼容旧版本）
@@ -1522,6 +1920,12 @@ function setTalents(talents) {
     allCheckboxes.forEach(checkbox => {
         console.log('-', checkbox.value);
     });
+    
+    // 计算文体素养
+    calculateArtisticQuality();
+    
+    // 计算社交能力
+    calculateSocialAbility();
 }
 
 // 文件选择事件处理
@@ -1567,6 +1971,80 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
+    // 为学科分组添加监听器，当变化时重新计算学术能力
+    const subjectGroupField = document.getElementById('subjectGroup');
+    if (subjectGroupField) {
+        subjectGroupField.addEventListener('change', calculateAcademicAbility);
+    }
+    
+    // 为预测总分字段添加监听器，当直接修改时重新计算学术能力
+    const predictedTotalField = document.getElementById('predictedTotal');
+    if (predictedTotalField) {
+        predictedTotalField.addEventListener('input', calculateAcademicAbility);
+    }
+    
+    // 为英语总分添加监听器，当变化时重新计算语言能力
+    const englishTotalScoreField = document.getElementById('englishTotalScore');
+    if (englishTotalScoreField) {
+        englishTotalScoreField.addEventListener('input', calculateLanguageAbility);
+    }
+    
+    // 为预测英语成绩添加监听器，当变化时重新计算语言能力
+    const predictedEnglishField = document.getElementById('predictedEnglish');
+    if (predictedEnglishField) {
+        predictedEnglishField.addEventListener('input', calculateLanguageAbility);
+    }
+    
+    // 为文体素养相关字段添加监听器
+    const hasClubField = document.getElementById('hasClub');
+    if (hasClubField) {
+        hasClubField.addEventListener('change', function() {
+            calculateArtisticQuality();
+            calculateSocialAbility();
+        });
+    }
+    
+    const hasLongTermHobbyField = document.getElementById('hasLongTermHobby');
+    if (hasLongTermHobbyField) {
+        hasLongTermHobbyField.addEventListener('change', calculateArtisticQuality);
+    }
+    
+    const readingTimeField = document.getElementById('readingTime');
+    if (readingTimeField) {
+        readingTimeField.addEventListener('input', calculateArtisticQuality);
+    }
+    
+    // 为才艺复选框添加监听器
+    const talentsCheckboxes = document.querySelectorAll('input[name="talents"]');
+    talentsCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', calculateArtisticQuality);
+    });
+    
+    // 为社交能力相关字段添加监听器
+    const friendsCountField = document.getElementById('friendsCount');
+    if (friendsCountField) {
+        friendsCountField.addEventListener('change', calculateSocialAbility);
+    }
+    
+    const askForHelpField = document.getElementById('askForHelp');
+    if (askForHelpField) {
+        askForHelpField.addEventListener('change', function() {
+            calculateSocialAbility();
+            calculateIndependentLiving();
+        });
+    }
+    
+    // 为独立生活能力相关字段添加监听器
+    const organizationFrequencyField = document.getElementById('organizationFrequency');
+    if (organizationFrequencyField) {
+        organizationFrequencyField.addEventListener('change', calculateIndependentLiving);
+    }
+    
+    const canCookField = document.getElementById('canCook');
+    if (canCookField) {
+        canCookField.addEventListener('change', calculateIndependentLiving);
+    }
+    
     // 为英语成绩类型添加监听器
     const englishTestTypeField = document.getElementById('englishTestType');
     if (englishTestTypeField) {
@@ -1593,6 +2071,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 });
             }
+            
+            // 计算语言能力
+            calculateLanguageAbility();
         });
     }
     

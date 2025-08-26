@@ -225,59 +225,42 @@ body {
 .ability-detail {
     margin-bottom: 25px;
     background: var(--surface-color);
-    border-radius: 8px;
+    border-radius: 12px;
     padding: 20px;
-    border-left: 4px solid var(--primary-color);
+    border: 1px solid var(--border-color);
     width: 100%;
     box-sizing: border-box;
+    transition: all 0.3s ease;
+}
+
+.ability-detail:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
 }
 
 .ability-detail h3 {
-    font-size: 1.1rem;
+    font-size: 1.4rem;
     color: var(--primary-color);
     margin-bottom: 15px;
     font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
-.detail-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 15px;
-    width: 100%;
-}
-
-.detail-item {
+.ability-content {
     background: white;
-    border-radius: 6px;
-    padding: 15px;
-    border: 1px solid var(--border-color);
-    min-height: 80px;
-    box-sizing: border-box;
+    border-radius: 8px;
+    padding: 18px;
+    border-left: 4px solid var(--primary-color);
 }
 
-.detail-item h4 {
-    font-size: 0.9rem;
-    margin-bottom: 8px;
-    font-weight: 600;
-}
-
-.detail-item.strengths h4 {
-    color: var(--success-color);
-}
-
-.detail-item.weaknesses h4 {
-    color: var(--warning-color);
-}
-
-.detail-item.suggestions h4 {
-    color: var(--primary-color);
-}
-
-.detail-item p {
-    font-size: 0.85rem;
-    line-height: 1.5;
+.ability-content p {
+    font-size: 1rem;
+    line-height: 1.7;
     color: var(--text-primary);
     margin: 0;
+    text-align: justify;
 }
 
 /* 院校推荐区域 */
@@ -658,5 +641,136 @@ body {
     
     .analysis-section h2 {
         font-size: 1.2rem;
+    }
+    
+    /* 移动端留学意向样式 */
+    .intention-section h2 {
+        font-size: 1.2rem;
+        margin-bottom: 15px;
+    }
+    
+    .intention-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .intention-item .label {
+        font-size: 0.9rem;
+    }
+    
+    .intention-item .value {
+        min-height: 35px;
+    }
+}
+
+/* 留学意向部分样式 */
+.intention-section {
+    margin-bottom: 30px;
+    display: block;
+    width: 100%;
+}
+
+.intention-section h2 {
+    font-size: 1.4rem;
+    color: var(--primary-color);
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--primary-color);
+    font-weight: 600;
+}
+
+.intention-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.intention-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.intention-item .label {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 1rem;
+}
+
+.intention-item .value {
+    min-height: 40px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+}
+
+/* 留学区域意向和专业方向意向样式 */
+.region-item, .major-item {
+    display: inline-flex;
+    align-items: center;
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 6px 12px;
+    margin: 4px;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    transition: all 0.2s ease;
+}
+
+.region-item:hover, .major-item:hover {
+    background: var(--accent-color);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: var(--shadow);
+}
+
+.flag, .icon {
+    font-size: 1.1rem;
+    margin-right: 6px;
+    display: inline-block;
+}
+
+.region-name, .major-name {
+    font-weight: 500;
+}
+
+.no-data {
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+/* 响应式设计中的意向显示 */
+@media (max-width: 768px) {
+    .region-item, .major-item {
+        font-size: 0.8rem;
+        padding: 4px 8px;
+        margin: 2px;
+    }
+    
+    .flag, .icon {
+        font-size: 1rem;
+        margin-right: 4px;
+    }
+    
+    /* 移动端五维能力分析样式 */
+    .ability-detail {
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+    
+    .ability-detail h3 {
+        font-size: 1.2rem;
+        margin-bottom: 12px;
+    }
+    
+    .ability-content {
+        padding: 15px;
+    }
+    
+    .ability-content p {
+        font-size: 0.95rem;
+        line-height: 1.6;
     }
 } 
