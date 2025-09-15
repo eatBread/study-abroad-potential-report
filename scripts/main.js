@@ -528,13 +528,15 @@ function saveAdminSettings() {
                     name: safeGetValue('reach1Name'),
                     major: safeGetValue('reach1Major'),
                     location: safeGetValue('reach1Location'),
-                    logo: safeGetValue('reach1Logo')
+                    logo: safeGetValue('reach1Logo'),
+                    reason: safeGetValue('reach1Reason')
                 },
                 {
                     name: safeGetValue('reach2Name'),
                     major: safeGetValue('reach2Major'),
                     location: safeGetValue('reach2Location'),
-                    logo: safeGetValue('reach2Logo')
+                    logo: safeGetValue('reach2Logo'),
+                    reason: safeGetValue('reach2Reason')
                 }
             ],
             match: [
@@ -542,13 +544,15 @@ function saveAdminSettings() {
                     name: safeGetValue('match1Name'),
                     major: safeGetValue('match1Major'),
                     location: safeGetValue('match1Location'),
-                    logo: safeGetValue('match1Logo')
+                    logo: safeGetValue('match1Logo'),
+                    reason: safeGetValue('match1Reason')
                 },
                 {
                     name: safeGetValue('match2Name'),
                     major: safeGetValue('match2Major'),
                     location: safeGetValue('match2Location'),
-                    logo: safeGetValue('match2Logo')
+                    logo: safeGetValue('match2Logo'),
+                    reason: safeGetValue('match2Reason')
                 }
             ],
             safety: [
@@ -556,19 +560,24 @@ function saveAdminSettings() {
                     name: safeGetValue('safety1Name'),
                     major: safeGetValue('safety1Major'),
                     location: safeGetValue('safety1Location'),
-                    logo: safeGetValue('safety1Logo')
+                    logo: safeGetValue('safety1Logo'),
+                    reason: safeGetValue('safety1Reason')
                 },
                 {
                     name: safeGetValue('safety2Name'),
                     major: safeGetValue('safety2Major'),
                     location: safeGetValue('safety2Location'),
-                    logo: safeGetValue('safety2Logo')
+                    logo: safeGetValue('safety2Logo'),
+                    reason: safeGetValue('safety2Reason')
                 }
             ]
         },
         service: {
-            slogan: safeGetValue('serviceSlogan'),
-            successCases: safeGetValue('successCases')
+            title: safeGetValue('serviceTitle'),
+            subtitle: safeGetValue('serviceSubtitle'),
+            qrCodeImage: safeGetValue('qrCodeImage'),
+            contactEmail: safeGetValue('contactEmail'),
+            techSupport: safeGetValue('techSupport')
         }
     };
     
@@ -665,11 +674,13 @@ function loadAdminSettings() {
                 safeSetValue('reach1Major', adminSettings.universities.reach[0].major);
                 safeSetValue('reach1Location', adminSettings.universities.reach[0].location);
                 safeSetValue('reach1Logo', adminSettings.universities.reach[0].logo);
+                safeSetValue('reach1Reason', adminSettings.universities.reach[0].reason);
                 
                 safeSetValue('reach2Name', adminSettings.universities.reach[1].name);
                 safeSetValue('reach2Major', adminSettings.universities.reach[1].major);
                 safeSetValue('reach2Location', adminSettings.universities.reach[1].location);
                 safeSetValue('reach2Logo', adminSettings.universities.reach[1].logo);
+                safeSetValue('reach2Reason', adminSettings.universities.reach[1].reason);
             }
             
             // 稳妥院校
@@ -678,11 +689,13 @@ function loadAdminSettings() {
                 safeSetValue('match1Major', adminSettings.universities.match[0].major);
                 safeSetValue('match1Location', adminSettings.universities.match[0].location);
                 safeSetValue('match1Logo', adminSettings.universities.match[0].logo);
+                safeSetValue('match1Reason', adminSettings.universities.match[0].reason);
                 
                 safeSetValue('match2Name', adminSettings.universities.match[1].name);
                 safeSetValue('match2Major', adminSettings.universities.match[1].major);
                 safeSetValue('match2Location', adminSettings.universities.match[1].location);
                 safeSetValue('match2Logo', adminSettings.universities.match[1].logo);
+                safeSetValue('match2Reason', adminSettings.universities.match[1].reason);
             }
             
             // 保底院校
@@ -691,17 +704,22 @@ function loadAdminSettings() {
                 safeSetValue('safety1Major', adminSettings.universities.safety[0].major);
                 safeSetValue('safety1Location', adminSettings.universities.safety[0].location);
                 safeSetValue('safety1Logo', adminSettings.universities.safety[0].logo);
+                safeSetValue('safety1Reason', adminSettings.universities.safety[0].reason);
                 
                 safeSetValue('safety2Name', adminSettings.universities.safety[1].name);
                 safeSetValue('safety2Major', adminSettings.universities.safety[1].major);
                 safeSetValue('safety2Location', adminSettings.universities.safety[1].location);
                 safeSetValue('safety2Logo', adminSettings.universities.safety[1].logo);
+                safeSetValue('safety2Reason', adminSettings.universities.safety[1].reason);
             }
         }
         
         if (adminSettings.service) {
-            safeSetValue('serviceSlogan', adminSettings.service.slogan);
-            safeSetValue('successCases', adminSettings.service.successCases);
+            safeSetValue('serviceTitle', adminSettings.service.title);
+            safeSetValue('serviceSubtitle', adminSettings.service.subtitle);
+            safeSetValue('qrCodeImage', adminSettings.service.qrCodeImage);
+            safeSetValue('contactEmail', adminSettings.service.contactEmail);
+            safeSetValue('techSupport', adminSettings.service.techSupport);
         }
     }
 }

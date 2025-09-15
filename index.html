@@ -643,12 +643,14 @@
                             <input type="text" placeholder="专业名称" id="reach1Major" value="工程学">
                             <input type="text" placeholder="地区" id="reach1Location" value="英国">
                             <input type="url" placeholder="校徽URL" id="reach1Logo" value="https://via.placeholder.com/60x60?text=剑桥">
+                            <textarea placeholder="推荐理由（约20字）" id="reach1Reason" rows="2">世界顶尖学府，工程专业排名全球前3，学术声誉卓越</textarea>
                         </div>
                         <div class="university-item">
                             <input type="text" placeholder="大学名称" id="reach2Name" value="帝国理工学院">
                             <input type="text" placeholder="专业名称" id="reach2Major" value="计算机科学">
                             <input type="text" placeholder="地区" id="reach2Location" value="英国">
                             <input type="url" placeholder="校徽URL" id="reach2Logo" value="https://via.placeholder.com/60x60?text=帝国">
+                            <textarea placeholder="推荐理由（约20字）" id="reach2Reason" rows="2">计算机科学全球领先，就业前景极佳，科研实力雄厚</textarea>
                         </div>
                     </div>
 
@@ -659,12 +661,14 @@
                             <input type="text" placeholder="专业名称" id="match1Major" value="电子工程">
                             <input type="text" placeholder="地区" id="match1Location" value="英国">
                             <input type="url" placeholder="校徽URL" id="match1Logo" value="https://via.placeholder.com/60x60?text=曼大">
+                            <textarea placeholder="推荐理由（约20字）" id="match1Reason" rows="2">电子工程专业实力强劲，工业界认可度高，就业稳定</textarea>
                         </div>
                         <div class="university-item">
                             <input type="text" placeholder="大学名称" id="match2Name" value="伯明翰大学">
                             <input type="text" placeholder="专业名称" id="match2Major" value="机械工程">
                             <input type="text" placeholder="地区" id="match2Location" value="英国">
                             <input type="url" placeholder="校徽URL" id="match2Logo" value="https://via.placeholder.com/60x60?text=伯明翰">
+                            <textarea placeholder="推荐理由（约20字）" id="match2Reason" rows="2">机械工程历史悠久，实践教学丰富，毕业生就业率高</textarea>
                         </div>
                     </div>
 
@@ -675,12 +679,14 @@
                             <input type="text" placeholder="专业名称" id="safety1Major" value="土木工程">
                             <input type="text" placeholder="地区" id="safety1Location" value="英国">
                             <input type="url" placeholder="校徽URL" id="safety1Logo" value="https://via.placeholder.com/60x60?text=利兹">
+                            <textarea placeholder="推荐理由（约20字）" id="safety1Reason" rows="2">土木工程专业扎实，课程设置实用，性价比高</textarea>
                         </div>
                         <div class="university-item">
                             <input type="text" placeholder="大学名称" id="safety2Name" value="谢菲尔德大学">
                             <input type="text" placeholder="专业名称" id="safety2Major" value="材料科学">
                             <input type="text" placeholder="地区" id="safety2Location" value="英国">
                             <input type="url" placeholder="校徽URL" id="safety2Logo" value="https://via.placeholder.com/60x60?text=谢菲">
+                            <textarea placeholder="推荐理由（约20字）" id="safety2Reason" rows="2">材料科学领域知名，研究环境优良，申请门槛适中</textarea>
                         </div>
                     </div>
                 </div>
@@ -688,16 +694,25 @@
                 <div class="admin-section">
                     <h3>服务引流模块</h3>
                     <div class="form-group">
-                        <label for="serviceSlogan">宣传标语</label>
-                        <textarea id="serviceSlogan" name="serviceSlogan" rows="3" placeholder="请输入宣传标语...">专业留学规划 · 成就海外梦想
-我们拥有10年+留学服务经验，已帮助2000+学生成功留学世界名校</textarea>
+                        <label for="serviceTitle">主标题</label>
+                        <input type="text" id="serviceTitle" name="serviceTitle" placeholder="请输入主标题..." value="高考成绩锁定海外名校！">
                     </div>
                     <div class="form-group">
-                        <label for="successCases">过往案例</label>
-                        <textarea id="successCases" name="successCases" rows="4" placeholder="请输入过往案例...">• 张同学：高考580分 → 剑桥大学工程学院
-• 李同学：雅思6.5分 → 帝国理工计算机科学
-• 王同学：高中理科生 → 牛津大学物理系
-• 陈同学：艺术特长生 → 伦敦艺术大学</textarea>
+                        <label for="serviceSubtitle">副标题</label>
+                        <input type="text" id="serviceSubtitle" name="serviceSubtitle" placeholder="请输入副标题..." value="联系我们获取更多高考海外升学资讯及个性化解决方案">
+                    </div>
+                    <div class="form-group">
+                        <label for="qrCodeImage">二维码图片</label>
+                        <input type="url" id="qrCodeImage" name="qrCodeImage" placeholder="请输入二维码图片URL（留空使用默认图片）..." value="">
+                        <small class="form-help">留空将使用默认二维码图片</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="contactEmail">联系邮箱</label>
+                        <input type="email" id="contactEmail" name="contactEmail" placeholder="请输入联系邮箱..." value="contact@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="techSupport">技术支持机构</label>
+                        <input type="text" id="techSupport" name="techSupport" placeholder="请输入技术支持机构名称..." value="未名教育">
                     </div>
                 </div>
 

@@ -97,8 +97,11 @@ function generateSampleData() {
                 ]
             },
             service: {
-                slogan: '专业留学规划 · 成就海外梦想\n我们拥有10年+留学服务经验，已帮助2000+学生成功留学世界名校',
-                successCases: '• 张同学：高考580分 → 剑桥大学工程学院\n• 李同学：雅思6.5分 → 帝国理工计算机科学\n• 王同学：高中理科生 → 牛津大学物理系\n• 陈同学：艺术特长生 → 伦敦艺术大学'
+                title: '高考成绩锁定海外名校！',
+                subtitle: '联系我们获取更多高考海外升学资讯及个性化解决方案',
+                qrCodeImage: '', // 如果为空则使用默认图片
+                contactEmail: 'contact@example.com',
+                techSupport: '未名教育'
             }
         }
     };
@@ -165,14 +168,14 @@ function createRadarChart() {
                     radar.socialAbility,
                     radar.independentLiving
                 ],
-                backgroundColor: 'rgba(59, 130, 246, 0.2)',
-                borderColor: 'rgb(59, 130, 246)',
-                borderWidth: 2,
-                pointBackgroundColor: 'rgb(59, 130, 246)',
+                backgroundColor: 'rgba(43, 108, 176, 0.2)',
+                borderColor: 'rgb(43, 108, 176)',
+                borderWidth: 3,
+                pointBackgroundColor: 'rgb(43, 108, 176)',
                 pointBorderColor: '#fff',
-                pointBorderWidth: 2,
-                pointRadius: 5,
-                pointHoverRadius: 7
+                pointBorderWidth: 3,
+                pointRadius: 6,
+                pointHoverRadius: 8
             }]
         },
         options: {
@@ -200,8 +203,8 @@ function createRadarChart() {
                     const labels = chart.data.labels;
                     
                     ctx.save();
-                    ctx.font = '12px Arial';
-                    ctx.fillStyle = '#1e293b';
+                    ctx.font = 'bold 10px Georgia, serif';
+                    ctx.fillStyle = '#1a365d';
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
                     
@@ -216,8 +219,23 @@ function createRadarChart() {
                         const x = centerX + Math.cos(angle) * (radius * value / 100);
                         const y = centerY + Math.sin(angle) * (radius * value / 100);
                         
-                        // 在数据点上方显示分数
-                        ctx.fillText(value + '分', x, y - 15);
+                        // 在数据点上直接显示分数
+                        const text = value + '分';
+                        const textWidth = ctx.measureText(text).width;
+                        const padding = 3;
+                        
+                        // 绘制背景
+                        ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+                        ctx.fillRect(x - textWidth/2 - padding, y - 6, textWidth + padding*2, 10);
+                        
+                        // 绘制边框
+                        ctx.strokeStyle = '#2b6cb0';
+                        ctx.lineWidth = 0.5;
+                        ctx.strokeRect(x - textWidth/2 - padding, y - 6, textWidth + padding*2, 10);
+                        
+                        // 绘制文字
+                        ctx.fillStyle = '#1a365d';
+                        ctx.fillText(text, x, y);
                     });
                     
                     ctx.restore();
@@ -227,18 +245,20 @@ function createRadarChart() {
                 r: {
                     angleLines: {
                         display: true,
-                        color: 'rgba(0, 0, 0, 0.1)'
+                        color: 'rgba(26, 54, 93, 0.2)',
+                        lineWidth: 1
                     },
                     grid: {
-                        color: 'rgba(0, 0, 0, 0.1)',
+                        color: 'rgba(26, 54, 93, 0.15)',
                         lineWidth: 1
                     },
                     pointLabels: {
                         font: {
                             size: 14,
-                            weight: '500'
+                            weight: '600',
+                            family: 'Georgia, serif'
                         },
-                        color: '#1e293b'
+                        color: '#1a365d'
                     },
                     ticks: {
                         display: true,
@@ -249,9 +269,10 @@ function createRadarChart() {
                             return value;
                         },
                         font: {
-                            size: 10
+                            size: 11,
+                            family: 'Georgia, serif'
                         },
-                        color: '#64748b'
+                        color: '#4a5568'
                     },
                     min: 0,
                     max: 100,
@@ -262,7 +283,7 @@ function createRadarChart() {
             },
             elements: {
                 line: {
-                    tension: 0.3
+                    tension: 0
                 }
             }
         }
@@ -437,183 +458,99 @@ function generateLanguageAnalysis() {
     // 根据不同的英语考试类型进行详细分析
     if (englishTestType === '雅思') {
         const totalScore = parseFloat(student.englishTotalScore) || 0;
-        const listening = parseFloat(student.englishListening) || 0;
-        const reading = parseFloat(student.englishReading) || 0;
-        const speaking = parseFloat(student.englishSpeaking) || 0;
-        const writing = parseFloat(student.englishWriting) || 0;
         
         if (totalScore > 0) {
             analysis += `。雅思总分${totalScore}分`;
             
-            // 总分评价
-            if (totalScore >= 7.5) {
-                analysis += '，成绩优秀，达到顶尖大学要求';
+            // 按照新的6档标准进行分档
+            let levelComment = '';
+            if (totalScore >= 8.0) {
+                levelComment = '学生能够轻松理解几乎所有听到或读到的内容。能够概括来自不同口头和书面来源的信息，并以连贯的方式重构论点和叙述。能够自如、流利且准确地表达自己，即使在复杂、不清晰的情况下也能区分细微的含义。';
             } else if (totalScore >= 7.0) {
-                analysis += '，成绩良好，满足大部分大学要求';
-            } else if (totalScore >= 6.5) {
-                analysis += '，成绩中等，基本满足大学要求';
+                levelComment = '学生能够理解各种难度较高的长篇文章，并能理解文章的隐含含义。能够流利、自然地表达自己，无需刻意寻找表达方式。能够灵活有效地运用语言进行社交、学术和职业交流。能够就复杂主题撰写清晰、结构良好、内容详尽的文本，并能熟练运用各种语言组织方式、连接词和衔接手段。';
             } else if (totalScore >= 6.0) {
-                analysis += '，成绩一般，需要进一步提升';
+                levelComment = '学生能够理解关于具体和抽象主题的复杂文本的主要思想，包括其专业领域级别的讨论。能够自发地，且以一定的口语流利度进行交流，从而能够与母语者进行日常沟通，且不会给双方带来任何压力。能够就广泛的不同主题撰写清晰、详细的文本，并阐述对某个热门话题的观点，并列举各种方案的优缺点。';
+            } else if (totalScore >= 5.0) {
+                levelComment = '学生能够理解清晰列出的、速度偏慢的涉及工作、学习、休闲等日常常见话题内容要点。能够就熟悉或个人感兴趣的话题撰写简单连贯的文字。能够简单描述与自我相关的经历、事件、梦想、希望、观点和计划等，并简要给出相关的理由与解释。';
+            } else if (totalScore >= 4.0) {
+                levelComment = '学生能够理解非常基本的个人和家庭信息、购物、当地地理、就业等相关的句子和常用表达。能够就简单日常的任务进行交流。能够用简单的术语描述自己的背景、周围环境以及急需解决的问题。';
             } else {
-                analysis += '，成绩偏低，需要系统备考';
+                levelComment = '学生能够理解并使用简单的的日常表达和非常基本的短语来满足具体类型的需求。能够自我介绍和他人介绍，并能够询问和回答有关个人信息的问题，例如居住地、认识的人以及拥有的物品。能够进行简单的互动，前提是对方说话缓慢清晰，并愿意提供帮助。';
             }
             
-            // 分项分析
-            const skills = [];
-            if (listening >= 7.0) skills.push('听力优秀');
-            else if (listening >= 6.0) skills.push('听力良好');
-            else skills.push('听力需加强');
-            
-            if (reading >= 7.0) skills.push('阅读优秀');
-            else if (reading >= 6.0) skills.push('阅读良好');
-            else skills.push('阅读需加强');
-            
-            if (speaking >= 7.0) skills.push('口语优秀');
-            else if (speaking >= 6.0) skills.push('口语良好');
-            else skills.push('口语需加强');
-            
-            if (writing >= 7.0) skills.push('写作优秀');
-            else if (writing >= 6.0) skills.push('写作良好');
-            else skills.push('写作需加强');
-            
-            if (skills.length > 0) {
-                analysis += `，${skills.join('、')}`;
-            }
+            analysis += `，${levelComment}`;
         }
     } else if (englishTestType === '托福') {
         const totalScore = parseFloat(student.englishTotalScore) || 0;
-        const listening = parseFloat(student.englishListening) || 0;
-        const reading = parseFloat(student.englishReading) || 0;
-        const speaking = parseFloat(student.englishSpeaking) || 0;
-        const writing = parseFloat(student.englishWriting) || 0;
         
         if (totalScore > 0) {
             analysis += `。托福总分${totalScore}分`;
             
-            // 总分评价
-            if (totalScore >= 100) {
-                analysis += '，成绩优秀，达到顶尖大学要求';
-            } else if (totalScore >= 90) {
-                analysis += '，成绩良好，满足大部分大学要求';
-            } else if (totalScore >= 80) {
-                analysis += '，成绩中等，基本满足大学要求';
-            } else if (totalScore >= 70) {
-                analysis += '，成绩一般，需要进一步提升';
+            // 按照新的6档标准进行分档
+            let levelComment = '';
+            if (totalScore >= 114) {
+                levelComment = '学生能够轻松理解几乎所有听到或读到的内容。能够概括来自不同口头和书面来源的信息，并以连贯的方式重构论点和叙述。能够自如、流利且准确地表达自己，即使在复杂、不清晰的情况下也能区分细微的含义。';
+            } else if (totalScore >= 95) {
+                levelComment = '学生能够理解各种难度较高的长篇文章，并能理解文章的隐含含义。能够流利、自然地表达自己，无需刻意寻找表达方式。能够灵活有效地运用语言进行社交、学术和职业交流。能够就复杂主题撰写清晰、结构良好、内容详尽的文本，并能熟练运用各种语言组织方式、连接词和衔接手段。';
+            } else if (totalScore >= 72) {
+                levelComment = '学生能够理解关于具体和抽象主题的复杂文本的主要思想，包括其专业领域级别的讨论。能够自发地，且以一定的口语流利度进行交流，从而能够与母语者进行日常沟通，且不会给双方带来任何压力。能够就广泛的不同主题撰写清晰、详细的文本，并阐述对某个热门话题的观点，并列举各种方案的优缺点。';
+            } else if (totalScore >= 44) {
+                levelComment = '学生能够理解清晰列出的、速度偏慢的涉及工作、学习、休闲等日常常见话题内容要点。能够就熟悉或个人感兴趣的话题撰写简单连贯的文字。能够简单描述与自我相关的经历、事件、梦想、希望、观点和计划等，并简要给出相关的理由与解释。';
+            } else if (totalScore >= 24) {
+                levelComment = '学生能够理解非常基本的个人和家庭信息、购物、当地地理、就业等相关的句子和常用表达。能够就简单日常的任务进行交流。能够用简单的术语描述自己的背景、周围环境以及急需解决的问题。';
             } else {
-                analysis += '，成绩偏低，需要系统备考';
+                levelComment = '学生能够理解并使用简单的的日常表达和非常基本的短语来满足具体类型的需求。能够自我介绍和他人介绍，并能够询问和回答有关个人信息的问题，例如居住地、认识的人以及拥有的物品。能够进行简单的互动，前提是对方说话缓慢清晰，并愿意提供帮助。';
             }
             
-            // 分项分析
-            const skills = [];
-            if (listening >= 25) skills.push('听力优秀');
-            else if (listening >= 20) skills.push('听力良好');
-            else skills.push('听力需加强');
-            
-            if (reading >= 25) skills.push('阅读优秀');
-            else if (reading >= 20) skills.push('阅读良好');
-            else skills.push('阅读需加强');
-            
-            if (speaking >= 25) skills.push('口语优秀');
-            else if (speaking >= 20) skills.push('口语良好');
-            else skills.push('口语需加强');
-            
-            if (writing >= 25) skills.push('写作优秀');
-            else if (writing >= 20) skills.push('写作良好');
-            else skills.push('写作需加强');
-            
-            if (skills.length > 0) {
-                analysis += `，${skills.join('、')}`;
-            }
+            analysis += `，${levelComment}`;
         }
     } else if (englishTestType === 'PTE') {
         const totalScore = parseFloat(student.englishTotalScore) || 0;
-        const listening = parseFloat(student.englishListening) || 0;
-        const reading = parseFloat(student.englishReading) || 0;
-        const speaking = parseFloat(student.englishSpeaking) || 0;
-        const writing = parseFloat(student.englishWriting) || 0;
         
         if (totalScore > 0) {
             analysis += `。PTE总分${totalScore}分`;
             
-            // 总分评价
-            if (totalScore >= 70) {
-                analysis += '，成绩优秀，达到顶尖大学要求';
-            } else if (totalScore >= 65) {
-                analysis += '，成绩良好，满足大部分大学要求';
-            } else if (totalScore >= 58) {
-                analysis += '，成绩中等，基本满足大学要求';
-            } else if (totalScore >= 50) {
-                analysis += '，成绩一般，需要进一步提升';
+            // 按照新的6档标准进行分档
+            let levelComment = '';
+            if (totalScore >= 85) {
+                levelComment = '学生能够轻松理解几乎所有听到或读到的内容。能够概括来自不同口头和书面来源的信息，并以连贯的方式重构论点和叙述。能够自如、流利且准确地表达自己，即使在复杂、不清晰的情况下也能区分细微的含义。';
+            } else if (totalScore >= 76) {
+                levelComment = '学生能够理解各种难度较高的长篇文章，并能理解文章的隐含含义。能够流利、自然地表达自己，无需刻意寻找表达方式。能够灵活有效地运用语言进行社交、学术和职业交流。能够就复杂主题撰写清晰、结构良好、内容详尽的文本，并能熟练运用各种语言组织方式、连接词和衔接手段。';
+            } else if (totalScore >= 59) {
+                levelComment = '学生能够理解关于具体和抽象主题的复杂文本的主要思想，包括其专业领域级别的讨论。能够自发地，且以一定的口语流利度进行交流，从而能够与母语者进行日常沟通，且不会给双方带来任何压力。能够就广泛的不同主题撰写清晰、详细的文本，并阐述对某个热门话题的观点，并列举各种方案的优缺点。';
+            } else if (totalScore >= 43) {
+                levelComment = '学生能够理解清晰列出的、速度偏慢的涉及工作、学习、休闲等日常常见话题内容要点。能够就熟悉或个人感兴趣的话题撰写简单连贯的文字。能够简单描述与自我相关的经历、事件、梦想、希望、观点和计划等，并简要给出相关的理由与解释。';
+            } else if (totalScore >= 30) {
+                levelComment = '学生能够理解非常基本的个人和家庭信息、购物、当地地理、就业等相关的句子和常用表达。能够就简单日常的任务进行交流。能够用简单的术语描述自己的背景、周围环境以及急需解决的问题。';
             } else {
-                analysis += '，成绩偏低，需要系统备考';
+                levelComment = '学生能够理解并使用简单的的日常表达和非常基本的短语来满足具体类型的需求。能够自我介绍和他人介绍，并能够询问和回答有关个人信息的问题，例如居住地、认识的人以及拥有的物品。能够进行简单的互动，前提是对方说话缓慢清晰，并愿意提供帮助。';
             }
             
-            // 分项分析
-            const skills = [];
-            if (listening >= 65) skills.push('听力优秀');
-            else if (listening >= 58) skills.push('听力良好');
-            else skills.push('听力需加强');
-            
-            if (reading >= 65) skills.push('阅读优秀');
-            else if (reading >= 58) skills.push('阅读良好');
-            else skills.push('阅读需加强');
-            
-            if (speaking >= 65) skills.push('口语优秀');
-            else if (speaking >= 58) skills.push('口语良好');
-            else skills.push('口语需加强');
-            
-            if (writing >= 65) skills.push('写作优秀');
-            else if (writing >= 58) skills.push('写作良好');
-            else skills.push('写作需加强');
-            
-            if (skills.length > 0) {
-                analysis += `，${skills.join('、')}`;
-            }
+            analysis += `，${levelComment}`;
         }
     } else if (englishTestType === '多邻国') {
         const totalScore = parseFloat(student.englishTotalScore) || 0;
-        const listening = parseFloat(student.englishListening) || 0;
-        const reading = parseFloat(student.englishReading) || 0;
-        const speaking = parseFloat(student.englishSpeaking) || 0;
-        const writing = parseFloat(student.englishWriting) || 0;
         
         if (totalScore > 0) {
             analysis += `。多邻国总分${totalScore}分`;
             
-            // 总分评价
-            if (totalScore >= 130) {
-                analysis += '，成绩优秀，达到顶尖大学要求';
-            } else if (totalScore >= 120) {
-                analysis += '，成绩良好，满足大部分大学要求';
-            } else if (totalScore >= 110) {
-                analysis += '，成绩中等，基本满足大学要求';
+            // 按照新的6档标准进行分档
+            let levelComment = '';
+            if (totalScore >= 151) {
+                levelComment = '学生能够轻松理解几乎所有听到或读到的内容。能够概括来自不同口头和书面来源的信息，并以连贯的方式重构论点和叙述。能够自如、流利且准确地表达自己，即使在复杂、不清晰的情况下也能区分细微的含义。';
+            } else if (totalScore >= 130) {
+                levelComment = '学生能够理解各种难度较高的长篇文章，并能理解文章的隐含含义。能够流利、自然地表达自己，无需刻意寻找表达方式。能够灵活有效地运用语言进行社交、学术和职业交流。能够就复杂主题撰写清晰、结构良好、内容详尽的文本，并能熟练运用各种语言组织方式、连接词和衔接手段。';
             } else if (totalScore >= 100) {
-                analysis += '，成绩一般，需要进一步提升';
+                levelComment = '学生能够理解关于具体和抽象主题的复杂文本的主要思想，包括其专业领域级别的讨论。能够自发地，且以一定的口语流利度进行交流，从而能够与母语者进行日常沟通，且不会给双方带来任何压力。能够就广泛的不同主题撰写清晰、详细的文本，并阐述对某个热门话题的观点，并列举各种方案的优缺点。';
+            } else if (totalScore >= 60) {
+                levelComment = '学生能够理解清晰列出的、速度偏慢的涉及工作、学习、休闲等日常常见话题内容要点。能够就熟悉或个人感兴趣的话题撰写简单连贯的文字。能够简单描述与自我相关的经历、事件、梦想、希望、观点和计划等，并简要给出相关的理由与解释。';
+            } else if (totalScore >= 40) {
+                levelComment = '学生能够理解非常基本的个人和家庭信息、购物、当地地理、就业等相关的句子和常用表达。能够就简单日常的任务进行交流。能够用简单的术语描述自己的背景、周围环境以及急需解决的问题。';
             } else {
-                analysis += '，成绩偏低，需要系统备考';
+                levelComment = '学生能够理解并使用简单的的日常表达和非常基本的短语来满足具体类型的需求。能够自我介绍和他人介绍，并能够询问和回答有关个人信息的问题，例如居住地、认识的人以及拥有的物品。能够进行简单的互动，前提是对方说话缓慢清晰，并愿意提供帮助。';
             }
             
-            // 分项分析
-            const skills = [];
-            if (listening >= 120) skills.push('听力优秀');
-            else if (listening >= 110) skills.push('听力良好');
-            else skills.push('听力需加强');
-            
-            if (reading >= 120) skills.push('阅读优秀');
-            else if (reading >= 110) skills.push('阅读良好');
-            else skills.push('阅读需加强');
-            
-            if (speaking >= 120) skills.push('口语优秀');
-            else if (speaking >= 110) skills.push('口语良好');
-            else skills.push('口语需加强');
-            
-            if (writing >= 120) skills.push('写作优秀');
-            else if (writing >= 110) skills.push('写作良好');
-            else skills.push('写作需加强');
-            
-            if (skills.length > 0) {
-                analysis += `，${skills.join('、')}`;
-            }
+            analysis += `，${levelComment}`;
         }
     } else if (englishTestType === '暂无') {
         // 根据预测英语成绩分析
@@ -813,6 +750,7 @@ function fillUniversityCategory(containerId, universityList) {
                 <h4>${university.name || '未填写'}</h4>
                 <div class="major">${university.major || '未填写'}</div>
                 <div class="location">${university.location || '未填写'}</div>
+                <div class="reason">${university.reason || '暂无推荐理由'}</div>
             </div>
         `;
         
@@ -824,8 +762,26 @@ function fillUniversityCategory(containerId, universityList) {
 function fillServiceContent() {
     const service = reportData.admin.service;
     
-    document.getElementById('service-slogan').textContent = service.slogan || '';
-    document.getElementById('success-cases').textContent = service.successCases || '';
+    // 设置标题（可配置）
+    document.getElementById('service-title').textContent = service.title || '高考成绩锁定海外名校！';
+    
+    // 设置副标题（可配置）
+    document.getElementById('service-subtitle').textContent = service.subtitle || '联系我们获取更多高考海外升学资讯及个性化解决方案';
+    
+    // 设置二维码图片（可配置，默认使用默认图片）
+    const qrCodeImg = document.getElementById('qr-code-image');
+    if (service.qrCodeImage) {
+        qrCodeImg.src = service.qrCodeImage;
+    } else {
+        qrCodeImg.src = 'image/default-qr.svg';
+    }
+    
+    // 设置联系邮箱（可配置）
+    document.getElementById('contact-email').textContent = service.contactEmail || 'contact@example.com';
+    
+    // 设置技术支持信息（可配置）
+    const techSupport = service.techSupport || '未名教育';
+    document.getElementById('tech-support').textContent = `本报告技术支持由 ${techSupport} 提供`;
 }
 
 // 导出PDF
