@@ -4,7 +4,95 @@ let adminSettings = {};
 let excelData = []; // 存储Excel数据
 let excelHeaders = []; // 存储Excel表头
 
-// 五维能力评价数据库
+// Excel表头映射表 - 根据新的表头格式
+const EXCEL_HEADER_MAPPING = {
+    // 基本信息列
+    studentName: '1. 学生姓名:  ',
+    gender: '2. 学生性别:  ',
+    grade: '3. 所在年级:  ',
+    school: '4. 学生所在的学校名称:  ',
+    subjectGroup: '5. 学生的学科分组（或意向分组）是?  ',
+    
+    // 当前成绩列
+    currentChinese: '6.请填写最后一次联考或期末考试成绩（如无相关科目成绩，则输入0）—语文',
+    currentMath: '数学',
+    currentEnglish: '英语',
+    currentPhysics: '物理',
+    currentBiology: '生物',
+    currentChemistry: '化学',
+    currentHistory: '历史',
+    currentGeography: '地理',
+    currentPolitics: '政治',
+    
+    // 预测成绩列
+    predictedChinese: '7.请填写预计的高考成绩（如无相关科目成绩，则输入0）—语文',
+    predictedMath: '数学',
+    predictedEnglish: '英语',
+    predictedPhysics: '物理',
+    predictedBiology: '生物',
+    predictedChemistry: '化学',
+    predictedHistory: '历史',
+    predictedGeography: '地理',
+    predictedPolitics: '政治',
+    
+    // 学业水平考试列
+    academicLevelPass: '8. 是否通过学业水平考试',
+    academicSubject1: '9. 请填写学业水平成绩—科目1(科目)',
+    academicScore1: '科目1(分数)',
+    academicSubject2: '科目2(科目)',
+    academicScore2: '科目2(分数)',
+    academicSubject3: '科目3(科目)',
+    academicScore3: '科目3(分数)',
+    
+    // 补习情况
+    hasTutoring: '10. 是否有进行学科补习  ',
+    tutoringSubjects: '11.请选择有补过或正在补习的科目',
+    
+    // 专业和英语
+    majorPreference: '12. 请选择学生大学倾向就读的专业方向  ',
+    englishTestType: '13. 请选择学生目前已有成绩的国际英语考试  ',
+    englishTotalScore: '请填写其中一项国际英语考试的成绩—总分',
+    englishListening: '听力',
+    englishSpeaking: '口语',
+    englishReading: '阅读',
+    englishWriting: '写作',
+    
+    // 留学意向
+    studyDestination: '15. 请选择学生有留学意愿的国家或地区  ',
+    budget: '16. 预期留学投入费用（含学费和生活费）  ',
+    
+    // 社团和兴趣
+    hasClub: '17. 学生是否有在学校参加社团?  ',
+    clubActivities: '18. 请填写学生参加的社团  ',
+    hasLongTermHobby: '19. 学生是否有一项持续3年以上的兴趣爱好?  ',
+    hobbies: '20. 请填写学生持续3年以上的兴趣或爱好  ',
+    friendsCount: '21. 除了同学，学生在外有多少个经常来往的朋友?  ',
+    
+    // 才艺相关
+    talents: '22. 学生是否有持续学习3年以上音乐、舞蹈、体育、艺术等各方面的才艺?  ',
+    certificates: '23. 请填写学生有在才艺相关的领域获得的证书、资质或奖项?  ',
+    organizationFrequency: '24. 学生多久会整理一次自己的生活与工作空间?  ',
+    
+    // 新增评估维度
+    askForHelp: '25. 学生在生活中遇到困难时会选择如何应对？',
+    studyPersistence: '26.在学习中遇到阻碍时，学生会面对并坚持解决吗？',
+    internationalExperience: '27.学生自小学之后有多长时间的国外生活经历？',
+    campExperience: '28.学生自初中之后是否有参加过任何类型的夏令营/冬令营？',
+    canCook: '29.学生的做饭水平符合以下哪个描述？',
+    readingTime: '30. 学生平均每天花多少小时进行课外阅读？'
+};
+
+// 辅助函数：安全地获取Excel列值
+function getExcelValue(rowData, headerKey) {
+    const headerName = EXCEL_HEADER_MAPPING[headerKey];
+    if (!headerName) {
+        console.warn(`未找到表头映射: ${headerKey}`);
+        return '';
+    }
+    return rowData[headerName] || '';
+}
+
+// 四维能力评价数据库
 const abilityEvaluations = {
     academic: {
         name: '学术能力',
@@ -181,58 +269,29 @@ const abilityEvaluations = {
         ]
     },
     social: {
-        name: '社交能力',
+        name: '生活能力',
         ranges: [
             {
                 min: 0, max: 60,
-                strengths: '具备基本的社交意识，能够进行日常交流。',
-                weaknesses: '社交能力相对薄弱，人际交往范围有限，团队协作能力有待提升。',
-                suggestions: '建议多参与社交活动，加入社团组织，练习与人沟通交流，培养团队合作精神。'
-            },
-            {
-                min: 60, max: 80,
-                strengths: '社交能力较好，人际关系和谐，具备一定的团队协作能力。',
-                weaknesses: '在领导力和公众表达方面还有提升空间，社交圈相对固定。',
-                suggestions: '建议在团队中承担更多责任，练习公众演讲，拓展社交圈，提升领导力。'
-            },
-            {
-                min: 80, max: 90,
-                strengths: '社交能力出色，人际关系广泛，具备良好的领导力和团队协作能力。',
-                weaknesses: '可能在某些特定社交场景下还需要进一步提升应变能力。',
-                suggestions: '建议参与更多跨文化交流活动，提升国际化社交能力，建立更广泛的人脉网络。'
-            },
-            {
-                min: 90, max: 100,
-                strengths: '社交能力卓越，具备强大的领导力和人际影响力，在团队中发挥核心作用。',
-                weaknesses: '需要注意保持真诚的社交态度，避免过度社交影响个人发展。',
-                suggestions: '建议在社交领域建立个人影响力，考虑相关专业发展，充分发挥社交优势。'
-            }
-        ]
-    },
-    living: {
-        name: '独立生活能力',
-        ranges: [
-            {
-                min: 0, max: 60,
-                strengths: '具备基本的生活自理能力。',
-                weaknesses: '独立生活能力较弱，时间管理能力不足，自我管理意识有待提升。',
+                strengths: '具备基本的生活自理能力，能够处理简单的日常生活事务。',
+                weaknesses: '生活能力相对薄弱，时间管理能力不足，自我管理意识有待提升。',
                 suggestions: '建议培养独立生活技能，学习时间管理，提升自我管理能力，为留学做好准备。'
             },
             {
                 min: 60, max: 80,
-                strengths: '独立生活能力较好，具备基本的时间管理和自我管理能力。',
+                strengths: '生活能力较好，具备基本的时间管理和自我管理能力，能够应对大部分日常生活需求。',
                 weaknesses: '在某些生活技能方面还需要进一步提升，适应新环境的能力有待加强。',
                 suggestions: '建议学习更多生活技能，提升适应能力，培养独立解决问题的能力。'
             },
             {
                 min: 80, max: 90,
-                strengths: '独立生活能力出色，具备良好的时间管理和自我管理能力，适应能力强。',
+                strengths: '生活能力出色，具备良好的时间管理和自我管理能力，适应能力强，能够独立应对各种生活挑战。',
                 weaknesses: '可能在某些特定生活场景下还需要进一步提升应变能力。',
                 suggestions: '建议参与更多独立生活实践，提升跨文化适应能力，为海外生活做好充分准备。'
             },
             {
                 min: 90, max: 100,
-                strengths: '独立生活能力卓越，具备强大的自我管理能力和适应能力，能够快速适应新环境。',
+                strengths: '生活能力卓越，具备强大的自我管理能力和适应能力，能够快速适应新环境，完全独立应对留学生活。',
                 weaknesses: '需要注意保持独立生活技能，避免过度依赖他人。',
                 suggestions: '建议在独立生活方面建立个人优势，考虑相关专业发展，充分发挥独立生活能力。'
             }
@@ -334,10 +393,10 @@ function handleFormSubmit(event) {
         studentData.majorPreference = selectedMajors.join('┋');
     }
     
-    // 处理才艺
-    const selectedTalents = getSelectedTalents();
-    if (selectedTalents.length > 0) {
-        studentData.talents = selectedTalents.join('┋');
+    // 处理才艺（现在是文本输入，直接获取值）
+    const talentsField = document.getElementById('talents');
+    if (talentsField && talentsField.value.trim()) {
+        studentData.talents = talentsField.value.trim();
     }
     
     // 验证必填字段
@@ -416,15 +475,11 @@ function generateIntelligentAnalysis() {
     // 计算社交能力
     calculateSocialAbility();
     
-    // 计算独立生活能力
-    calculateIndependentLiving();
-    
     const radar = {
         academicAbility: parseInt(safeGetValue('academicAbility', '75')) || 75,
         languageAbility: parseInt(safeGetValue('languageAbility', '70')) || 70,
         artisticQuality: parseInt(safeGetValue('artisticQuality', '80')) || 80,
-        socialAbility: parseInt(safeGetValue('socialAbility', '85')) || 85,
-        independentLiving: parseInt(safeGetValue('independentLiving', '78')) || 78
+        socialAbility: parseInt(safeGetValue('socialAbility', '85')) || 85
     };
 
     const analysis = {
@@ -447,11 +502,6 @@ function generateIntelligentAnalysis() {
             strengths: safeGetValue('socialStrengths') || (getAbilityEvaluation('social', radar.socialAbility)?.strengths || '社交能力有待提升'),
             weaknesses: safeGetValue('socialWeaknesses') || (getAbilityEvaluation('social', radar.socialAbility)?.weaknesses || '社交基础需要加强'),
             suggestions: safeGetValue('socialSuggestions') || (getAbilityEvaluation('social', radar.socialAbility)?.suggestions || '建议加强社交能力')
-        },
-        living: {
-            strengths: safeGetValue('livingStrengths') || (getAbilityEvaluation('living', radar.independentLiving)?.strengths || '独立生活能力有待提升'),
-            weaknesses: safeGetValue('livingWeaknesses') || (getAbilityEvaluation('living', radar.independentLiving)?.weaknesses || '独立生活基础需要加强'),
-            suggestions: safeGetValue('livingSuggestions') || (getAbilityEvaluation('living', radar.independentLiving)?.suggestions || '建议加强独立生活能力')
         }
     };
 
@@ -485,17 +535,13 @@ function generateOverallSuggestions(detailedAnalysis) {
         suggestions.push('3. 深化文体素养，在优势领域建立突出表现');
     }
     
-    if (detailedAnalysis.social.suggestions.includes('社交') || detailedAnalysis.social.suggestions.includes('沟通')) {
-        suggestions.push('4. 加强社交能力培养，参与团队活动和志愿服务');
+    if (detailedAnalysis.social.suggestions.includes('生活') || detailedAnalysis.social.suggestions.includes('独立')) {
+        suggestions.push('4. 加强生活能力培养，学习独立生活技能');
     } else {
-        suggestions.push('4. 维持良好的社交关系，拓展人际网络');
+        suggestions.push('4. 维持良好的生活习惯，提升自理能力');
     }
     
-    if (detailedAnalysis.living.suggestions.includes('生活') || detailedAnalysis.living.suggestions.includes('独立')) {
-        suggestions.push('5. 培养独立生活能力，学习时间管理和自我管理');
-    } else {
-        suggestions.push('5. 保持独立生活优势，为留学做好充分准备');
-    }
+    suggestions.push('5. 培养综合能力，全面提升个人素质');
     
     return suggestions.join('\n');
 }
@@ -515,8 +561,7 @@ function saveAdminSettings() {
             academicAbility: parseInt(safeGetValue('academicAbility', '75')) || 75,
             languageAbility: parseInt(safeGetValue('languageAbility', '70')) || 70,
             artisticQuality: parseInt(safeGetValue('artisticQuality', '80')) || 80,
-            socialAbility: parseInt(safeGetValue('socialAbility', '85')) || 85,
-            independentLiving: parseInt(safeGetValue('independentLiving', '78')) || 78
+            socialAbility: parseInt(safeGetValue('socialAbility', '85')) || 85
         },
         detailedAnalysis: detailedAnalysis,
         analysis: {
@@ -599,10 +644,9 @@ function loadAdminSettings() {
             document.getElementById('languageAbility').value = adminSettings.radar.languageAbility || 70;
             document.getElementById('artisticQuality').value = adminSettings.radar.artisticQuality || 80;
             document.getElementById('socialAbility').value = adminSettings.radar.socialAbility || 85;
-            document.getElementById('independentLiving').value = adminSettings.radar.independentLiving || 78;
         }
         
-        // 填充五维详细分析
+        // 填充四维详细分析
         if (adminSettings.detailedAnalysis) {
             // 学术能力
             if (adminSettings.detailedAnalysis.academic) {
@@ -644,15 +688,6 @@ function loadAdminSettings() {
                 if (socialSuggestions) socialSuggestions.value = adminSettings.detailedAnalysis.social.suggestions || '';
             }
             
-            // 独立生活能力
-            if (adminSettings.detailedAnalysis.living) {
-                const livingStrengths = document.getElementById('livingStrengths');
-                const livingWeaknesses = document.getElementById('livingWeaknesses');
-                const livingSuggestions = document.getElementById('livingSuggestions');
-                if (livingStrengths) livingStrengths.value = adminSettings.detailedAnalysis.living.strengths || '';
-                if (livingWeaknesses) livingWeaknesses.value = adminSettings.detailedAnalysis.living.weaknesses || '';
-                if (livingSuggestions) livingSuggestions.value = adminSettings.detailedAnalysis.living.suggestions || '';
-            }
         }
         
         // 填充整体建议
@@ -1037,7 +1072,7 @@ function fillStudentFormFromExcel(rowIndex = 0) {
     if (arguments.length === 1 && rowIndex === 0) {
         let rowList = '请选择要填入表单的数据行：\n\n';
         excelData.forEach((row, index) => {
-            const studentName = row[excelHeaders[7]] || `学生${index + 1}`; // 第8列是学生姓名
+            const studentName = getExcelValue(row, 'studentName') || `学生${index + 1}`;
             rowList += `${index + 1}. ${studentName}\n`;
         });
         
@@ -1056,56 +1091,44 @@ function fillStudentFormFromExcel(rowIndex = 0) {
     
     const rowData = excelData[rowIndex];
     
-    // 根据你提供的映射关系填充表单
-    // 列8对应studentName
+    // 使用表头映射填充基本信息
     const studentNameField = document.getElementById('studentName');
     if (studentNameField) {
-        studentNameField.value = rowData[excelHeaders[7]] || ''; // 第8列（索引7）
+        studentNameField.value = getExcelValue(rowData, 'studentName');
     }
     
-    // 列9对应gender
     const genderField = document.getElementById('gender');
     if (genderField) {
-        genderField.value = rowData[excelHeaders[8]] || ''; // 第9列（索引8）
+        genderField.value = getExcelValue(rowData, 'gender');
     }
     
-    // 列10对应grade
     const gradeField = document.getElementById('grade');
     if (gradeField) {
-        gradeField.value = rowData[excelHeaders[9]] || ''; // 第10列（索引9）
+        gradeField.value = getExcelValue(rowData, 'grade');
     }
     
-    // 列11对应school
     const schoolField = document.getElementById('school');
     if (schoolField) {
-        schoolField.value = rowData[excelHeaders[10]] || ''; // 第11列（索引10）
+        schoolField.value = getExcelValue(rowData, 'school');
     }
     
-    // 列12对应subjectGroup
     const subjectGroupField = document.getElementById('subjectGroup');
     if (subjectGroupField) {
-        subjectGroupField.value = rowData[excelHeaders[11]] || ''; // 第12列（索引11）
+        subjectGroupField.value = getExcelValue(rowData, 'subjectGroup');
     }
     
-    // 填充成绩字段（Excel的13-21列对应前9个成绩字段）
-    const scoreFields = [
-        'currentChinese',   // 语文
-        'currentMath',      // 数学
-        'currentEnglish',   // 英语
-        'currentPhysics',   // 物理
-        'currentBiology',   // 生物
-        'currentChemistry', // 化学
-        'currentHistory',   // 历史
-        'currentPolitics',  // 政治
-        'currentGeography'  // 地理
+    // 填充当前成绩字段
+    const currentScoreFields = [
+        'currentChinese', 'currentMath', 'currentEnglish', 'currentPhysics', 
+        'currentBiology', 'currentChemistry', 'currentHistory', 'currentGeography', 'currentPolitics'
     ];
     
     let totalScore = 0;
     
-    scoreFields.forEach((fieldName, index) => {
+    currentScoreFields.forEach(fieldName => {
         const field = document.getElementById(fieldName);
         if (field) {
-            const score = parseFloat(rowData[excelHeaders[12 + index]]) || 0; // 第13-21列（索引12-20）
+            const score = parseFloat(getExcelValue(rowData, fieldName)) || 0;
             field.value = score;
             totalScore += score;
         }
@@ -1117,25 +1140,18 @@ function fillStudentFormFromExcel(rowIndex = 0) {
         currentTotalField.value = totalScore;
     }
     
-    // 填充预测成绩字段（Excel的22-30列对应预测成绩）
+    // 填充预测成绩字段
     const predictedScoreFields = [
-        'predictedChinese',   // 语文
-        'predictedMath',      // 数学
-        'predictedEnglish',   // 英语
-        'predictedPhysics',   // 物理
-        'predictedBiology',   // 生物
-        'predictedChemistry', // 化学
-        'predictedHistory',   // 历史
-        'predictedPolitics',  // 政治
-        'predictedGeography'  // 地理
+        'predictedChinese', 'predictedMath', 'predictedEnglish', 'predictedPhysics', 
+        'predictedBiology', 'predictedChemistry', 'predictedHistory', 'predictedGeography', 'predictedPolitics'
     ];
     
     let predictedTotalScore = 0;
     
-    predictedScoreFields.forEach((fieldName, index) => {
+    predictedScoreFields.forEach(fieldName => {
         const field = document.getElementById(fieldName);
         if (field) {
-            const score = parseFloat(rowData[excelHeaders[21 + index]]) || 0; // 第22-30列（索引21-29）
+            const score = parseFloat(getExcelValue(rowData, fieldName)) || 0;
             field.value = score;
             predictedTotalScore += score;
         }
@@ -1147,39 +1163,68 @@ function fillStudentFormFromExcel(rowIndex = 0) {
         predictedTotalField.value = predictedTotalScore;
     }
     
-    // 填充补习情况字段（Excel的35-36列对应补习情况）
-    // 列35对应是否进行学科补习
+    // 填充学业水平考试字段
+    const academicLevelPassField = document.getElementById('academicLevelPass');
+    if (academicLevelPassField) {
+        academicLevelPassField.value = getExcelValue(rowData, 'academicLevelPass');
+    }
+    
+    const academicSubject1Field = document.getElementById('academicSubject1');
+    if (academicSubject1Field) {
+        academicSubject1Field.value = getExcelValue(rowData, 'academicSubject1');
+    }
+    
+    const academicScore1Field = document.getElementById('academicScore1');
+    if (academicScore1Field) {
+        academicScore1Field.value = getExcelValue(rowData, 'academicScore1');
+    }
+    
+    const academicSubject2Field = document.getElementById('academicSubject2');
+    if (academicSubject2Field) {
+        academicSubject2Field.value = getExcelValue(rowData, 'academicSubject2');
+    }
+    
+    const academicScore2Field = document.getElementById('academicScore2');
+    if (academicScore2Field) {
+        academicScore2Field.value = getExcelValue(rowData, 'academicScore2');
+    }
+    
+    const academicSubject3Field = document.getElementById('academicSubject3');
+    if (academicSubject3Field) {
+        academicSubject3Field.value = getExcelValue(rowData, 'academicSubject3');
+    }
+    
+    const academicScore3Field = document.getElementById('academicScore3');
+    if (academicScore3Field) {
+        academicScore3Field.value = getExcelValue(rowData, 'academicScore3');
+    }
+    
+    // 填充补习情况字段
     const hasTutoringField = document.getElementById('hasTutoring');
     if (hasTutoringField) {
-        hasTutoringField.value = rowData[excelHeaders[34]] || ''; // 第35列（索引34）
+        hasTutoringField.value = getExcelValue(rowData, 'hasTutoring');
     }
     
-    // 列36对应正在补习的科目
     const tutoringSubjectsField = document.getElementById('tutoringSubjects');
     if (tutoringSubjectsField) {
-        tutoringSubjectsField.value = rowData[excelHeaders[35]] || ''; // 第36列（索引35）
+        tutoringSubjectsField.value = getExcelValue(rowData, 'tutoringSubjects');
     }
     
-    // 列37对应专业倾向（多选，用"┋"分隔）
-    const majorPreferenceData = rowData[excelHeaders[36]] || ''; // 第37列（索引36）
+    // 填充专业倾向（多选，用"┋"分隔）
+    const majorPreferenceData = getExcelValue(rowData, 'majorPreference');
     if (majorPreferenceData) {
         const majorPreferences = majorPreferenceData.split('┋').map(p => p.trim()).filter(p => p);
         setMajorPreferences(majorPreferences);
     }
     
-    // 列39-43对应英语成绩详细分数
+    // 填充英语成绩字段
     const englishScoreFields = [
-        'englishTotalScore',  // 总分
-        'englishListening',   // 听力
-        'englishReading',     // 阅读
-        'englishSpeaking',    // 口语
-        'englishWriting'      // 写作
+        'englishTotalScore', 'englishListening', 'englishSpeaking', 'englishReading', 'englishWriting'
     ];
     
-    // 列38对应国际英语成绩类型
     const englishTestTypeField = document.getElementById('englishTestType');
     if (englishTestTypeField) {
-        const testType = rowData[excelHeaders[37]] || ''; // 第38列（索引37）
+        const testType = getExcelValue(rowData, 'englishTestType');
         if (testType === '没有任何国际英语考试成绩') {
             englishTestTypeField.value = '暂无';
             // 当选择"暂无"时，清空所有成绩字段
@@ -1202,10 +1247,10 @@ function fillStudentFormFromExcel(rowIndex = 0) {
         }
     }
     
-    englishScoreFields.forEach((fieldName, index) => {
+    englishScoreFields.forEach(fieldName => {
         const field = document.getElementById(fieldName);
         if (field) {
-            const score = rowData[excelHeaders[38 + index]] || ''; // 第39-43列（索引38-42）
+            const score = getExcelValue(rowData, fieldName);
             if (score === '（跳过）') {
                 field.value = '';
             } else {
@@ -1214,128 +1259,137 @@ function fillStudentFormFromExcel(rowIndex = 0) {
         }
     });
     
-    // 列44对应留学意向国家/地区（多选，用"┋"分隔）
-    const studyDestinationData = rowData[excelHeaders[43]] || ''; // 第44列（索引43）
-    console.log('Excel第44列原始数据:', studyDestinationData);
+    // 填充留学意向（多选，用"┋"分隔）
+    const studyDestinationData = getExcelValue(rowData, 'studyDestination');
+    console.log('留学意向原始数据:', studyDestinationData);
     if (studyDestinationData) {
         const destinations = studyDestinationData.split('┋').map(d => d.trim()).filter(d => d);
         console.log('解析后的留学意向:', destinations);
         setStudyDestinations(destinations);
     }
     
-    // 列45对应预期留学投入费用
+    // 填充其他字段
     const budgetField = document.getElementById('budget');
     if (budgetField) {
-        budgetField.value = rowData[excelHeaders[44]] || ''; // 第45列（索引44）
+        budgetField.value = getExcelValue(rowData, 'budget');
     }
     
-    // 列46对应是否参加学校社团
     const hasClubField = document.getElementById('hasClub');
     if (hasClubField) {
-        hasClubField.value = rowData[excelHeaders[45]] || ''; // 第46列（索引45）
+        hasClubField.value = getExcelValue(rowData, 'hasClub');
     }
     
-    // 列47对应参加的社团
     const clubActivitiesField = document.getElementById('clubActivities');
     if (clubActivitiesField) {
-        clubActivitiesField.value = rowData[excelHeaders[46]] || ''; // 第47列（索引46）
+        clubActivitiesField.value = getExcelValue(rowData, 'clubActivities');
     }
     
-    // 列48对应是否有维持3年以上的兴趣爱好
     const hasLongTermHobbyField = document.getElementById('hasLongTermHobby');
     if (hasLongTermHobbyField) {
-        hasLongTermHobbyField.value = rowData[excelHeaders[47]] || ''; // 第48列（索引47）
+        hasLongTermHobbyField.value = getExcelValue(rowData, 'hasLongTermHobby');
     }
     
-    // 列49对应兴趣爱好
     const hobbiesField = document.getElementById('hobbies');
     if (hobbiesField) {
-        hobbiesField.value = rowData[excelHeaders[48]] || ''; // 第49列（索引48）
+        hobbiesField.value = getExcelValue(rowData, 'hobbies');
     }
     
-    // 列50对应经常来往的好友数量
     const friendsCountField = document.getElementById('friendsCount');
     if (friendsCountField) {
-        friendsCountField.value = rowData[excelHeaders[49]] || ''; // 第50列（索引49）
+        friendsCountField.value = getExcelValue(rowData, 'friendsCount');
     }
     
-    // 列51对应才艺（多选，用"┋"分隔）
-    const talentsData = rowData[excelHeaders[50]] || ''; // 第51列（索引50）
-    console.log('Excel第51列原始数据:', talentsData);
+    // 填充才艺（多选，用"┋"分隔）
+    const talentsData = getExcelValue(rowData, 'talents');
+    console.log('才艺原始数据:', talentsData);
     if (talentsData) {
         const talents = talentsData.split('┋').map(t => t.trim()).filter(t => t);
         console.log('解析后的才艺:', talents);
         setTalents(talents);
     }
     
-    // 列52对应才艺证书资质或奖项
     const certificatesField = document.getElementById('certificates');
     if (certificatesField) {
-        certificatesField.value = rowData[excelHeaders[51]] || ''; // 第52列（索引51）
+        certificatesField.value = getExcelValue(rowData, 'certificates');
     }
     
-    // 列53对应整理生活和工作空间频率
     const organizationFrequencyField = document.getElementById('organizationFrequency');
     if (organizationFrequencyField) {
-        organizationFrequencyField.value = rowData[excelHeaders[52]] || ''; // 第53列（索引52）
+        organizationFrequencyField.value = getExcelValue(rowData, 'organizationFrequency');
     }
     
-    // 列54对应遇到困难是否向周围的人求助
     const askForHelpField = document.getElementById('askForHelp');
     if (askForHelpField) {
-        askForHelpField.value = rowData[excelHeaders[53]] || ''; // 第54列（索引53）
+        askForHelpField.value = getExcelValue(rowData, 'askForHelp');
     }
     
-    // 列55对应是否会自己做饭
+    // 填充新增字段
+    const studyPersistenceField = document.getElementById('studyPersistence');
+    if (studyPersistenceField) {
+        studyPersistenceField.value = getExcelValue(rowData, 'studyPersistence');
+    }
+    
+    const internationalExperienceField = document.getElementById('internationalExperience');
+    if (internationalExperienceField) {
+        internationalExperienceField.value = getExcelValue(rowData, 'internationalExperience');
+    }
+    
+    const campExperienceField = document.getElementById('campExperience');
+    if (campExperienceField) {
+        campExperienceField.value = getExcelValue(rowData, 'campExperience');
+    }
+    
     const canCookField = document.getElementById('canCook');
     if (canCookField) {
-        canCookField.value = rowData[excelHeaders[54]] || ''; // 第55列（索引54）
+        canCookField.value = getExcelValue(rowData, 'canCook');
     }
     
-    // 列56对应每天课外阅读时间
     const readingTimeField = document.getElementById('readingTime');
     if (readingTimeField) {
-        readingTimeField.value = rowData[excelHeaders[55]] || ''; // 第56列（索引55）
+        readingTimeField.value = getExcelValue(rowData, 'readingTime');
     }
     
     console.log(`已填充第${rowIndex + 1}行数据到学生信息表单`);
     console.log('填充的数据:', {
-        studentName: rowData[excelHeaders[7]],
-        gender: rowData[excelHeaders[8]],
-        grade: rowData[excelHeaders[9]],
-        school: rowData[excelHeaders[10]],
-        subjectGroup: rowData[excelHeaders[11]],
-        currentScores: scoreFields.map((field, index) => ({
+        studentName: getExcelValue(rowData, 'studentName'),
+        gender: getExcelValue(rowData, 'gender'),
+        grade: getExcelValue(rowData, 'grade'),
+        school: getExcelValue(rowData, 'school'),
+        subjectGroup: getExcelValue(rowData, 'subjectGroup'),
+        currentScores: currentScoreFields.map(field => ({
             field: field,
-            value: rowData[excelHeaders[12 + index]]
+            value: getExcelValue(rowData, field)
         })),
         currentTotalScore: totalScore,
-        predictedScores: predictedScoreFields.map((field, index) => ({
+        predictedScores: predictedScoreFields.map(field => ({
             field: field,
-            value: rowData[excelHeaders[21 + index]]
+            value: getExcelValue(rowData, field)
         })),
         predictedTotalScore: predictedTotalScore,
-        hasTutoring: rowData[excelHeaders[34]],
-        tutoringSubjects: rowData[excelHeaders[35]],
-        majorPreference: rowData[excelHeaders[36]],
-        englishTestType: rowData[excelHeaders[37]],
-        englishScores: englishScoreFields.map((field, index) => ({
+        hasTutoring: getExcelValue(rowData, 'hasTutoring'),
+        tutoringSubjects: getExcelValue(rowData, 'tutoringSubjects'),
+        majorPreference: getExcelValue(rowData, 'majorPreference'),
+        englishTestType: getExcelValue(rowData, 'englishTestType'),
+        englishScores: englishScoreFields.map(field => ({
             field: field,
-            value: rowData[excelHeaders[38 + index]]
+            value: getExcelValue(rowData, field)
         })),
-        studyDestination: rowData[excelHeaders[43]],
-        budget: rowData[excelHeaders[44]],
-        hasClub: rowData[excelHeaders[45]],
-        clubActivities: rowData[excelHeaders[46]],
-        hasLongTermHobby: rowData[excelHeaders[47]],
-        hobbies: rowData[excelHeaders[48]],
-        friendsCount: rowData[excelHeaders[49]],
-        talents: rowData[excelHeaders[50]],
-        certificates: rowData[excelHeaders[51]],
-        organizationFrequency: rowData[excelHeaders[52]],
-        askForHelp: rowData[excelHeaders[53]],
-        canCook: rowData[excelHeaders[54]],
-        readingTime: rowData[excelHeaders[55]]
+        studyDestination: getExcelValue(rowData, 'studyDestination'),
+        budget: getExcelValue(rowData, 'budget'),
+        hasClub: getExcelValue(rowData, 'hasClub'),
+        clubActivities: getExcelValue(rowData, 'clubActivities'),
+        hasLongTermHobby: getExcelValue(rowData, 'hasLongTermHobby'),
+        hobbies: getExcelValue(rowData, 'hobbies'),
+        friendsCount: getExcelValue(rowData, 'friendsCount'),
+        talents: getExcelValue(rowData, 'talents'),
+        certificates: getExcelValue(rowData, 'certificates'),
+        organizationFrequency: getExcelValue(rowData, 'organizationFrequency'),
+        askForHelp: getExcelValue(rowData, 'askForHelp'),
+        studyPersistence: getExcelValue(rowData, 'studyPersistence'),
+        internationalExperience: getExcelValue(rowData, 'internationalExperience'),
+        campExperience: getExcelValue(rowData, 'campExperience'),
+        canCook: getExcelValue(rowData, 'canCook'),
+        readingTime: getExcelValue(rowData, 'readingTime')
     });
     
     // 计算并更新学术能力
@@ -1350,36 +1404,46 @@ function fillStudentFormFromExcel(rowIndex = 0) {
     // 计算并更新社交能力
     calculateSocialAbility();
     
-    // 计算并更新独立生活能力
-    calculateIndependentLiving();
     
-    alert(`已成功将第${rowIndex + 1}行数据填入学生信息录入表单！\n\n学生姓名: ${rowData[excelHeaders[7]] || '未填写'}\n当前总分: ${totalScore}分\n预测总分: ${predictedTotalScore}分`);
+    alert(`已成功将第${rowIndex + 1}行数据填入学生信息录入表单！\n\n学生姓名: ${getExcelValue(rowData, 'studentName') || '未填写'}\n当前总分: ${totalScore}分\n预测总分: ${predictedTotalScore}分`);
 }
 
 // 转换Excel数据为学生数据格式
 function convertExcelToStudentData(rowData) {
     return {
-        studentName: rowData['1、学生姓名：'] || '',
-        gender: rowData['2、学生性别：'] || '',
-        grade: rowData['3、所在年级：'] || '',
-        school: rowData['4、您所在的学校名称：'] || '',
-        subjectGroup: rowData['5、学生的学科分组是？'] || '',
-        studyDestination: rowData['15、请选择学生有留学意愿的国家或地区'] || '',
-        majorPreference: rowData['12、请选择学生大学倾向就读的专业方向'] || '',
-        englishTestType: rowData['13、请选择学生目前已有成绩的国际英语考试'] || '',
-        englishScore: rowData['14、请填写其中一项国际英语考试的成绩—总分'] || '',
-        budget: rowData['16、预期留学投入费用（含学费和生活费）'] || '',
-        hasClub: rowData['17、学生是否有在学校参加社团？'] || '',
-        clubActivities: rowData['18、请填写学生参加的社团'] || '',
-        hasLongTermHobby: rowData['19、学生是否有一项持续3年以上的兴趣爱好？'] || '',
-        hobbies: rowData['20、请填写学生持续3年以上的兴趣或爱好'] || '',
-        friendsCount: rowData['21、除了同学，学生在外有多少个经常来往的朋友？'] || '',
-        talents: rowData['22、学生是否有持续学习3年以上音乐、舞蹈、体育、艺术等各方面的才艺？'] || '',
-        certificates: rowData['23、请填写学生有在才艺相关的领域获得的证书、资质或奖项？'] || '',
-        organizationFrequency: rowData['24、学生多久会整理一次自己的生活与工作空间？'] || '',
-        askForHelp: rowData['25、学生在遇到困难时，是否会主动向身边的人进行求助？'] || '',
-        canCook: rowData['26、学生是否会自己做饭？'] || '',
-        readingTime: rowData['27、学生平均每天课外阅读的时间'] || '',
+        studentName: getExcelValue(rowData, 'studentName'),
+        gender: getExcelValue(rowData, 'gender'),
+        grade: getExcelValue(rowData, 'grade'),
+        school: getExcelValue(rowData, 'school'),
+        subjectGroup: getExcelValue(rowData, 'subjectGroup'),
+        studyDestination: getExcelValue(rowData, 'studyDestination'),
+        majorPreference: getExcelValue(rowData, 'majorPreference'),
+        englishTestType: getExcelValue(rowData, 'englishTestType'),
+        englishScore: getExcelValue(rowData, 'englishTotalScore'),
+        budget: getExcelValue(rowData, 'budget'),
+        hasClub: getExcelValue(rowData, 'hasClub'),
+        clubActivities: getExcelValue(rowData, 'clubActivities'),
+        hasLongTermHobby: getExcelValue(rowData, 'hasLongTermHobby'),
+        hobbies: getExcelValue(rowData, 'hobbies'),
+        friendsCount: getExcelValue(rowData, 'friendsCount'),
+        talents: getExcelValue(rowData, 'talents'),
+        certificates: getExcelValue(rowData, 'certificates'),
+        organizationFrequency: getExcelValue(rowData, 'organizationFrequency'),
+        askForHelp: getExcelValue(rowData, 'askForHelp'),
+        canCook: getExcelValue(rowData, 'canCook'),
+        readingTime: getExcelValue(rowData, 'readingTime'),
+        // 学业水平考试
+        academicLevelPass: getExcelValue(rowData, 'academicLevelPass'),
+        academicSubject1: getExcelValue(rowData, 'academicSubject1'),
+        academicScore1: getExcelValue(rowData, 'academicScore1'),
+        academicSubject2: getExcelValue(rowData, 'academicSubject2'),
+        academicScore2: getExcelValue(rowData, 'academicScore2'),
+        academicSubject3: getExcelValue(rowData, 'academicSubject3'),
+        academicScore3: getExcelValue(rowData, 'academicScore3'),
+        // 新增列
+        studyPersistence: getExcelValue(rowData, 'studyPersistence'),
+        internationalExperience: getExcelValue(rowData, 'internationalExperience'),
+        campExperience: getExcelValue(rowData, 'campExperience'),
         currentTotal: calculateCurrentTotal(rowData),
         predictedTotal: calculatePredictedTotal(rowData),
         // 保存原始Excel数据用于后续分析
@@ -1389,11 +1453,14 @@ function convertExcelToStudentData(rowData) {
 
 // 计算当前总分
 function calculateCurrentTotal(rowData) {
-    const subjects = ['语文', '数学', '英语', '物理', '生物', '化学', '历史', '政治', '地理'];
+    const currentScoreKeys = [
+        'currentChinese', 'currentMath', 'currentEnglish', 'currentPhysics', 
+        'currentBiology', 'currentChemistry', 'currentHistory', 'currentGeography', 'currentPolitics'
+    ];
     let total = 0;
     
-    subjects.forEach(subject => {
-        const score = parseFloat(rowData[`6、${subject}`]) || 0;
+    currentScoreKeys.forEach(key => {
+        const score = parseFloat(getExcelValue(rowData, key)) || 0;
         total += score;
     });
     
@@ -1402,11 +1469,14 @@ function calculateCurrentTotal(rowData) {
 
 // 计算预测总分
 function calculatePredictedTotal(rowData) {
-    const subjects = ['语文', '数学', '英语', '物理', '生物', '化学', '历史', '政治', '地理'];
+    const predictedScoreKeys = [
+        'predictedChinese', 'predictedMath', 'predictedEnglish', 'predictedPhysics', 
+        'predictedBiology', 'predictedChemistry', 'predictedHistory', 'predictedGeography', 'predictedPolitics'
+    ];
     let total = 0;
     
-    subjects.forEach(subject => {
-        const score = parseFloat(rowData[`7、${subject}`]) || 0;
+    predictedScoreKeys.forEach(key => {
+        const score = parseFloat(getExcelValue(rowData, key)) || 0;
         total += score;
     });
     
@@ -1422,7 +1492,6 @@ function generateRadarDataFromExcel(rowData) {
         languageAbility: 70,
         artisticQuality: 80,
         socialAbility: 85,
-        independentLiving: 78
     };
 }
 
@@ -1445,14 +1514,9 @@ function generateAnalysisFromRadar(radarData) {
             suggestions: '建议加强文体素养'
         },
         social: getAbilityEvaluation('social', radarData.socialAbility) || {
-            strengths: '社交能力有待提升',
-            weaknesses: '社交基础需要加强',
-            suggestions: '建议加强社交能力'
-        },
-        living: getAbilityEvaluation('living', radarData.independentLiving) || {
-            strengths: '独立生活能力有待提升',
-            weaknesses: '独立生活基础需要加强',
-            suggestions: '建议加强独立生活能力'
+            strengths: '生活能力有待提升',
+            weaknesses: '生活基础需要加强',
+            suggestions: '建议加强生活能力'
         }
     };
 }
@@ -1601,8 +1665,6 @@ function calculatePredictedTotalScore() {
     // 计算并更新社交能力
     calculateSocialAbility();
     
-    // 计算并更新独立生活能力
-    calculateIndependentLiving();
     
     return totalScore;
 }
@@ -1697,7 +1759,10 @@ function calculateLanguageAbility() {
 function calculateArtisticQuality() {
     const hasClubField = document.getElementById('hasClub');
     const hasLongTermHobbyField = document.getElementById('hasLongTermHobby');
-    const talentsGroup = document.querySelectorAll('input[name="talents"]');
+    const talentsField = document.getElementById('talents');
+    const certificatesField = document.getElementById('certificates');
+    const internationalExperienceField = document.getElementById('internationalExperience');
+    const campExperienceField = document.getElementById('campExperience');
     const readingTimeField = document.getElementById('readingTime');
     const artisticQualityField = document.getElementById('artisticQuality');
     
@@ -1705,134 +1770,148 @@ function calculateArtisticQuality() {
         return;
     }
     
-    let totalScore = 0;
+    let rawScore = 0; // 原始分，满分90
     
-    // 第一项：hasClub（25分）
+    // 1. 社团活动（10分）
     const hasClub = hasClubField?.value;
     if (hasClub === '是') {
-        totalScore += 25;
+        rawScore += 10;
     }
     
-    // 第二项：hasLongTermHobby（25分）
+    // 2. 持续兴趣（10分）
     const hasLongTermHobby = hasLongTermHobbyField?.value;
     if (hasLongTermHobby === '是') {
-        totalScore += 25;
+        rawScore += 10;
     }
     
-    // 第三项：talentsGroup（25分）
-    let hasTalents = true;
-    talentsGroup.forEach(checkbox => {
-        if (checkbox.value === '否' && checkbox.checked) {
-            hasTalents = false;
+    // 3. 才艺学习（5-15分）
+    const talents = talentsField?.value;
+    if (talents && !talents.includes('没有正在学习的才艺') && talents.trim() !== '') {
+        const talentCount = talents.split('┋').length;
+        if (talentCount === 1) {
+            rawScore += 5;
+        } else if (talentCount === 2) {
+            rawScore += 10;
+        } else if (talentCount >= 3) {
+            rawScore += 15;
         }
-    });
-    if (hasTalents) {
-        totalScore += 25;
     }
     
-    // 第四项：readingTime（25分，按比例计算）
-    const readingTime = parseFloat(readingTimeField?.value) || 0;
-    const readingScore = Math.min(25, (readingTime / 8) * 25);
-    totalScore += readingScore;
+    // 4. 证书奖项（10分）
+    const certificates = certificatesField?.value;
+    if (certificates && !certificates.includes('无') && !certificates.includes('没有')) {
+        rawScore += 10;
+    }
     
-    // 限制在0-100范围内并取整
-    totalScore = Math.max(0, Math.min(100, totalScore));
-    artisticQualityField.value = Math.round(totalScore);
+    // 5. 国外经历（10-20分）
+    const internationalExperience = internationalExperienceField?.value;
+    if (internationalExperience === '从来没有') {
+        rawScore += 0;
+    } else if (internationalExperience === '一个月以内') {
+        rawScore += 10;
+    } else if (internationalExperience === '6个月以内') {
+        rawScore += 15;
+    } else if (internationalExperience && internationalExperience !== '从来没有') {
+        rawScore += 20;
+    }
+    
+    // 6. 夏令营经历（10分）
+    const campExperience = campExperienceField?.value;
+    if (campExperience === '是') {
+        rawScore += 10;
+    }
+    
+    // 7. 阅读时间（0-15分）
+    const readingTime = parseFloat(readingTimeField?.value) || 0;
+    const readingScore = Math.round((readingTime / 8) * 15); // 按15分制计算
+    rawScore += Math.min(15, readingScore);
+    
+    // 转换为100分制
+    const finalScore = Math.round((rawScore / 90) * 100);
+    artisticQualityField.value = Math.max(0, Math.min(100, finalScore));
 }
 
-// 计算社交能力
+// 计算生活能力
 function calculateSocialAbility() {
     const hasClubField = document.getElementById('hasClub');
     const friendsCountField = document.getElementById('friendsCount');
+    const organizationFrequencyField = document.getElementById('organizationFrequency');
     const askForHelpField = document.getElementById('askForHelp');
+    const studyPersistenceField = document.getElementById('studyPersistence');
+    const canCookField = document.getElementById('canCook');
     const socialAbilityField = document.getElementById('socialAbility');
     
     if (!socialAbilityField) {
         return;
     }
     
-    let totalScore = 0;
+    let rawScore = 0; // 原始分，满分90
     
-    // 第一项：hasClub（25分）
+    // 1. 社团活动（10分）
     const hasClub = hasClubField?.value;
     if (hasClub === '是') {
-        totalScore += 25;
+        rawScore += 10;
     }
     
-    // 第二项：friendsCount（50分）
+    // 2. 朋友数量（0-20分）
     const friendsCount = friendsCountField?.value;
     if (friendsCount === '没有') {
-        totalScore += 0;
+        rawScore += 0;
     } else if (friendsCount === '1-3个') {
-        totalScore += 25;
+        rawScore += 8;
     } else if (friendsCount === '3-5个') {
-        totalScore += 35;
+        rawScore += 12;
     } else if (friendsCount === '5个以上') {
-        totalScore += 50;
+        rawScore += 20;
     }
     
-    // 第三项：askForHelp（25分）
+    // 3. 整理频率（0-20分）
+    const organizationFrequency = organizationFrequencyField?.value;
+    if (organizationFrequency && organizationFrequency.includes('每天')) {
+        rawScore += 20;
+    } else if (organizationFrequency && organizationFrequency.includes('每周')) {
+        rawScore += 15;
+    } else if (organizationFrequency && organizationFrequency.includes('每月')) {
+        rawScore += 10;
+    } else if (organizationFrequency && organizationFrequency.includes('半年')) {
+        rawScore += 5;
+    } else if (organizationFrequency && organizationFrequency.includes('从不整理')) {
+        rawScore += 0;
+    }
+    
+    // 4. 困难应对（0-10分）
     const askForHelp = askForHelpField?.value;
-    if (askForHelp === '会马上向身边的人求助') {
-        totalScore += 25;
-    } else if (askForHelp === '先自己尝试努力，无法解决时再求助') {
-        totalScore += 12.5;
-    } else if (askForHelp === '无论如何都要靠自己，不希望麻烦别人') {
-        totalScore += 0;
+    if (askForHelp && askForHelp.includes('大部分情况下')) {
+        rawScore += 10;
+    } else if (askForHelp && askForHelp.includes('有时会选择')) {
+        rawScore += 5;
     }
     
-    // 限制在0-100范围内并取整
-    totalScore = Math.max(0, Math.min(100, totalScore));
-    socialAbilityField.value = Math.round(totalScore);
+    // 5. 学习坚持（0-10分）
+    const studyPersistence = studyPersistenceField?.value;
+    if (studyPersistence && studyPersistence.includes('直至解决问题')) {
+        rawScore += 10;
+    } else if (studyPersistence && studyPersistence.includes('大部分时间')) {
+        rawScore += 8;
+    } else if (studyPersistence && studyPersistence.includes('有时会')) {
+        rawScore += 6;
+    }
+    
+    // 6. 料理水平（0-20分）
+    const canCook = canCookField?.value;
+    if (canCook && canCook.includes('会采购并处理')) {
+        rawScore += 20;
+    } else if (canCook && canCook.includes('明火炉灶加热预制食物')) {
+        rawScore += 15;
+    } else if (canCook && canCook.includes('微波炉')) {
+        rawScore += 10;
+    }
+    
+    // 转换为100分制
+    const finalScore = Math.round((rawScore / 90) * 100);
+    socialAbilityField.value = Math.max(0, Math.min(100, finalScore));
 }
 
-// 计算独立生活能力
-function calculateIndependentLiving() {
-    const organizationFrequencyField = document.getElementById('organizationFrequency');
-    const askForHelpField = document.getElementById('askForHelp');
-    const canCookField = document.getElementById('canCook');
-    const independentLivingField = document.getElementById('independentLiving');
-    
-    if (!independentLivingField) {
-        return;
-    }
-    
-    let totalScore = 0;
-    
-    // 第一项：organizationFrequency（50分）
-    const organizationFrequency = organizationFrequencyField?.value;
-    if (organizationFrequency === '从不整理') {
-        totalScore += 0;
-    } else if (organizationFrequency === '半年至少一次') {
-        totalScore += 12;
-    } else if (organizationFrequency === '每月至少一次') {
-        totalScore += 25;
-    } else if (organizationFrequency === '每周至少一次') {
-        totalScore += 40;
-    } else if (organizationFrequency === '每天至少一次') {
-        totalScore += 50;
-    }
-    
-    // 第二项：askForHelp（25分）
-    const askForHelp = askForHelpField?.value;
-    if (askForHelp === '会马上向身边的人求助') {
-        totalScore += 12;
-    } else if (askForHelp === '先自己尝试努力，无法解决时再求助') {
-        totalScore += 25;
-    } else if (askForHelp === '无论如何都要靠自己，不希望麻烦别人') {
-        totalScore += 12;
-    }
-    
-    // 第三项：canCook（25分）
-    const canCook = canCookField?.value;
-    if (canCook === '是') {
-        totalScore += 25;
-    }
-    
-    // 限制在0-100范围内并取整
-    totalScore = Math.max(0, Math.min(100, totalScore));
-    independentLivingField.value = Math.round(totalScore);
-}
 
 // 自动计算总分（兼容旧版本）
 function calculateTotalScore() {
@@ -1902,42 +1981,20 @@ function setStudyDestinations(destinations) {
     });
 }
 
-// 获取选中的才艺
-function getSelectedTalents() {
-    const checkboxes = document.querySelectorAll('input[name="talents"]:checked');
-    return Array.from(checkboxes).map(checkbox => checkbox.value);
-}
+// 获取选中的才艺（现在是文本输入，不需要这个函数）
+// function getSelectedTalents() {
+//     const checkboxes = document.querySelectorAll('input[name="talents"]:checked');
+//     return Array.from(checkboxes).map(checkbox => checkbox.value);
+// }
 
-// 设置才艺复选框
+// 设置才艺文本输入
 function setTalents(talents) {
     console.log('设置才艺:', talents);
     
-    // 清除所有复选框的选中状态
-    const checkboxes = document.querySelectorAll('input[name="talents"]');
-    checkboxes.forEach(checkbox => {
-        checkbox.checked = false;
-    });
-    
-    // 选中指定的复选框
-    if (Array.isArray(talents)) {
-        talents.forEach(talent => {
-            console.log('尝试选中才艺:', talent);
-            const checkbox = document.querySelector(`input[name="talents"][value="${talent}"]`);
-            if (checkbox) {
-                checkbox.checked = true;
-                console.log('成功选中才艺:', talent);
-            } else {
-                console.log('未找到才艺复选框:', talent);
-            }
-        });
+    const talentsField = document.getElementById('talents');
+    if (talentsField && Array.isArray(talents)) {
+        talentsField.value = talents.join('┋');
     }
-    
-    // 显示所有可用的复选框值
-    const allCheckboxes = document.querySelectorAll('input[name="talents"]');
-    console.log('所有可用的才艺复选框值:');
-    allCheckboxes.forEach(checkbox => {
-        console.log('-', checkbox.value);
-    });
     
     // 计算文体素养
     calculateArtisticQuality();
@@ -2032,11 +2089,11 @@ document.addEventListener('DOMContentLoaded', function() {
         readingTimeField.addEventListener('input', calculateArtisticQuality);
     }
     
-    // 为才艺复选框添加监听器
-    const talentsCheckboxes = document.querySelectorAll('input[name="talents"]');
-    talentsCheckboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', calculateArtisticQuality);
-    });
+    // 为才艺文本输入添加监听器
+    const talentsField = document.getElementById('talents');
+    if (talentsField) {
+        talentsField.addEventListener('input', calculateArtisticQuality);
+    }
     
     // 为社交能力相关字段添加监听器
     const friendsCountField = document.getElementById('friendsCount');
@@ -2048,20 +2105,23 @@ document.addEventListener('DOMContentLoaded', function() {
     if (askForHelpField) {
         askForHelpField.addEventListener('change', function() {
             calculateSocialAbility();
-            calculateIndependentLiving();
         });
     }
     
-    // 为独立生活能力相关字段添加监听器
-    const organizationFrequencyField = document.getElementById('organizationFrequency');
-    if (organizationFrequencyField) {
-        organizationFrequencyField.addEventListener('change', calculateIndependentLiving);
+    const studyPersistenceField = document.getElementById('studyPersistence');
+    if (studyPersistenceField) {
+        studyPersistenceField.addEventListener('change', function() {
+            calculateSocialAbility();
+        });
     }
     
     const canCookField = document.getElementById('canCook');
     if (canCookField) {
-        canCookField.addEventListener('change', calculateIndependentLiving);
+        canCookField.addEventListener('change', function() {
+            calculateSocialAbility();
+        });
     }
+    
     
     // 为英语成绩类型添加监听器
     const englishTestTypeField = document.getElementById('englishTestType');
@@ -2110,4 +2170,122 @@ document.addEventListener('DOMContentLoaded', function() {
             viewReportsBtn.style.display = 'inline-block';
         }
     }
-}); 
+});
+
+// 大学选择器功能
+let currentUniversityField = '';
+let filteredUniversities = QS_TOP_UNIVERSITIES;
+
+// 打开大学选择器
+function openUniversitySelector(fieldId) {
+    currentUniversityField = fieldId;
+    const modal = document.getElementById('universitySelectorModal');
+    modal.style.display = 'block';
+    
+    // 重置搜索和筛选
+    document.getElementById('universitySearch').value = '';
+    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelector('.filter-btn[onclick="filterByCountry(\'all\')"]').classList.add('active');
+    
+    // 显示所有大学
+    filteredUniversities = QS_TOP_UNIVERSITIES;
+    renderUniversities();
+}
+
+// 关闭大学选择器
+function closeUniversitySelector() {
+    const modal = document.getElementById('universitySelectorModal');
+    modal.style.display = 'none';
+    currentUniversityField = '';
+}
+
+// 渲染大学列表
+function renderUniversities() {
+    const container = document.getElementById('universitiesList');
+    container.innerHTML = '';
+    
+    if (filteredUniversities.length === 0) {
+        container.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-secondary);">没有找到匹配的大学</div>';
+        return;
+    }
+    
+    filteredUniversities.forEach(university => {
+        const item = document.createElement('div');
+        item.className = 'university-item-selector';
+        item.onclick = () => selectUniversity(university);
+        
+        item.innerHTML = `
+            <img src="${university.logo}" alt="${university.name}" class="university-logo-small" 
+                 onerror="this.src='https://via.placeholder.com/40x40?text=校徽'">
+            <div class="university-info">
+                <h4>${university.chineseName}</h4>
+                <p>${university.name} • ${university.country}</p>
+            </div>
+            <div class="university-rank">QS ${university.rank}</div>
+        `;
+        
+        container.appendChild(item);
+    });
+}
+
+// 选择大学
+function selectUniversity(university) {
+    if (!currentUniversityField) return;
+    
+    // 更新表单字段
+    document.getElementById(currentUniversityField + 'Name').value = university.chineseName;
+    document.getElementById(currentUniversityField + 'Location').value = university.country;
+    document.getElementById(currentUniversityField + 'Logo').value = university.logo;
+    
+    // 关闭模态框
+    closeUniversitySelector();
+}
+
+// 搜索大学
+function filterUniversities() {
+    const searchTerm = document.getElementById('universitySearch').value.toLowerCase();
+    
+    filteredUniversities = QS_TOP_UNIVERSITIES.filter(university => {
+        return university.chineseName.toLowerCase().includes(searchTerm) ||
+               university.name.toLowerCase().includes(searchTerm) ||
+               university.country.toLowerCase().includes(searchTerm);
+    });
+    
+    renderUniversities();
+}
+
+// 按国家筛选
+function filterByCountry(country) {
+    // 更新按钮状态
+    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+    
+    if (country === 'all') {
+        filteredUniversities = QS_TOP_UNIVERSITIES;
+    } else if (country === '其他') {
+        const commonCountries = ['美国', '英国', '中国', '澳大利亚', '加拿大', '德国', '日本', '韩国', '新加坡'];
+        filteredUniversities = QS_TOP_UNIVERSITIES.filter(uni => !commonCountries.includes(uni.country));
+    } else {
+        filteredUniversities = QS_TOP_UNIVERSITIES.filter(uni => uni.country === country);
+    }
+    
+    // 保持搜索条件
+    const searchTerm = document.getElementById('universitySearch').value.toLowerCase();
+    if (searchTerm) {
+        filteredUniversities = filteredUniversities.filter(university => {
+            return university.chineseName.toLowerCase().includes(searchTerm) ||
+                   university.name.toLowerCase().includes(searchTerm) ||
+                   university.country.toLowerCase().includes(searchTerm);
+        });
+    }
+    
+    renderUniversities();
+}
+
+// 点击模态框外部关闭
+window.onclick = function(event) {
+    const modal = document.getElementById('universitySelectorModal');
+    if (event.target === modal) {
+        closeUniversitySelector();
+    }
+} 

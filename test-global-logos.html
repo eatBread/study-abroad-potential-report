@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QS世界大学排名校徽展示</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2563eb, #3b82f6);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .stats {
+            background: #f8fafc;
+            padding: 20px 40px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .stats h3 {
+            color: #1e293b;
+            margin-bottom: 10px;
+        }
+
+        .stats p {
+            color: #64748b;
+            font-size: 1.1rem;
+        }
+
+        .logo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            padding: 40px;
+        }
+
+        .university-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .university-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            border-color: #3b82f6;
+        }
+
+        .university-logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 12px;
+            object-fit: cover;
+            margin: 0 auto 15px;
+            border: 2px solid #f1f5f9;
+        }
+
+        .university-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .university-rank {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 8px;
+        }
+
+        .university-country {
+            font-size: 0.9rem;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px;
+            color: #64748b;
+            font-size: 1.1rem;
+        }
+
+        .error {
+            text-align: center;
+            padding: 60px;
+            color: #ef4444;
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 768px) {
+            .logo-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 15px;
+                padding: 20px;
+            }
+            
+            .header {
+                padding: 30px 20px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .stats {
+                padding: 15px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>QS世界大学排名校徽</h1>
+            <p>基于权威QS 2024世界大学排名的前200所大学校徽展示</p>
+        </div>
+        
+        <div class="stats">
+            <h3>下载统计</h3>
+            <p id="stats">正在加载...</p>
+        </div>
+        
+        <div class="logo-grid" id="logoGrid">
+            <div class="loading">正在加载校徽数据...</div>
+        </div>
+    </div>
+
+    <script src="scripts/university-data.js"></script>
+    <script>
+        // 使用新的QS排名数据
+        function loadAllUniversities() {
+            return QS_TOP_UNIVERSITIES;
+        }
+
+        // 检查校徽文件是否存在
+        function checkLogoExists(logoPath) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => resolve(true);
+                img.onerror = () => resolve(false);
+                img.src = logoPath;
+            });
+        }
+
+        // 加载并显示校徽
+        async function loadLogos() {
+            const grid = document.getElementById('logoGrid');
+            
+            try {
+                const allUniversities = loadAllUniversities();
+                
+                let availableCount = 0;
+                let totalCount = allUniversities.length;
+                
+                const sortedUniversities = [...allUniversities].sort((a, b) => a.rank - b.rank);
+                
+                for (const university of sortedUniversities) {
+                    const exists = await checkLogoExists(university.logo);
+                    
+                    if (exists) {
+                        availableCount++;
+                        
+                        const card = document.createElement('div');
+                        card.className = 'university-card';
+                        card.innerHTML = `
+                            <img src="${university.logo}" alt="${university.name}" class="university-logo" 
+                                 onerror="this.style.display='none'">
+                            <div class="university-name">${university.chineseName || university.name}</div>
+                            <div class="university-rank">QS排名: ${university.rank}</div>
+                            <div class="university-country">${university.country || '未知'}</div>
+                        `;
+                        grid.appendChild(card);
+                    }
+                }
+                
+                document.getElementById('stats').innerHTML = `
+                    <strong>已下载: ${availableCount} / ${totalCount} 个校徽</strong><br>
+                    成功率: ${(availableCount / totalCount * 100).toFixed(1)}%
+                `;
+                
+            } catch (error) {
+                console.error('加载校徽时出错:', error);
+                grid.innerHTML = '<div class="error">加载校徽数据时出错，请检查网络连接</div>';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadLogos);
+    </script>
+</body>
+</html>

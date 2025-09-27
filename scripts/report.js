@@ -69,18 +69,13 @@ function generateSampleData() {
                     suggestions: '建议深化文体特长发展，参加相关比赛和考级，争取获得证书或奖项。'
                 },
                 social: {
-                    strengths: '社交能力较好，人际关系和谐，具备一定的团队协作能力。',
-                    weaknesses: '在领导力和公众表达方面还有提升空间，社交圈相对固定。',
-                    suggestions: '建议在团队中承担更多责任，练习公众演讲，拓展社交圈，提升领导力。'
-                },
-                living: {
-                    strengths: '独立生活能力较好，具备基本的时间管理和自我管理能力。',
+                    strengths: '生活能力较好，具备基本的时间管理和自我管理能力，能够应对大部分日常生活需求。',
                     weaknesses: '在某些生活技能方面还需要进一步提升，适应新环境的能力有待加强。',
                     suggestions: '建议学习更多生活技能，提升适应能力，培养独立解决问题的能力。'
                 }
             },
             analysis: {
-                suggestions: '1. 参与更多学术挑战项目，培养创新思维和批判性思维\n2. 重点提升英语能力，准备标准化语言考试\n3. 深化个人特长发展，在优势领域建立突出表现\n4. 完善申请材料，增强申请竞争力和成功率'
+                suggestions: '1. 参与更多学术挑战项目，培养创新思维和批判性思维\n2. 重点提升英语能力，准备标准化语言考试\n3. 深化个人特长发展，在优势领域建立突出表现\n4. 培养独立生活技能，为留学做好准备'
             },
             universities: {
                 reach: [
@@ -100,7 +95,7 @@ function generateSampleData() {
                 title: '高考成绩锁定海外名校！',
                 subtitle: '联系我们获取更多高考海外升学资讯及个性化解决方案',
                 qrCodeImage: '', // 如果为空则使用默认图片
-                contactEmail: 'contact@example.com',
+                contactEmail: 'maerzchen@live.com',
                 techSupport: '未名教育'
             }
         }
@@ -158,15 +153,14 @@ function createRadarChart() {
     radarChart = new Chart(ctx, {
         type: 'radar',
         data: {
-            labels: ['学术能力', '语言能力', '文体素养', '社交能力', '独立生活能力'],
+            labels: ['学术能力', '语言能力', '文体素养', '生活能力'],
             datasets: [{
                 label: '能力评估',
                 data: [
                     radar.academicAbility,
                     radar.languageAbility,
                     radar.artisticQuality,
-                    radar.socialAbility,
-                    radar.independentLiving
+                    radar.socialAbility
                 ],
                 backgroundColor: 'rgba(43, 108, 176, 0.2)',
                 borderColor: 'rgb(43, 108, 176)',
@@ -295,7 +289,7 @@ function fillAnalysisAndSuggestions() {
     const detailedAnalysis = reportData.admin.detailedAnalysis;
     const overallSuggestions = reportData.admin.analysis?.suggestions || '暂无整体建议内容';
     
-    // 填充五维详细分析（合并为一段话）
+    // 填充四维详细分析（合并为一段话）
     if (detailedAnalysis) {
         // 学术能力（使用新的分析函数）
         const academicText = generateAcademicAnalysis();
@@ -309,13 +303,10 @@ function fillAnalysisAndSuggestions() {
         const artisticText = generateArtisticAnalysis();
         document.getElementById('artistic-analysis').textContent = artisticText;
         
-        // 社交能力（使用新的分析函数）
+        // 生活能力（使用新的分析函数）
         const socialText = generateSocialAnalysis();
         document.getElementById('social-analysis').textContent = socialText;
         
-        // 独立生活能力（使用新的分析函数）
-        const livingText = generateLivingAnalysis();
-        document.getElementById('living-analysis').textContent = livingText;
     }
     
     // 填充整体建议
@@ -637,73 +628,33 @@ function generateArtisticAnalysis() {
     return analysis || '文体素养分析内容正在生成中，请稍后查看。';
 }
 
-// 生成社交能力详细分析
+// 生成生活能力详细分析
 function generateSocialAnalysis() {
     const student = reportData.student;
     const socialAbility = reportData.admin.radar.socialAbility || 85;
     
     let analysis = '';
     
-    // 基于社交能力分数的总体评价
+    // 基于生活能力分数的总体评价
     if (socialAbility >= 90) {
-        analysis = '社交能力出色，具备优秀的沟通技巧和人际交往能力，能够快速融入新环境';
+        analysis = '生活能力卓越，具备出色的自理能力和生活管理技能，能够完全独立应对留学生活';
     } else if (socialAbility >= 80) {
-        analysis = '社交能力优秀，具备良好的沟通能力和团队合作精神，能够有效处理人际关系';
+        analysis = '生活能力优秀，具备良好的自理能力和时间管理能力，能够较好地适应独立生活';
     } else if (socialAbility >= 70) {
-        analysis = '社交能力良好，具备基本的沟通技巧，能够与同学和老师进行有效交流';
+        analysis = '生活能力良好，具备基本的自理能力，能够应对大部分日常生活需求';
     } else if (socialAbility >= 60) {
-        analysis = '社交能力中等，在人际交往方面有一定基础，但需要进一步提升沟通技巧';
+        analysis = '生活能力中等，在自理能力方面有一定基础，但需要进一步提升生活技能';
     } else {
-        analysis = '社交能力有待提升，在人际交往和沟通方面需要更多锻炼和实践';
+        analysis = '生活能力有待提升，在自理能力和生活管理方面需要更多学习和实践';
     }
     
     // 针对出国留学的建议
     let suggestions = '';
     if (socialAbility >= 80) {
-        suggestions = '建议充分利用社交优势，积极参与国际学生组织，建立跨文化友谊，为未来职业发展积累人脉';
-    } else if (socialAbility >= 70) {
-        suggestions = '建议主动参与社交活动，练习英语口语交流，培养跨文化沟通能力';
-    } else if (socialAbility >= 60) {
-        suggestions = '建议多参加团队活动，练习主动沟通，提升英语口语表达能力';
-    } else {
-        suggestions = '建议从小组活动开始练习社交技能，参加英语角等活动，逐步提升沟通能力';
-    }
-    
-    // 合并分析文本
-    if (suggestions) {
-        analysis += `。${suggestions}`;
-    }
-    
-    return analysis || '社交能力分析内容正在生成中，请稍后查看。';
-}
-
-// 生成独立生活能力详细分析
-function generateLivingAnalysis() {
-    const student = reportData.student;
-    const independentLiving = reportData.admin.radar.independentLiving || 78;
-    
-    let analysis = '';
-    
-    // 基于独立生活能力分数的总体评价
-    if (independentLiving >= 90) {
-        analysis = '独立生活能力卓越，具备出色的自理能力和生活管理技能，能够完全独立应对留学生活';
-    } else if (independentLiving >= 80) {
-        analysis = '独立生活能力优秀，具备良好的自理能力和时间管理能力，能够较好地适应独立生活';
-    } else if (independentLiving >= 70) {
-        analysis = '独立生活能力良好，具备基本的自理能力，能够应对大部分日常生活需求';
-    } else if (independentLiving >= 60) {
-        analysis = '独立生活能力中等，在自理能力方面有一定基础，但需要进一步提升生活技能';
-    } else {
-        analysis = '独立生活能力有待提升，在自理能力和生活管理方面需要更多学习和实践';
-    }
-    
-    // 针对出国留学的建议
-    let suggestions = '';
-    if (independentLiving >= 80) {
         suggestions = '建议继续保持良好的生活习惯，学习财务管理，为独立留学生活做好充分准备';
-    } else if (independentLiving >= 70) {
+    } else if (socialAbility >= 70) {
         suggestions = '建议学习基本的生活技能，如烹饪、洗衣、理财等，提升独立生活能力';
-    } else if (independentLiving >= 60) {
+    } else if (socialAbility >= 60) {
         suggestions = '建议从基础生活技能开始学习，培养良好的生活习惯，逐步提升自理能力';
     } else {
         suggestions = '建议系统学习生活技能，培养独立意识，为未来的留学生活做好准备';
@@ -714,8 +665,9 @@ function generateLivingAnalysis() {
         analysis += `。${suggestions}`;
     }
     
-    return analysis || '独立生活能力分析内容正在生成中，请稍后查看。';
+    return analysis || '生活能力分析内容正在生成中，请稍后查看。';
 }
+
 
 // 填充院校推荐
 function fillUniversityRecommendations() {
@@ -740,7 +692,7 @@ function fillUniversityCategory(containerId, universityList) {
         const universityItem = document.createElement('div');
         universityItem.className = 'university-item';
         
-        const logoElement = university.logo && university.logo.startsWith('http') 
+        const logoElement = university.logo && university.logo.trim() !== ''
             ? `<img src="${university.logo}" alt="${university.name}" class="university-logo" onerror="this.style.display='none';">`
             : `<div class="university-logo">${university.name ? university.name.substring(0, 2) : ''}</div>`;
         
@@ -773,11 +725,11 @@ function fillServiceContent() {
     if (service.qrCodeImage) {
         qrCodeImg.src = service.qrCodeImage;
     } else {
-        qrCodeImg.src = 'image/default-qr.svg';
+        qrCodeImg.src = 'image/default-qr.png';
     }
     
     // 设置联系邮箱（可配置）
-    document.getElementById('contact-email').textContent = service.contactEmail || 'contact@example.com';
+    document.getElementById('contact-email').textContent = service.contactEmail || 'maerzchen@live.com';
     
     // 设置技术支持信息（可配置）
     const techSupport = service.techSupport || '未名教育';
@@ -923,7 +875,7 @@ function fillStudyRegions(studyDestination) {
         '瑞士': '🇨🇭',
         '意大利': '🇮🇹',
         '西班牙': '🇪🇸',
-        '爱尔兰': '🇮🇪',
+        '加拿大': '🇨🇦',
         '马来西亚': '🇲🇾',
         '北欧': '🇳🇴',
         '欧洲': '🇪🇺'

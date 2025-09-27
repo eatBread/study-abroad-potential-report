@@ -12,8 +12,18 @@
 <body>
     <div class="container">
         <header class="header">
-            <h1>留学潜力报告生成系统</h1>
-            <p>基于科学评估的个性化留学规划报告</p>
+            <div class="header-content">
+                <div class="header-text">
+                    <h1>留学潜力报告生成系统</h1>
+                    <p>基于科学评估的个性化留学规划报告</p>
+                </div>
+                <div class="header-actions">
+                    <a href="test-global-logos.html" target="_blank" class="btn btn-secondary">
+                        <span class="btn-icon">🏛️</span>
+                        查看校徽列表
+                    </a>
+                </div>
+            </div>
         </header>
 
         <nav class="nav-tabs">
@@ -201,6 +211,42 @@
                         </div>
                     </div>
 
+                    <h3>学业水平考试</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="academicLevelPass">是否通过学业水平考试</label>
+                            <select id="academicLevelPass" name="academicLevelPass">
+                                <option value="">请选择</option>
+                                <option value="是">是</option>
+                                <option value="否">否</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="academicSubject1">科目1(科目)</label>
+                            <input type="text" id="academicSubject1" name="academicSubject1" placeholder="请输入科目名称">
+                        </div>
+                        <div class="form-group">
+                            <label for="academicScore1">科目1(分数)</label>
+                            <input type="number" id="academicScore1" name="academicScore1" min="0" max="100" placeholder="请输入分数">
+                        </div>
+                        <div class="form-group">
+                            <label for="academicSubject2">科目2(科目)</label>
+                            <input type="text" id="academicSubject2" name="academicSubject2" placeholder="请输入科目名称">
+                        </div>
+                        <div class="form-group">
+                            <label for="academicScore2">科目2(分数)</label>
+                            <input type="number" id="academicScore2" name="academicScore2" min="0" max="100" placeholder="请输入分数">
+                        </div>
+                        <div class="form-group">
+                            <label for="academicSubject3">科目3(科目)</label>
+                            <input type="text" id="academicSubject3" name="academicSubject3" placeholder="请输入科目名称">
+                        </div>
+                        <div class="form-group">
+                            <label for="academicScore3">科目3(分数)</label>
+                            <input type="number" id="academicScore3" name="academicScore3" min="0" max="100" placeholder="请输入分数">
+                        </div>
+                    </div>
+
                     <h3>补习情况</h3>
                     <div class="form-grid">
                         <div class="form-group">
@@ -338,8 +384,8 @@
                                     <label for="destination_malaysia">🇲🇾 马来西亚</label>
                                 </div>
                                 <div class="checkbox-item">
-                                    <input type="checkbox" id="destination_ireland" name="studyDestination" value="爱尔兰">
-                                    <label for="destination_ireland">🇮🇪 爱尔兰</label>
+                                    <input type="checkbox" id="destination_canada" name="studyDestination" value="加拿大">
+                                    <label for="destination_canada">🇨🇦 加拿大</label>
                                 </div>
                                 <div class="checkbox-item">
                                     <input type="checkbox" id="destination_netherlands" name="studyDestination" value="荷兰">
@@ -408,29 +454,8 @@
                         </div>
                         
                         <div class="form-group">
-                            <label>音乐、美术、体育、艺术才艺</label>
-                            <div class="checkbox-group" id="talentsGroup">
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="talent_music" name="talents" value="音乐">
-                                    <label for="talent_music">🎵 音乐</label>
-                                </div>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="talent_dance" name="talents" value="舞蹈">
-                                    <label for="talent_dance">💃 舞蹈</label>
-                                </div>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="talent_sports" name="talents" value="体育">
-                                    <label for="talent_sports">⚽ 体育</label>
-                                </div>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="talent_art" name="talents" value="艺术">
-                                    <label for="talent_art">🎨 艺术</label>
-                                </div>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="talent_none" name="talents" value="否">
-                                    <label for="talent_none">❌ 否</label>
-                                </div>
-                            </div>
+                            <label for="talents">持续学习3年以上的才艺</label>
+                            <input type="text" id="talents" name="talents" placeholder="多个才艺请用┋分隔，如：音乐┋舞蹈┋体育">
                         </div>
                         
                         <div class="form-group">
@@ -452,17 +477,29 @@
                         
                         <div class="form-group">
                             <label for="askForHelp">遇到困难是否向周围的人求助</label>
-                            <select id="askForHelp" name="askForHelp">
+                            <input type="text" id="askForHelp" name="askForHelp" placeholder="请填写学生的应对方式">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="studyPersistence">学习中遇到阻碍时的坚持程度</label>
+                            <input type="text" id="studyPersistence" name="studyPersistence" placeholder="请填写学生的坚持程度">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="internationalExperience">国外生活经历时长</label>
+                            <select id="internationalExperience" name="internationalExperience">
                                 <option value="">请选择</option>
-                                <option value="会马上向身边的人求助">会马上向身边的人求助</option>
-                                <option value="先自己尝试努力，无法解决时再求助">先自己尝试努力，无法解决时再求助</option>
-                                <option value="无论如何都要靠自己，不希望麻烦别人">无论如何都要靠自己，不希望麻烦别人</option>
+                                <option value="从来没有">从来没有</option>
+                                <option value="一个月以内">一个月以内</option>
+                                <option value="6个月以内">6个月以内</option>
+                                <option value="一年以内">一年以内</option>
+                                <option value="一年以上">一年以上</option>
                             </select>
                         </div>
                         
                         <div class="form-group">
-                            <label for="canCook">是否会自己做饭</label>
-                            <select id="canCook" name="canCook">
+                            <label for="campExperience">是否参加过夏令营/冬令营</label>
+                            <select id="campExperience" name="campExperience">
                                 <option value="">请选择</option>
                                 <option value="是">是</option>
                                 <option value="否">否</option>
@@ -470,8 +507,13 @@
                         </div>
                         
                         <div class="form-group">
+                            <label for="canCook">做饭水平</label>
+                            <input type="text" id="canCook" name="canCook" placeholder="请填写学生的做饭水平描述">
+                        </div>
+                        
+                        <div class="form-group">
                             <label for="readingTime">每天课外阅读时间（小时）</label>
-                            <input type="number" id="readingTime" name="readingTime" min="0" max="8" step="1" placeholder="请输入0-8的整数">
+                            <input type="number" id="readingTime" name="readingTime" min="0" max="8" step="0.5" placeholder="请输入0-8的数字，支持0.5">
                         </div>
                     </div>
 
@@ -512,18 +554,14 @@
                             <input type="number" id="artisticQuality" name="artisticQuality" min="0" max="100" value="80">
                         </div>
                         <div class="form-group">
-                            <label for="socialAbility">社交能力 (0-100)</label>
+                            <label for="socialAbility">生活能力 (0-100)</label>
                             <input type="number" id="socialAbility" name="socialAbility" min="0" max="100" value="85">
-                        </div>
-                        <div class="form-group">
-                            <label for="independentLiving">独立生活能力 (0-100)</label>
-                            <input type="number" id="independentLiving" name="independentLiving" min="0" max="100" value="78">
                         </div>
                     </div>
                 </div>
 
                 <div class="admin-section">
-                    <h3>五维能力详细分析</h3>
+                    <h3>四维能力详细分析</h3>
                     <p class="section-desc">为每个能力维度设置详细的分析内容。留空则根据分数自动生成对应评价。</p>
                     
                     <!-- 学术能力分析 -->
@@ -585,7 +623,7 @@
 
                     <!-- 社交能力分析 -->
                     <div class="ability-analysis">
-                        <h4>🤝 社交能力分析</h4>
+                        <h4>🏠 生活能力分析</h4>
                         <div class="analysis-grid">
                             <div class="form-group">
                                 <label for="socialStrengths">优势</label>
@@ -602,33 +640,15 @@
                         </div>
                     </div>
 
-                    <!-- 独立生活能力分析 -->
-                    <div class="ability-analysis">
-                        <h4>🏠 独立生活能力分析</h4>
-                        <div class="analysis-grid">
-                            <div class="form-group">
-                                <label for="livingStrengths">优势</label>
-                                <textarea id="livingStrengths" name="livingStrengths" rows="2" placeholder="留空则根据分数自动生成"></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="livingWeaknesses">不足</label>
-                                <textarea id="livingWeaknesses" name="livingWeaknesses" rows="2" placeholder="留空则根据分数自动生成"></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="livingSuggestions">可行性建议</label>
-                                <textarea id="livingSuggestions" name="livingSuggestions" rows="2" placeholder="留空则根据分数自动生成"></textarea>
-                            </div>
-                        </div>
-                    </div>
 
                     <div class="admin-section">
                         <h3>综合提升建议</h3>
                         <div class="form-group">
                             <label for="overallSuggestions">整体建议</label>
-                            <textarea id="overallSuggestions" name="overallSuggestions" rows="4" placeholder="留空则根据五维分析自动汇总生成">1. 加强英语听说读写能力，建议参加雅思或托福培训
+                            <textarea id="overallSuggestions" name="overallSuggestions" rows="4" placeholder="留空则根据四维分析自动汇总生成">1. 加强英语听说读写能力，建议参加雅思或托福培训
 2. 扩展学术课外活动，如科研项目或学科竞赛
-3. 培养领导力，可考虑在社团中担任职务
-4. 增加国际化视野，关注目标专业的前沿发展</textarea>
+3. 发展文体特长，参与相关比赛和活动
+4. 培养独立生活技能，为留学做好准备</textarea>
                         </div>
                     </div>
                 </div>
@@ -639,14 +659,20 @@
                     <h4>冲刺院校（2所）</h4>
                     <div class="university-grid">
                         <div class="university-item">
-                            <input type="text" placeholder="大学名称" id="reach1Name" value="剑桥大学">
+                            <div class="university-name-row">
+                                <input type="text" placeholder="大学名称" id="reach1Name" value="剑桥大学">
+                                <button type="button" class="select-university-btn" onclick="openUniversitySelector('reach1')">选择大学</button>
+                            </div>
                             <input type="text" placeholder="专业名称" id="reach1Major" value="工程学">
                             <input type="text" placeholder="地区" id="reach1Location" value="英国">
                             <input type="url" placeholder="校徽URL" id="reach1Logo" value="https://via.placeholder.com/60x60?text=剑桥">
                             <textarea placeholder="推荐理由（约20字）" id="reach1Reason" rows="2">世界顶尖学府，工程专业排名全球前3，学术声誉卓越</textarea>
                         </div>
                         <div class="university-item">
-                            <input type="text" placeholder="大学名称" id="reach2Name" value="帝国理工学院">
+                            <div class="university-name-row">
+                                <input type="text" placeholder="大学名称" id="reach2Name" value="帝国理工学院">
+                                <button type="button" class="select-university-btn" onclick="openUniversitySelector('reach2')">选择大学</button>
+                            </div>
                             <input type="text" placeholder="专业名称" id="reach2Major" value="计算机科学">
                             <input type="text" placeholder="地区" id="reach2Location" value="英国">
                             <input type="url" placeholder="校徽URL" id="reach2Logo" value="https://via.placeholder.com/60x60?text=帝国">
@@ -657,14 +683,20 @@
                     <h4>稳妥院校（2所）</h4>
                     <div class="university-grid">
                         <div class="university-item">
-                            <input type="text" placeholder="大学名称" id="match1Name" value="曼彻斯特大学">
+                            <div class="university-name-row">
+                                <input type="text" placeholder="大学名称" id="match1Name" value="曼彻斯特大学">
+                                <button type="button" class="select-university-btn" onclick="openUniversitySelector('match1')">选择大学</button>
+                            </div>
                             <input type="text" placeholder="专业名称" id="match1Major" value="电子工程">
                             <input type="text" placeholder="地区" id="match1Location" value="英国">
                             <input type="url" placeholder="校徽URL" id="match1Logo" value="https://via.placeholder.com/60x60?text=曼大">
                             <textarea placeholder="推荐理由（约20字）" id="match1Reason" rows="2">电子工程专业实力强劲，工业界认可度高，就业稳定</textarea>
                         </div>
                         <div class="university-item">
-                            <input type="text" placeholder="大学名称" id="match2Name" value="伯明翰大学">
+                            <div class="university-name-row">
+                                <input type="text" placeholder="大学名称" id="match2Name" value="伯明翰大学">
+                                <button type="button" class="select-university-btn" onclick="openUniversitySelector('match2')">选择大学</button>
+                            </div>
                             <input type="text" placeholder="专业名称" id="match2Major" value="机械工程">
                             <input type="text" placeholder="地区" id="match2Location" value="英国">
                             <input type="url" placeholder="校徽URL" id="match2Logo" value="https://via.placeholder.com/60x60?text=伯明翰">
@@ -675,14 +707,20 @@
                     <h4>保底院校（2所）</h4>
                     <div class="university-grid">
                         <div class="university-item">
-                            <input type="text" placeholder="大学名称" id="safety1Name" value="利兹大学">
+                            <div class="university-name-row">
+                                <input type="text" placeholder="大学名称" id="safety1Name" value="利兹大学">
+                                <button type="button" class="select-university-btn" onclick="openUniversitySelector('safety1')">选择大学</button>
+                            </div>
                             <input type="text" placeholder="专业名称" id="safety1Major" value="土木工程">
                             <input type="text" placeholder="地区" id="safety1Location" value="英国">
                             <input type="url" placeholder="校徽URL" id="safety1Logo" value="https://via.placeholder.com/60x60?text=利兹">
                             <textarea placeholder="推荐理由（约20字）" id="safety1Reason" rows="2">土木工程专业扎实，课程设置实用，性价比高</textarea>
                         </div>
                         <div class="university-item">
-                            <input type="text" placeholder="大学名称" id="safety2Name" value="谢菲尔德大学">
+                            <div class="university-name-row">
+                                <input type="text" placeholder="大学名称" id="safety2Name" value="谢菲尔德大学">
+                                <button type="button" class="select-university-btn" onclick="openUniversitySelector('safety2')">选择大学</button>
+                            </div>
                             <input type="text" placeholder="专业名称" id="safety2Major" value="材料科学">
                             <input type="text" placeholder="地区" id="safety2Location" value="英国">
                             <input type="url" placeholder="校徽URL" id="safety2Logo" value="https://via.placeholder.com/60x60?text=谢菲">
@@ -708,7 +746,7 @@
                     </div>
                     <div class="form-group">
                         <label for="contactEmail">联系邮箱</label>
-                        <input type="email" id="contactEmail" name="contactEmail" placeholder="请输入联系邮箱..." value="contact@example.com">
+                        <input type="email" id="contactEmail" name="contactEmail" placeholder="请输入联系邮箱..." value="maerzchen@live.com">
                     </div>
                     <div class="form-group">
                         <label for="techSupport">技术支持机构</label>
@@ -724,6 +762,41 @@
         </div>
     </div>
 
+    <!-- 大学选择器模态框 -->
+    <div id="universitySelectorModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>选择大学</h3>
+                <span class="close" onclick="closeUniversitySelector()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="search-section">
+                    <input type="text" id="universitySearch" placeholder="搜索大学名称..." onkeyup="filterUniversities()">
+                    <div class="filter-buttons">
+                        <button type="button" class="filter-btn active" onclick="filterByCountry('all')">全部</button>
+                        <button type="button" class="filter-btn" onclick="filterByCountry('美国')">美国</button>
+                        <button type="button" class="filter-btn" onclick="filterByCountry('英国')">英国</button>
+                        <button type="button" class="filter-btn" onclick="filterByCountry('中国')">中国</button>
+                        <button type="button" class="filter-btn" onclick="filterByCountry('澳大利亚')">澳大利亚</button>
+                        <button type="button" class="filter-btn" onclick="filterByCountry('加拿大')">加拿大</button>
+                        <button type="button" class="filter-btn" onclick="filterByCountry('德国')">德国</button>
+                        <button type="button" class="filter-btn" onclick="filterByCountry('日本')">日本</button>
+                        <button type="button" class="filter-btn" onclick="filterByCountry('韩国')">韩国</button>
+                        <button type="button" class="filter-btn" onclick="filterByCountry('新加坡')">新加坡</button>
+                        <button type="button" class="filter-btn" onclick="filterByCountry('其他')">其他</button>
+                    </div>
+                </div>
+                <div class="universities-list" id="universitiesList">
+                    <!-- 大学列表将在这里动态生成 -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeUniversitySelector()">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="scripts/university-data.js"></script>
     <script src="scripts/main.js"></script>
 </body>
 </html> 

@@ -1,30 +1,36 @@
-# 依赖文件
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+# Python虚拟环境
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
 
-# 编辑器文件
-.vscode/
-.idea/
-*.swp
-*.swo
+# 临时文件
+*.tmp
+*.temp
+*.log
 
 # 系统文件
 .DS_Store
 Thumbs.db
 
-# 临时文件
-*.tmp
-*.temp
+# IDE文件
+.vscode/
+.idea/
+*.swp
+*.swo
 
-# 日志文件
-logs/
-*.log
+# 依赖文件
+node_modules/
+package-lock.json
 
-# 环境文件
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+# 临时脚本文件（保留主要的）
+fetch_global_universities_batch*.py
+global_universities_batch*_result.json
+qs_universities_result.json
+university_logos_result.json
+test-logos.html
+
+# Excel数据文件（如果包含敏感信息）
+# image/top200.xlsx
