@@ -93,6 +93,31 @@
             border: 2px solid #f1f5f9;
         }
 
+        .no-logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 12px;
+            margin: 0 auto 15px;
+            border: 2px dashed #cbd5e1;
+            background: #f8fafc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            font-size: 0.8rem;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .university-card.no-logo-card {
+            border-color: #e2e8f0;
+            background: #fafafa;
+        }
+
+        .university-card.no-logo-card:hover {
+            border-color: #94a3b8;
+        }
+
         .university-name {
             font-size: 1.1rem;
             font-weight: 600;
@@ -194,18 +219,20 @@
                 const allUniversities = loadAllUniversities();
                 
                 let availableCount = 0;
+                let noLogoCount = 0;
                 let totalCount = allUniversities.length;
                 
                 const sortedUniversities = [...allUniversities].sort((a, b) => a.rank - b.rank);
                 
                 for (const university of sortedUniversities) {
-                    const exists = await checkLogoExists(university.logo);
+                    const hasLogo = university.logo && university.logo.trim() !== '';
+                    const exists = hasLogo ? await checkLogoExists(university.logo) : false;
                     
-                    if (exists) {
+                    const card = document.createElement('div');
+                    card.className = hasLogo && exists ? 'university-card' : 'university-card no-logo-card';
+                    
+                    if (hasLogo && exists) {
                         availableCount++;
-                        
-                        const card = document.createElement('div');
-                        card.className = 'university-card';
                         card.innerHTML = `
                             <img src="${university.logo}" alt="${university.name}" class="university-logo" 
                                  onerror="this.style.display='none'">
@@ -213,13 +240,24 @@
                             <div class="university-rank">QS排名: ${university.rank}</div>
                             <div class="university-country">${university.country || '未知'}</div>
                         `;
-                        grid.appendChild(card);
+                    } else {
+                        noLogoCount++;
+                        card.innerHTML = `
+                            <div class="no-logo">暂无<br>校徽</div>
+                            <div class="university-name">${university.chineseName || university.name}</div>
+                            <div class="university-rank">QS排名: ${university.rank}</div>
+                            <div class="university-country">${university.country || '未知'}</div>
+                        `;
                     }
+                    
+                    grid.appendChild(card);
                 }
                 
                 document.getElementById('stats').innerHTML = `
-                    <strong>已下载: ${availableCount} / ${totalCount} 个校徽</strong><br>
-                    成功率: ${(availableCount / totalCount * 100).toFixed(1)}%
+                    <strong>有校徽: ${availableCount} 个</strong> | 
+                    <strong>无校徽: ${noLogoCount} 个</strong> | 
+                    <strong>总计: ${totalCount} 个</strong><br>
+                    校徽覆盖率: ${(availableCount / totalCount * 100).toFixed(1)}%
                 `;
                 
             } catch (error) {
