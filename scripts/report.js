@@ -79,16 +79,16 @@ function generateSampleData() {
             },
             universities: {
                 reach: [
-                    { name: '剑桥大学', major: '工程学', location: '英国', logo: 'https://via.placeholder.com/60x60?text=剑桥' },
-                    { name: '帝国理工学院', major: '计算机科学', location: '英国', logo: 'https://via.placeholder.com/60x60?text=帝国' }
+                    { name: '剑桥大学', englishName: 'University of Cambridge', majorDirection: '工科', major: '工程学', location: '英国', logo: 'image/global-universities/University_of_Cambridge.png' },
+                    { name: '伦敦帝国学院', englishName: 'Imperial College London', majorDirection: '工科', major: '计算机科学', location: '英国', logo: 'image/global-universities/Imperial_College_London.png' }
                 ],
                 match: [
-                    { name: '曼彻斯特大学', major: '电子工程', location: '英国', logo: 'https://via.placeholder.com/60x60?text=曼大' },
-                    { name: '伯明翰大学', major: '机械工程', location: '英国', logo: 'https://via.placeholder.com/60x60?text=伯明翰' }
+                    { name: '曼彻斯特大学', englishName: 'The University of Manchester', majorDirection: '工科', major: '电子工程', location: '英国', logo: 'image/global-universities/The_University_of_Manchester.png' },
+                    { name: '伯明翰大学', englishName: 'University of Birmingham', majorDirection: '工科', major: '机械工程', location: '英国', logo: 'image/global-universities/University_of_Birmingham.png' }
                 ],
                 safety: [
-                    { name: '利兹大学', major: '土木工程', location: '英国', logo: 'https://via.placeholder.com/60x60?text=利兹' },
-                    { name: '谢菲尔德大学', major: '材料科学', location: '英国', logo: 'https://via.placeholder.com/60x60?text=谢菲' }
+                    { name: '利兹大学', englishName: 'University of Leeds', majorDirection: '工科', major: '土木工程', location: '英国', logo: 'image/global-universities/University_of_Leeds.png' },
+                    { name: '谢菲尔德大学', englishName: 'The University of Sheffield', majorDirection: '理科', major: '材料科学', location: '英国', logo: 'image/global-universities/The_University_of_Sheffield.png' }
                 ]
             },
             service: {
@@ -683,6 +683,111 @@ function fillUniversityRecommendations() {
     fillUniversityCategory('safety-universities', universities.safety || []);
 }
 
+// 获取国家旗帜emoji
+function getCountryFlag(location) {
+    const flagMap = {
+        '美国': '🇺🇸',
+        '英国': '🇬🇧',
+        '加拿大': '🇨🇦',
+        '澳大利亚': '🇦🇺',
+        '德国': '🇩🇪',
+        '法国': '🇫🇷',
+        '日本': '🇯🇵',
+        '韩国': '🇰🇷',
+        '新加坡': '🇸🇬',
+        '中国香港': '🇭🇰',
+        '中国大陆': '🇨🇳',
+        '中国台湾': '🇹🇼',
+        '荷兰': '🇳🇱',
+        '瑞士': '🇨🇭',
+        '瑞典': '🇸🇪',
+        '丹麦': '🇩🇰',
+        '挪威': '🇳🇴',
+        '芬兰': '🇫🇮',
+        '意大利': '🇮🇹',
+        '西班牙': '🇪🇸',
+        '爱尔兰': '🇮🇪',
+        '新西兰': '🇳🇿',
+        '马来西亚': '🇲🇾',
+        '泰国': '🇹🇭',
+        '印度': '🇮🇳',
+        '巴西': '🇧🇷',
+        '阿根廷': '🇦🇷',
+        '智利': '🇨🇱',
+        '墨西哥': '🇲🇽',
+        '俄罗斯': '🇷🇺',
+        '波兰': '🇵🇱',
+        '捷克': '🇨🇿',
+        '匈牙利': '🇭🇺',
+        '奥地利': '🇦🇹',
+        '比利时': '🇧🇪',
+        '葡萄牙': '🇵🇹',
+        '希腊': '🇬🇷',
+        '土耳其': '🇹🇷',
+        '以色列': '🇮🇱',
+        '阿联酋': '🇦🇪',
+        '沙特阿拉伯': '🇸🇦',
+        '南非': '🇿🇦',
+        '埃及': '🇪🇬',
+        '摩洛哥': '🇲🇦',
+        '肯尼亚': '🇰🇪',
+        '尼日利亚': '🇳🇬',
+        '加纳': '🇬🇭',
+        '埃塞俄比亚': '🇪🇹',
+        '坦桑尼亚': '🇹🇿',
+        '乌干达': '🇺🇬',
+        '卢旺达': '🇷🇼',
+        '塞内加尔': '🇸🇳',
+        '科特迪瓦': '🇨🇮',
+        '马里': '🇲🇱',
+        '布基纳法索': '🇧🇫',
+        '尼日尔': '🇳🇪',
+        '乍得': '🇹🇩',
+        '中非': '🇨🇫',
+        '喀麦隆': '🇨🇲',
+        '刚果': '🇨🇬',
+        '刚果民主共和国': '🇨🇩',
+        '加蓬': '🇬🇦',
+        '赤道几内亚': '🇬🇶',
+        '圣多美和普林西比': '🇸🇹',
+        '安哥拉': '🇦🇴',
+        '赞比亚': '🇿🇲',
+        '津巴布韦': '🇿🇼',
+        '博茨瓦纳': '🇧🇼',
+        '纳米比亚': '🇳🇦',
+        '莱索托': '🇱🇸',
+        '斯威士兰': '🇸🇿',
+        '马拉维': '🇲🇼',
+        '莫桑比克': '🇲🇿',
+        '马达加斯加': '🇲🇬',
+        '毛里求斯': '🇲🇺',
+        '塞舌尔': '🇸🇨',
+        '科摩罗': '🇰🇲',
+        '马约特': '🇾🇹',
+        '留尼汪': '🇷🇪',
+        '圣赫勒拿': '🇸🇭',
+        '阿森松岛': '🇦🇨',
+        '特里斯坦-达库尼亚': '🇹🇦'
+    };
+    return flagMap[location] || '🌍';
+}
+
+// 获取专业方向样式类
+function getMajorDirectionClass(majorDirection) {
+    const classMap = {
+        '建筑': 'architecture',
+        '理科': 'science',
+        '工科': 'engineering',
+        '商科': 'business',
+        '文科': 'liberal-arts',
+        '医护': 'medical',
+        '音乐': 'music',
+        '美术': 'art',
+        '其他': 'other'
+    };
+    return classMap[majorDirection] || 'other';
+}
+
 // 填充单个院校类别
 function fillUniversityCategory(containerId, universityList) {
     const container = document.getElementById(containerId);
@@ -696,12 +801,26 @@ function fillUniversityCategory(containerId, universityList) {
             ? `<img src="${university.logo}" alt="${university.name}" class="university-logo" onerror="this.style.display='none';">`
             : `<div class="university-logo">${university.name ? university.name.substring(0, 2) : ''}</div>`;
         
+        const displayName = university.name || '未填写';
+        const englishName = university.englishName || '';
+        const nameWithEnglish = englishName ? `${displayName} (${englishName})` : displayName;
+        
         universityItem.innerHTML = `
             ${logoElement}
             <div class="university-info">
-                <h4>${university.name || '未填写'}</h4>
+                <h4>${displayName}<span class="english-name">${englishName ? ` (${englishName})` : ''}</span></h4>
                 <div class="major">${university.major || '未填写'}</div>
-                <div class="location">${university.location || '未填写'}</div>
+                <div class="university-meta">
+                    <div class="meta-item location-meta">
+                        <span class="meta-label">国家/地区：</span>
+                        <span class="meta-value">${university.location || '未填写'}</span>
+                        <span class="country-flag">${getCountryFlag(university.location)}</span>
+                    </div>
+                    <div class="meta-item direction-meta">
+                        <span class="meta-label">专业方向：</span>
+                        <span class="meta-value major-direction-tag major-direction-${getMajorDirectionClass(university.majorDirection)}">${university.majorDirection || '未填写'}</span>
+                    </div>
+                </div>
                 <div class="reason">${university.reason || '暂无推荐理由'}</div>
             </div>
         `;

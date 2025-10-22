@@ -1,0 +1,593 @@
+// 问卷逻辑
+let currentQuestion = 1;
+const totalQuestions = 30;
+
+// 页面加载完成后初始化
+document.addEventListener('DOMContentLoaded', function() {
+    initializeSurvey();
+    updateProgress();
+    // 显示所有问题
+    showAllQuestions();
+});
+
+// 初始化问卷
+function initializeSurvey() {
+    // 为所有输入字段添加事件监听器
+    const form = document.getElementById('surveyForm');
+    const inputs = form.querySelectorAll('input, textarea, select');
+    
+    inputs.forEach(input => {
+        input.addEventListener('change', function() {
+            // 处理条件显示
+            handleConditionalDisplay(this);
+            
+            // 自动计算相关分数
+            if (this.name === 'englishTestType' || this.name === 'englishTotalScore') {
+                calculateLanguageAbility();
+            }
+            if (this.name === 'predictedTotal' || this.name === 'subjectGroup') {
+                calculateAcademicAbility();
+            }
+            if (this.name === 'hasClub' || this.name === 'hasLongTermHobby' || this.name === 'readingTime' || this.name === 'talents') {
+                calculateArtisticQuality();
+            }
+            if (this.name === 'hasClub' || this.name === 'friendsCount' || this.name === 'organizationFrequency' || this.name === 'canCook') {
+                calculateSocialAbility();
+            }
+            
+            // 实时更新进度
+            updateProgress();
+        });
+    });
+    
+    // 为滑块添加特殊处理
+    const readingTimeSlider = document.getElementById('readingTime');
+    if (readingTimeSlider) {
+        readingTimeSlider.addEventListener('input', function() {
+            const value = this.value / 2; // 转换为0.5小时为单位
+            document.getElementById('readingTimeValue').textContent = value + '小时';
+            calculateArtisticQuality();
+            updateProgress();
+        });
+    }
+    
+    // 表单提交处理
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        submitSurvey();
+    });
+}
+
+// 显示所有问题
+function showAllQuestions() {
+    const questions = document.querySelectorAll('.question-section');
+    
+    questions.forEach((question, index) => {
+        // 检查是否是条件显示的问题
+        const questionId = question.id;
+        if (questionId === 'question-9' || questionId === 'question-11' || 
+            questionId === 'question-14' || questionId === 'question-18' || 
+            questionId === 'question-20') {
+            // 这些是条件显示的问题，保持隐藏状态
+            question.style.display = 'none';
+        } else {
+            // 其他问题正常显示
+            question.style.display = 'block';
+        }
+    });
+    
+    currentQuestion = totalQuestions;
+    updateProgress();
+    updateNavigationButtons();
+}
+
+// 显示指定问题（保留用于兼容性）
+function showQuestion(questionNum) {
+    showAllQuestions();
+}
+
+// 更新进度条
+function updateProgress() {
+    const progressFill = document.getElementById('progressFill');
+    const progressText = document.getElementById('progressText');
+    
+    // 计算已完成的题目数量
+    const completedQuestions = getCompletedQuestionsCount();
+    const progress = (completedQuestions / totalQuestions) * 100;
+    progressFill.style.width = progress + '%';
+    progressText.textContent = `已完成 ${completedQuestions} 题，共 ${totalQuestions} 题`;
+}
+
+// 获取已完成的题目数量
+function getCompletedQuestionsCount() {
+    let completed = 0;
+    const questions = document.querySelectorAll('.question-section');
+    
+    questions.forEach(question => {
+        const requiredInputs = question.querySelectorAll('[required]');
+        let isCompleted = true;
+        
+        for (let input of requiredInputs) {
+            if (input.type === 'radio') {
+                const radioGroup = question.querySelectorAll(`input[name="${input.name}"]`);
+                let isChecked = false;
+                radioGroup.forEach(radio => {
+                    if (radio.checked) isChecked = true;
+                });
+                if (!isChecked) {
+                    isCompleted = false;
+                    break;
+                }
+            } else if (input.type === 'text' || input.type === 'number' || input.type === 'textarea') {
+                if (!input.value.trim()) {
+                    isCompleted = false;
+                    break;
+                }
+            }
+        }
+        
+        if (isCompleted) completed++;
+    });
+    
+    return completed;
+}
+
+// 更新导航按钮
+function updateNavigationButtons() {
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    // 隐藏上一题和下一题按钮，只显示提交按钮
+    if (prevBtn) prevBtn.style.display = 'none';
+    if (nextBtn) nextBtn.style.display = 'none';
+    if (submitBtn) submitBtn.style.display = 'inline-block';
+}
+
+// 下一题
+function nextQuestion() {
+    if (validateCurrentQuestion()) {
+        if (currentQuestion < totalQuestions) {
+            showQuestion(currentQuestion + 1);
+        }
+    }
+}
+
+// 上一题
+function previousQuestion() {
+    if (currentQuestion > 1) {
+        showQuestion(currentQuestion - 1);
+    }
+}
+
+// 验证整个表单
+function validateCurrentQuestion() {
+    return validateAllQuestions();
+}
+
+// 验证所有问题
+function validateAllQuestions() {
+    const questions = document.querySelectorAll('.question-section');
+    let firstInvalidQuestion = null;
+    
+    questions.forEach((question, index) => {
+        const requiredInputs = question.querySelectorAll('[required]');
+        let isQuestionValid = true;
+        
+        for (let input of requiredInputs) {
+            if (input.type === 'radio') {
+                const radioGroup = question.querySelectorAll(`input[name="${input.name}"]`);
+                let isChecked = false;
+                radioGroup.forEach(radio => {
+                    if (radio.checked) isChecked = true;
+                });
+                if (!isChecked) {
+                    isQuestionValid = false;
+                    break;
+                }
+            } else if (input.type === 'text' || input.type === 'number' || input.type === 'textarea') {
+                if (!input.value.trim()) {
+                    isQuestionValid = false;
+                    break;
+                }
+            }
+        }
+        
+        if (!isQuestionValid && !firstInvalidQuestion) {
+            firstInvalidQuestion = index + 1;
+        }
+    });
+    
+    if (firstInvalidQuestion) {
+        alert(`请完成第${firstInvalidQuestion}题的所有必填项`);
+        // 滚动到第一个未完成的问题
+        const questionElement = document.querySelector(`[data-question="${firstInvalidQuestion}"]`);
+        if (questionElement) {
+            questionElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        return false;
+    }
+    
+    return true;
+}
+
+// 提交问卷
+function submitSurvey() {
+    if (!validateCurrentQuestion()) {
+        return;
+    }
+    
+    // 收集所有表单数据
+    const formData = collectFormData();
+    
+    // 保存到localStorage
+    localStorage.setItem('surveyData', JSON.stringify(formData));
+    
+    // 跳转到报告生成页面
+    window.location.href = 'index.html#input-tab';
+}
+
+// 收集表单数据
+function collectFormData() {
+    const form = document.getElementById('surveyForm');
+    const formData = new FormData(form);
+    const data = {};
+    
+    // 处理单选按钮
+    const radioGroups = form.querySelectorAll('input[type="radio"]');
+    radioGroups.forEach(radio => {
+        if (radio.checked) {
+            data[radio.name] = radio.value;
+        }
+    });
+    
+    // 处理复选框
+    const checkboxes = form.querySelectorAll('input[type="checkbox"]');
+    const checkboxGroups = {};
+    checkboxes.forEach(checkbox => {
+        if (checkbox.checked) {
+            if (!checkboxGroups[checkbox.name]) {
+                checkboxGroups[checkbox.name] = [];
+            }
+            checkboxGroups[checkbox.name].push(checkbox.value);
+        }
+    });
+    
+    // 合并复选框数据
+    Object.assign(data, checkboxGroups);
+    
+    // 处理文本输入
+    const textInputs = form.querySelectorAll('input[type="text"], input[type="number"], textarea');
+    textInputs.forEach(input => {
+        if (input.value.trim()) {
+            data[input.name] = input.value.trim();
+        }
+    });
+    
+    // 处理滑块输入
+    const slider = document.getElementById('readingTime');
+    if (slider) {
+        data.readingTime = (slider.value / 2).toString(); // 转换为0.5小时为单位
+    }
+    
+    // 特殊处理第22题的多选数据，用┋分隔
+    if (data.talents && Array.isArray(data.talents)) {
+        data.talents = data.talents.join('┋');
+    }
+    
+    return data;
+}
+
+// 计算语言能力
+function calculateLanguageAbility() {
+    const englishTestType = document.querySelector('input[name="englishTestType"]:checked')?.value;
+    const englishTotalScore = document.getElementById('englishTotalScore')?.value;
+    const predictedEnglish = document.getElementById('predictedEnglish')?.value;
+    
+    if (!englishTestType) return;
+    
+    let languageAbility = 0;
+    
+    if (englishTestType === '雅思' && englishTotalScore) {
+        languageAbility = (parseFloat(englishTotalScore) / 9) * 100;
+    } else if (englishTestType === '托福' && englishTotalScore) {
+        languageAbility = (parseFloat(englishTotalScore) / 120) * 100;
+    } else if (englishTestType === 'PTE' && englishTotalScore) {
+        languageAbility = (parseFloat(englishTotalScore) / 90) * 100;
+    } else if (englishTestType === '多邻国' && englishTotalScore) {
+        languageAbility = (parseFloat(englishTotalScore) / 160) * 100;
+    } else if (englishTestType === '暂无' && predictedEnglish) {
+        // 根据预测英语成绩估算雅思分数
+        const predictedScore = parseFloat(predictedEnglish);
+        let ieltsScore = 0;
+        
+        if (predictedScore >= 130) ieltsScore = 7.0;
+        else if (predictedScore >= 120) ieltsScore = 6.5;
+        else if (predictedScore >= 110) ieltsScore = 6.0;
+        else if (predictedScore >= 100) ieltsScore = 5.5;
+        else if (predictedScore >= 90) ieltsScore = 5.0;
+        else if (predictedScore >= 80) ieltsScore = 4.5;
+        else ieltsScore = 4.0;
+        
+        languageAbility = (ieltsScore / 9) * 100;
+    }
+    
+    // 显示计算结果（如果有显示区域）
+    const scoreDisplay = document.querySelector('.score-display');
+    if (scoreDisplay) {
+        scoreDisplay.innerHTML = `
+            <div class="score-label">语言能力评分</div>
+            <div class="score-value">${Math.round(languageAbility)}分</div>
+        `;
+    }
+}
+
+// 计算学术能力
+function calculateAcademicAbility() {
+    const predictedTotal = document.getElementById('predictedTotal')?.value;
+    const subjectGroup = document.querySelector('input[name="subjectGroup"]:checked')?.value;
+    
+    if (!predictedTotal || !subjectGroup) return;
+    
+    const totalScore = parseFloat(predictedTotal);
+    let academicAbility = 0;
+    
+    if (subjectGroup === '物理组') {
+        // 物理组：750分制
+        academicAbility = (totalScore / 750) * 100;
+    } else if (subjectGroup === '历史组') {
+        // 历史组：750分制
+        academicAbility = (totalScore / 750) * 100;
+    }
+    
+    // 显示计算结果
+    const scoreDisplay = document.querySelector('.score-display');
+    if (scoreDisplay) {
+        scoreDisplay.innerHTML = `
+            <div class="score-label">学术能力评分</div>
+            <div class="score-value">${Math.round(academicAbility)}分</div>
+        `;
+    }
+}
+
+// 计算文体素养
+function calculateArtisticQuality() {
+    let rawScore = 0;
+    
+    // 1. 社团活动（10分）
+    const hasClub = document.querySelector('input[name="hasClub"]:checked')?.value;
+    if (hasClub === '是') {
+        rawScore += 10;
+    }
+    
+    // 2. 持续兴趣（10分）
+    const hasLongTermHobby = document.querySelector('input[name="hasLongTermHobby"]:checked')?.value;
+    if (hasLongTermHobby === '是') {
+        rawScore += 10;
+    }
+    
+    // 3. 才艺（20分）
+    const talents = document.getElementById('talents')?.value;
+    if (talents && talents.trim()) {
+        const talentCount = talents.split('┋').filter(t => t.trim()).length;
+        rawScore += Math.min(talentCount * 5, 20);
+    }
+    
+    // 4. 阅读时间（10分）
+    const readingTime = parseFloat(document.getElementById('readingTime')?.value) || 0;
+    if (readingTime >= 2) {
+        rawScore += 10;
+    } else if (readingTime >= 1) {
+        rawScore += 5;
+    }
+    
+    // 转换为100分制
+    const artisticQuality = Math.round((rawScore / 50) * 100);
+    
+    // 显示计算结果
+    const scoreDisplay = document.querySelector('.score-display');
+    if (scoreDisplay) {
+        scoreDisplay.innerHTML = `
+            <div class="score-label">文体素养评分</div>
+            <div class="score-value">${artisticQuality}分</div>
+        `;
+    }
+}
+
+// 计算社交能力
+function calculateSocialAbility() {
+    let rawScore = 0;
+    
+    // 1. 社团活动（10分）
+    const hasClub = document.querySelector('input[name="hasClub"]:checked')?.value;
+    if (hasClub === '是') {
+        rawScore += 10;
+    }
+    
+    // 2. 朋友数量（10分）
+    const friendsCount = document.querySelector('input[name="friendsCount"]:checked')?.value;
+    if (friendsCount === '5个以上') {
+        rawScore += 10;
+    } else if (friendsCount === '3-5个') {
+        rawScore += 6;
+    } else if (friendsCount === '1-3个') {
+        rawScore += 3;
+    }
+    
+    // 3. 整理频率（10分）
+    const organizationFrequency = document.querySelector('input[name="organizationFrequency"]:checked')?.value;
+    if (organizationFrequency === '每天至少一次') {
+        rawScore += 10;
+    } else if (organizationFrequency === '每周至少一次') {
+        rawScore += 6;
+    } else if (organizationFrequency === '每月至少一次') {
+        rawScore += 3;
+    }
+    
+    // 4. 国外经历（10-20分）
+    const internationalExperience = document.querySelector('input[name="internationalExperience"]:checked')?.value;
+    if (internationalExperience === '一年以上') {
+        rawScore += 20;
+    } else if (internationalExperience === '一年以内') {
+        rawScore += 15;
+    } else if (internationalExperience === '6个月以内') {
+        rawScore += 10;
+    } else if (internationalExperience === '一个月以内') {
+        rawScore += 5;
+    }
+    
+    // 5. 夏令营经历（10分）
+    const campExperience = document.querySelector('input[name="campExperience"]:checked')?.value;
+    if (campExperience === '是') {
+        rawScore += 10;
+    }
+    
+    // 6. 料理水平（0-20分）
+    const canCook = document.getElementById('canCook')?.value;
+    if (canCook && canCook.includes('会采购并处理')) {
+        rawScore += 20;
+    } else if (canCook && canCook.includes('明火炉灶加热预制食物')) {
+        rawScore += 15;
+    } else if (canCook && canCook.includes('微波炉')) {
+        rawScore += 10;
+    }
+    
+    // 转换为100分制
+    const socialAbility = Math.round((rawScore / 80) * 100);
+    
+    // 显示计算结果
+    const scoreDisplay = document.querySelector('.score-display');
+    if (scoreDisplay) {
+        scoreDisplay.innerHTML = `
+            <div class="score-label">生活能力评分</div>
+            <div class="score-value">${socialAbility}分</div>
+        `;
+    }
+}
+
+// 键盘导航
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowRight' || e.key === 'Enter') {
+        e.preventDefault();
+        nextQuestion();
+    } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        previousQuestion();
+    }
+});
+
+// 自动保存功能
+function autoSave() {
+    const formData = collectFormData();
+    localStorage.setItem('surveyAutoSave', JSON.stringify({
+        data: formData,
+        currentQuestion: currentQuestion,
+        timestamp: new Date().toISOString()
+    }));
+}
+
+// 恢复自动保存的数据
+function restoreAutoSave() {
+    const saved = localStorage.getItem('surveyAutoSave');
+    if (saved) {
+        try {
+            const { data, currentQuestion: savedQuestion } = JSON.parse(saved);
+            
+            // 恢复表单数据
+            Object.keys(data).forEach(key => {
+                if (Array.isArray(data[key])) {
+                    // 处理复选框数组
+                    data[key].forEach(value => {
+                        const checkbox = document.querySelector(`input[name="${key}"][value="${value}"]`);
+                        if (checkbox) checkbox.checked = true;
+                    });
+                } else {
+                    // 处理单选和文本输入
+                    const input = document.querySelector(`input[name="${key}"][value="${data[key]}"]`) || 
+                                 document.getElementById(key);
+                    if (input) {
+                        if (input.type === 'radio') {
+                            input.checked = true;
+                        } else {
+                            input.value = data[key];
+                        }
+                    }
+                }
+            });
+            
+            // 询问是否恢复进度
+            if (confirm('检测到未完成的问卷，是否继续？')) {
+                showQuestion(savedQuestion);
+            }
+        } catch (e) {
+            console.error('恢复自动保存数据失败:', e);
+        }
+    }
+}
+
+// 页面加载时尝试恢复数据
+document.addEventListener('DOMContentLoaded', function() {
+    restoreAutoSave();
+    
+    // 定期自动保存
+    setInterval(autoSave, 30000); // 每30秒自动保存一次
+});
+
+// 页面卸载时保存数据
+window.addEventListener('beforeunload', function() {
+    autoSave();
+});
+
+// 回到顶部功能
+function scrollToTop() {
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+}
+
+// 处理条件显示
+function handleConditionalDisplay(input) {
+    const name = input.name;
+    const value = input.value;
+    
+    // 第9题：仅当第8题选"是"时显示
+    if (name === 'academicLevelPass') {
+        const question9 = document.getElementById('question-9');
+        if (question9) {
+            question9.style.display = value === '是' ? 'block' : 'none';
+        }
+    }
+    
+    // 第11题：仅当第10题选"是"时显示
+    if (name === 'hasTutoring') {
+        const question11 = document.getElementById('question-11');
+        if (question11) {
+            question11.style.display = value === '是' ? 'block' : 'none';
+        }
+    }
+    
+    // 第14题：仅当第13题选择"暂无"之外的选项时显示
+    if (name === 'englishTestType') {
+        const question14 = document.getElementById('question-14');
+        if (question14) {
+            question14.style.display = value !== '暂无' ? 'block' : 'none';
+        }
+    }
+    
+    // 第18题：仅当第17题选"是"时显示
+    if (name === 'hasClub') {
+        const question18 = document.getElementById('question-18');
+        if (question18) {
+            question18.style.display = value === '是' ? 'block' : 'none';
+        }
+    }
+    
+    // 第20题：仅当第19题选"是"时显示
+    if (name === 'hasLongTermHobby') {
+        const question20 = document.getElementById('question-20');
+        if (question20) {
+            question20.style.display = value === '是' ? 'block' : 'none';
+        }
+    }
+}

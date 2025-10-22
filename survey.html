@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>留学潜力评估问卷</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .survey-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f8fafc;
+            min-height: 100vh;
+        }
+        
+        .survey-form {
+            max-height: none;
+            overflow: visible;
+        }
+        
+        .survey-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .survey-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+        
+        .survey-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+        
+        .survey-progress {
+            background: rgba(255,255,255,0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        .progress-bar {
+            background: rgba(255,255,255,0.3);
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            background: white;
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-text {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .question-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+            display: block;
+        }
+        
+        .question-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f1f5f9;
+        }
+        
+        .question-number {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-right: 20px;
+            flex-shrink: 0;
+        }
+        
+        .question-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2d3748;
+            flex: 1;
+        }
+        
+        .question-content {
+            margin-left: 60px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            font-weight: 500;
+            color: #4a5568;
+            margin-bottom: 8px;
+        }
+        
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f8fafc;
+        }
+        
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .checkbox-item:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+        
+        .checkbox-item input[type="checkbox"] {
+            margin-right: 10px;
+            transform: scale(1.2);
+        }
+        
+        .checkbox-item input[type="checkbox"]:checked + label {
+            color: #667eea;
+            font-weight: 500;
+        }
+        
+        .checkbox-item:has(input:checked) {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+        
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .radio-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .radio-item:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+        
+        .radio-item input[type="radio"] {
+            margin-right: 10px;
+            transform: scale(1.2);
+        }
+        
+        .radio-item input[type="radio"]:checked + label {
+            color: #667eea;
+            font-weight: 500;
+        }
+        
+        .radio-item:has(input:checked) {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+        
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin: 40px 0 20px 0;
+            padding: 15px 0;
+            border-bottom: 3px solid #667eea;
+            position: relative;
+        }
+        
+        .section-title::before {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+        
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 40px;
+            padding: 20px 0;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .btn-nav {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .btn-prev {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+        
+        .btn-prev:hover {
+            background: #cbd5e0;
+        }
+        
+        .btn-next {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .btn-next:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-submit {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            color: white;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+        }
+        
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(72, 187, 120, 0.3);
+        }
+        
+        .help-text {
+            font-size: 0.9rem;
+            color: #718096;
+            margin-top: 8px;
+            font-style: italic;
+        }
+        
+        .slider-container {
+            margin: 20px 0;
+        }
+        
+        .slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: #e2e8f0;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+        
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3);
+        }
+        
+        .slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3);
+        }
+        
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: #718096;
+        }
+        
+        #readingTimeValue {
+            font-weight: 600;
+            color: #667eea;
+        }
+        
+        .required {
+            color: #e53e3e;
+        }
+        
+        .score-display {
+            background: #f0f4ff;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            text-align: center;
+        }
+        
+        .score-label {
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        
+        .score-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2d3748;
+        }
+        
+        @media (max-width: 768px) {
+            .survey-container {
+                padding: 10px;
+            }
+            
+            .survey-header {
+                padding: 30px 20px;
+            }
+            
+            .survey-title {
+                font-size: 2rem;
+            }
+            
+            .question-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .question-number {
+                margin-bottom: 15px;
+                margin-right: 0;
+            }
+            
+            .question-content {
+                margin-left: 0;
+            }
+            
+            .checkbox-group {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="survey-container">
+        <div class="survey-header">
+            <h1 class="survey-title">留学潜力评估问卷</h1>
+            <p class="survey-subtitle">Study Abroad Potential Assessment Survey</p>
+            <div class="survey-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-text" id="progressText">已完成 0 题，共 30 题</div>
+            </div>
+        </div>
+        
+        <form id="surveyForm">
+            <!-- 基本信息 -->
+            <div class="section-title">📋 基本信息</div>
+            
+            <div class="question-section" data-question="1">
+                <div class="question-header">
+                    <div class="question-number">1</div>
+                    <div class="question-title">学生姓名</div>
+                </div>
+                <div class="question-content">
+                    <div class="form-group">
+                        <input type="text" id="studentName" name="studentName" class="form-input" placeholder="请输入学生姓名" required>
+                        <div class="help-text">请填写学生的真实姓名</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="question-section" data-question="2">
+                <div class="question-header">
+                    <div class="question-number">2</div>
+                    <div class="question-title">学生性别</div>
+                </div>
+                <div class="question-content">
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" id="gender_male" name="gender" value="男" required>
+                            <label for="gender_male">男</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="gender_female" name="gender" value="女" required>
+                            <label for="gender_female">女</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="question-section" data-question="3">
+                <div class="question-header">
+                    <div class="question-number">3</div>
+                    <div class="question-title">所在年级</div>
+                </div>
+                <div class="question-content">
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" id="grade_1" name="grade" value="高一" required>
+                            <label for="grade_1">高一</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="grade_2" name="grade" value="高二" required>
+                            <label for="grade_2">高二</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="grade_3" name="grade" value="高三" required>
+                            <label for="grade_3">高三</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="question-section" data-question="4">
+                <div class="question-header">
+                    <div class="question-number">4</div>
+                    <div class="question-title">学生所在的学校名称</div>
+                </div>
+                <div class="question-content">
+                    <div class="form-group">
+                        <input type="text" id="school" name="school" class="form-input" placeholder="请输入学校名称" required>
+                        <div class="help-text">请填写学生当前就读的学校全称</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="question-section" data-question="5">
+                <div class="question-header">
+                    <div class="question-number">5</div>
+                    <div class="question-title">学生的学科分组（或意向分组）是？</div>
+                </div>
+                <div class="question-content">
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" id="subject_physics" name="subjectGroup" value="物理组" required>
+                            <label for="subject_physics">物理组</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="subject_history" name="subjectGroup" value="历史组" required>
+                            <label for="subject_history">历史组</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 学业成绩 -->
+            <div class="section-title">📚 学业成绩</div>
+            
+            <div class="question-section" data-question="6">
+                <div class="question-header">
+                    <div class="question-number">6</div>
+                    <div class="question-title">请填写最后一次联考或期末考试成绩</div>
+                </div>
+                <div class="question-content">
+                    <div class="form-group">
+                        <label class="form-label">语文</label>
+                        <input type="number" id="currentChinese" name="currentChinese" class="form-input" min="0" max="150" placeholder="0-150分">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">数学</label>
+                        <input type="number" id="currentMath" name="currentMath" class="form-input" min="0" max="150" placeholder="0-150分">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">英语</label>
+                        <input type="number" id="currentEnglish" name="currentEnglish" class="form-input" min="0" max="150" placeholder="0-150分">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">物理</label>
+                        <input type="number" id="currentPhysics" name="currentPhysics" class="form-input" min="0" max="100" placeholder="0-100分">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">生物</label>
+                        <input type="number" id="currentBiology" name="currentBiology" class="form-input" min="0" max="100" placeholder="0-100分">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">化学</label>
+                        <input type="number" id="currentChemistry" name="currentChemistry" class="form-input" min="0" max="100" placeholder="0-100分">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">历史</label>
+                        <input type="number" id="currentHistory" name="currentHistory" class="form-input" min="0" max="100" placeholder="0-100分">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">政治</label>
+                        <input type="number" id="currentPolitics" name="currentPolitics" class="form-input" min="0" max="100" placeholder="0-100分">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">地理</label>
+                        <input type="number" id="currentGeography" name="currentGeography" class="form-input" min="0" max="100" placeholder="0-100分">
+                    </div>
+                    <div class="help-text">如无相关科目成绩，则输入0</div>
+                </div>
+            </div>
+            
+            <div class="question-section" data-question="7">
+                <div class="question-header">
+                    <div class="question-number">7</div>
+                    <div class="question-title">请填写预计的高考成绩</div>
+                </div>
+                <div class="question-content">
+                    <div class="form-group">
+                        <label class="form-label">语文</label>
+                        <input type="number" id="predictedChinese" name="predictedChinese" class="form-input" min="0" max="150" placeholder="0-150分">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">数学</label>
+                        <input type="number" id="predictedMath" name="predictedMath" class="form-input" min="0" max="150" placeholder="0-150分">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">英语</label>
+                        <input type="number" id="predictedEnglish" name="predictedEnglish" class="form-input" min="0" max="150" placeholder="0-150分">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">物理</label>
+                        <input type="number" id="predictedPhysics" name="predictedPhysics" class="form-input" min="0" max="100" placeholder="0-100分">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">生物</label>
+                        <input type="number" id="predictedBiology" name="predictedBiology" class="form-input" min="0" max="100" placeholder="0-100分">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">化学</label>
+                        <input type="number" id="predictedChemistry" name="predictedChemistry" class="form-input" min="0" max="100" placeholder="0-100分">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">历史</label>
+                        <input type="number" id="predictedHistory" name="predictedHistory" class="form-input" min="0" max="100" placeholder="0-100分">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">政治</label>
+                        <input type="number" id="predictedPolitics" name="predictedPolitics" class="form-input" min="0" max="100" placeholder="0-100分">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">地理</label>
+                        <input type="number" id="predictedGeography" name="predictedGeography" class="form-input" min="0" max="100" placeholder="0-100分">
+                    </div>
+                    <div class="help-text">如无相关科目成绩，则输入0</div>
+                </div>
+            </div>
+            
+            <div class="question-section" data-question="8">
+                <div class="question-header">
+                    <div class="question-number">8</div>
+                    <div class="question-title">是否通过学业水平考试</div>
+                </div>
+                <div class="question-content">
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" id="academicLevelPass_yes" name="academicLevelPass" value="是" required>
+                            <label for="academicLevelPass_yes">是</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="academicLevelPass_no" name="academicLevelPass" value="否" required>
+                            <label for="academicLevelPass_no">否</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="question-section" data-question="9" id="question-9" style="display: none;">
+                <div class="question-header">
+                    <div class="question-number">9</div>
+                    <div class="question-title">请填写学业水平成绩</div>
+                </div>
+                <div class="question-content">
+                    <div class="form-group">
+                        <label class="form-label">科目1(科目)</label>
+                        <input type="text" id="academicSubject1" name="academicSubject1" class="form-input" placeholder="请输入科目名称">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">科目1(分数)</label>
+                        <input type="number" id="academicScore1" name="academicScore1" class="form-input" min="0" max="100" placeholder="0-100分">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">科目2(科目)</label>
+                        <input type="text" id="academicSubject2" name="academicSubject2" class="form-input" placeholder="请输入科目名称">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">科目2(分数)</label>
+                        <input type="number" id="academicScore2" name="academicScore2" class="form-input" min="0" max="100" placeholder="0-100分">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">科目3(科目)</label>
+                        <input type="text" id="academicSubject3" name="academicSubject3" class="form-input" placeholder="请输入科目名称">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">科目3(分数)</label>
+                        <input type="number" id="academicScore3" name="academicScore3" class="form-input" min="0" max="100" placeholder="0-100分">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="question-section" data-question="10">
+                <div class="question-header">
+                    <div class="question-number">10</div>
+                    <div class="question-title">是否有进行学科补习</div>
+                </div>
+                <div class="question-content">
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" id="hasTutoring_yes" name="hasTutoring" value="是" required>
+                            <label for="hasTutoring_yes">是</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="hasTutoring_no" name="hasTutoring" value="否" required>
+                            <label for="hasTutoring_no">否</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="question-section" data-question="11" id="question-11" style="display: none;">
+                <div class="question-header">
+                    <div class="question-number">11</div>
+                    <div class="question-title">请选择有补过或正在补习的科目</div>
+                </div>
+                <div class="question-content">
+                    <div class="form-group">
+                        <input type="text" id="tutoringSubjects" name="tutoringSubjects" class="form-input" placeholder="多个科目请用逗号分隔，如：数学,英语,物理">
+                        <div class="help-text">多个科目请用逗号分隔</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 专业倾向与留学意向 -->
+            <div class="section-title">🎯 专业倾向与留学意向</div>
+            
+            <div class="question-section" data-question="12">
+                <div class="question-header">
+                    <div class="question-number">12</div>
+                    <div class="question-title">请选择学生大学倾向就读的专业方向</div>
+                </div>
+                <div class="question-content">
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="major_building" name="majorPreference" value="建筑">
+                            <label for="major_building">🏗️ 建筑</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="major_science" name="majorPreference" value="理科">
+                            <label for="major_science">🔬 理科</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="major_engineering" name="majorPreference" value="工科">
+                            <label for="major_engineering">⚙️ 工科</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="major_business" name="majorPreference" value="商科">
+                            <label for="major_business">💼 商科</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="major_liberal" name="majorPreference" value="文科">
+                            <label for="major_liberal">📚 文科</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="major_medical" name="majorPreference" value="医护">
+                            <label for="major_medical">🏥 医护</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="major_music" name="majorPreference" value="音乐">
+                            <label for="major_music">🎵 音乐</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="major_art" name="majorPreference" value="美术">
+                            <label for="major_art">🎨 美术</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="major_other" name="majorPreference" value="其他">
+                            <label for="major_other">📋 其他</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="question-section" data-question="13">
+                <div class="question-header">
+                    <div class="question-number">13</div>
+                    <div class="question-title">请选择学生目前已有成绩的国际英语考试</div>
+                </div>
+                <div class="question-content">
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" id="englishTestType_ielts" name="englishTestType" value="雅思" required>
+                            <label for="englishTestType_ielts">雅思 (IELTS)</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="englishTestType_toefl" name="englishTestType" value="托福" required>
+                            <label for="englishTestType_toefl">托福 (TOEFL)</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="englishTestType_pte" name="englishTestType" value="PTE" required>
+                            <label for="englishTestType_pte">PTE</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="englishTestType_duolingo" name="englishTestType" value="多邻国" required>
+                            <label for="englishTestType_duolingo">多邻国 (Duolingo)</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="englishTestType_none" name="englishTestType" value="暂无" required>
+                            <label for="englishTestType_none">暂无</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="question-section" data-question="14" id="question-14" style="display: none;">
+                <div class="question-header">
+                    <div class="question-number">14</div>
+                    <div class="question-title">请填写其中一项国际英语考试的成绩</div>
+                </div>
+                <div class="question-content">
+                    <div class="form-group">
+                        <label class="form-label">总分</label>
+                        <input type="text" id="englishTotalScore" name="englishTotalScore" class="form-input" placeholder="请输入总分">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">听力</label>
+                        <input type="text" id="englishListening" name="englishListening" class="form-input" placeholder="请输入听力成绩">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">阅读</label>
+                        <input type="text" id="englishReading" name="englishReading" class="form-input" placeholder="请输入阅读成绩">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">口语</label>
+                        <input type="text" id="englishSpeaking" name="englishSpeaking" class="form-input" placeholder="请输入口语成绩">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">写作</label>
+                        <input type="text" id="englishWriting" name="englishWriting" class="form-input" placeholder="请输入写作成绩">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="question-section" data-question="15">
+                <div class="question-header">
+                    <div class="question-number">15</div>
+                    <div class="question-title">请选择学生有留学意愿的国家或地区</div>
+                </div>
+                <div class="question-content">
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="destination_usa" name="studyDestination" value="美国">
+                            <label for="destination_usa">🇺🇸 美国</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="destination_uk" name="studyDestination" value="英国">
+                            <label for="destination_uk">🇬🇧 英国</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="destination_australia" name="studyDestination" value="澳大利亚">
+                            <label for="destination_australia">🇦🇺 澳大利亚</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="destination_hongkong" name="studyDestination" value="中国香港">
+                            <label for="destination_hongkong">🇭🇰 中国香港</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="destination_macao" name="studyDestination" value="中国澳门">
+                            <label for="destination_macao">🇲🇴 中国澳门</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="destination_singapore" name="studyDestination" value="新加坡">
+                            <label for="destination_singapore">🇸🇬 新加坡</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="destination_malaysia" name="studyDestination" value="马来西亚">
+                            <label for="destination_malaysia">🇲🇾 马来西亚</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="destination_canada" name="studyDestination" value="加拿大">
+                            <label for="destination_canada">🇨🇦 加拿大</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="destination_netherlands" name="studyDestination" value="荷兰">
+                            <label for="destination_netherlands">🇳🇱 荷兰</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="destination_newzealand" name="studyDestination" value="新西兰">
+                            <label for="destination_newzealand">🇳🇿 新西兰</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="question-section" data-question="16">
+                <div class="question-header">
+                    <div class="question-number">16</div>
+                    <div class="question-title">预期留学投入费用（含学费和生活费）</div>
+                </div>
+                <div class="question-content">
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" id="budget_80" name="budget" value="80万以内" required>
+                            <label for="budget_80">80万以内</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="budget_100" name="budget" value="100万以内" required>
+                            <label for="budget_100">100万以内</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="budget_120" name="budget" value="120万以内" required>
+                            <label for="budget_120">120万以内</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="budget_150" name="budget" value="150万以内" required>
+                            <label for="budget_150">150万以内</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="budget_200" name="budget" value="200万以内" required>
+                            <label for="budget_200">200万以内</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="budget_200plus" name="budget" value="200万以上" required>
+                            <label for="budget_200plus">200万以上</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 课外活动与个人素养 -->
+            <div class="section-title">🌟 课外活动与个人素养</div>
+            
+            <div class="question-section" data-question="17">
+                <div class="question-header">
+                    <div class="question-number">17</div>
+                    <div class="question-title">学生是否有在学校参加社团？</div>
+                </div>
+                <div class="question-content">
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" id="hasClub_yes" name="hasClub" value="是" required>
+                            <label for="hasClub_yes">是</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="hasClub_no" name="hasClub" value="否" required>
+                            <label for="hasClub_no">否</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="question-section" data-question="18" id="question-18" style="display: none;">
+                <div class="question-header">
+                    <div class="question-number">18</div>
+                    <div class="question-title">请填写学生参加的社团</div>
+                </div>
+                <div class="question-content">
+                    <div class="form-group">
+                        <input type="text" id="clubActivities" name="clubActivities" class="form-input" placeholder="多个社团请用逗号分隔">
+                        <div class="help-text">多个社团请用逗号分隔</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="question-section" data-question="19">
+                <div class="question-header">
+                    <div class="question-number">19</div>
+                    <div class="question-title">学生是否有一项持续3年以上的兴趣爱好？</div>
+                </div>
+                <div class="question-content">
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" id="hasLongTermHobby_yes" name="hasLongTermHobby" value="是" required>
+                            <label for="hasLongTermHobby_yes">是</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="hasLongTermHobby_no" name="hasLongTermHobby" value="否" required>
+                            <label for="hasLongTermHobby_no">否</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="question-section" data-question="20" id="question-20" style="display: none;">
+                <div class="question-header">
+                    <div class="question-number">20</div>
+                    <div class="question-title">请填写学生持续3年以上的兴趣或爱好</div>
+                </div>
+                <div class="question-content">
+                    <div class="form-group">
+                        <input type="text" id="hobbies" name="hobbies" class="form-input" placeholder="多个爱好请用逗号分隔">
+                        <div class="help-text">多个爱好请用逗号分隔</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="question-section" data-question="21">
+                <div class="question-header">
+                    <div class="question-number">21</div>
+                    <div class="question-title">除了同学，学生在外有多少个经常来往的朋友？</div>
+                </div>
+                <div class="question-content">
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" id="friendsCount_none" name="friendsCount" value="没有" required>
+                            <label for="friendsCount_none">没有</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="friendsCount_1_3" name="friendsCount" value="1-3个" required>
+                            <label for="friendsCount_1_3">1-3个</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="friendsCount_3_5" name="friendsCount" value="3-5个" required>
+                            <label for="friendsCount_3_5">3-5个</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="friendsCount_5plus" name="friendsCount" value="5个以上" required>
+                            <label for="friendsCount_5plus">5个以上</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="question-section" data-question="22">
+                <div class="question-header">
+                    <div class="question-number">22</div>
+                    <div class="question-title">学生是否有持续学习3年以上音乐、舞蹈、体育、艺术等各方面的才艺？</div>
+                </div>
+                <div class="question-content">
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="talent_music" name="talents" value="音乐">
+                            <label for="talent_music">🎵 音乐</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="talent_dance" name="talents" value="舞蹈">
+                            <label for="talent_dance">💃 舞蹈</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="talent_sports" name="talents" value="体育">
+                            <label for="talent_sports">⚽ 体育</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="talent_art" name="talents" value="艺术">
+                            <label for="talent_art">🎨 艺术</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="talent_other" name="talents" value="其他">
+                            <label for="talent_other">📋 其他</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="talent_none" name="talents" value="没有正在学习的才艺">
+                            <label for="talent_none">❌ 没有正在学习的才艺</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="question-section" data-question="23">
+                <div class="question-header">
+                    <div class="question-number">23</div>
+                    <div class="question-title">请填写学生有在才艺相关的领域获得的证书、资质或奖项？</div>
+                </div>
+                <div class="question-content">
+                    <div class="form-group">
+                        <input type="text" id="certificates" name="certificates" class="form-input" placeholder="多个证书请用逗号分隔">
+                        <div class="help-text">多个证书请用逗号分隔</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="question-section" data-question="24">
+                <div class="question-header">
+                    <div class="question-number">24</div>
+                    <div class="question-title">学生多久会整理一次自己的生活与工作空间？</div>
+                </div>
+                <div class="question-content">
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" id="organizationFrequency_daily" name="organizationFrequency" value="每天至少一次" required>
+                            <label for="organizationFrequency_daily">每天至少一次</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="organizationFrequency_weekly" name="organizationFrequency" value="每周至少一次" required>
+                            <label for="organizationFrequency_weekly">每周至少一次</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="organizationFrequency_monthly" name="organizationFrequency" value="每月至少一次" required>
+                            <label for="organizationFrequency_monthly">每月至少一次</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="organizationFrequency_yearly" name="organizationFrequency" value="半年至少一次" required>
+                            <label for="organizationFrequency_yearly">半年至少一次</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="organizationFrequency_never" name="organizationFrequency" value="从不整理" required>
+                            <label for="organizationFrequency_never">从不整理</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="question-section" data-question="25">
+                <div class="question-header">
+                    <div class="question-number">25</div>
+                    <div class="question-title">学生在生活中遇到困难时会选择如何应对？</div>
+                </div>
+                <div class="question-content">
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" id="askForHelp_self" name="askForHelp" value="大部分情况下会自己积极面对" required>
+                            <label for="askForHelp_self">大部分情况下会自己积极面对</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="askForHelp_mixed" name="askForHelp" value="有时会自己面对，有时会依赖家长" required>
+                            <label for="askForHelp_mixed">有时会自己面对，有时会依赖家长</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="askForHelp_parents" name="askForHelp" value="基本上会依赖家长帮忙" required>
+                            <label for="askForHelp_parents">基本上会依赖家长帮忙</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="question-section" data-question="26">
+                <div class="question-header">
+                    <div class="question-number">26</div>
+                    <div class="question-title">在学习中遇到阻碍时，学生会面对并坚持解决吗？</div>
+                </div>
+                <div class="question-content">
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" id="studyPersistence_always" name="studyPersistence" value="坚持面对直至解决问题" required>
+                            <label for="studyPersistence_always">坚持面对直至解决问题</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="studyPersistence_mostly" name="studyPersistence" value="大部分时间会坚持面对" required>
+                            <label for="studyPersistence_mostly">大部分时间会坚持面对</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="studyPersistence_sometimes" name="studyPersistence" value="有时会坚持面对" required>
+                            <label for="studyPersistence_sometimes">有时会坚持面对</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="studyPersistence_avoid" name="studyPersistence" value="大多数情况会选择绕开或者放弃" required>
+                            <label for="studyPersistence_avoid">大多数情况会选择绕开或者放弃</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="question-section" data-question="27">
+                <div class="question-header">
+                    <div class="question-number">27</div>
+                    <div class="question-title">学生自小学之后有多长时间的国外生活经历？</div>
+                </div>
+                <div class="question-content">
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" id="internationalExperience_never" name="internationalExperience" value="从来没有" required>
+                            <label for="internationalExperience_never">从来没有</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="internationalExperience_1month" name="internationalExperience" value="1个月以内" required>
+                            <label for="internationalExperience_1month">1个月以内</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="internationalExperience_6months" name="internationalExperience" value="6个月以内" required>
+                            <label for="internationalExperience_6months">6个月以内</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="internationalExperience_6months_1year" name="internationalExperience" value="6个月以上到1年以内" required>
+                            <label for="internationalExperience_6months_1year">6个月以上到1年以内</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="internationalExperience_1yearplus" name="internationalExperience" value="1年以上" required>
+                            <label for="internationalExperience_1yearplus">1年以上</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="question-section" data-question="28">
+                <div class="question-header">
+                    <div class="question-number">28</div>
+                    <div class="question-title">学生自初中之后是否有参加过任何类型的夏令营/冬令营？</div>
+                </div>
+                <div class="question-content">
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" id="campExperience_yes" name="campExperience" value="是" required>
+                            <label for="campExperience_yes">是</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="campExperience_no" name="campExperience" value="否" required>
+                            <label for="campExperience_no">否</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="question-section" data-question="29">
+                <div class="question-header">
+                    <div class="question-number">29</div>
+                    <div class="question-title">学生的做饭水平符合以下哪个描述？</div>
+                </div>
+                <div class="question-content">
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" id="canCook_none" name="canCook" value="完全不会做饭" required>
+                            <label for="canCook_none">完全不会做饭</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="canCook_microwave" name="canCook" value="会使用微波炉、空气炸锅加热预制食品" required>
+                            <label for="canCook_microwave">会使用微波炉、空气炸锅加热预制食品</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="canCook_stove" name="canCook" value="能使用明火炉灶加热预制食品" required>
+                            <label for="canCook_stove">能使用明火炉灶加热预制食品</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="canCook_fresh" name="canCook" value="能使用明火炉灶，会采购并处理生鲜食材" required>
+                            <label for="canCook_fresh">能使用明火炉灶，会采购并处理生鲜食材</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="question-section" data-question="30">
+                <div class="question-header">
+                    <div class="question-number">30</div>
+                    <div class="question-title">学生平均每天花多少小时进行课外阅读？</div>
+                </div>
+                <div class="question-content">
+                    <div class="form-group">
+                        <div class="slider-container">
+                            <input type="range" id="readingTime" name="readingTime" class="slider" min="0" max="16" step="1" value="0">
+                            <div class="slider-labels">
+                                <span>0小时</span>
+                                <span id="readingTimeValue">0小时</span>
+                                <span>8小时</span>
+                            </div>
+                        </div>
+                        <div class="help-text">拖动滑块选择阅读时间（0-8小时，0.5小时为1格）</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="navigation-buttons">
+                <button type="button" class="btn-nav btn-secondary-homepage" onclick="scrollToTop()">回到顶部</button>
+                <button type="submit" class="btn-nav btn-submit" id="submitBtn">提交问卷</button>
+            </div>
+        </form>
+    </div>
+    
+    <script src="scripts/survey.js"></script>
+</body>
+</html>

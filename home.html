@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>留学潜力评估系统</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .homepage-container {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .homepage-content {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 60px;
+            max-width: 800px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .homepage-header {
+            margin-bottom: 40px;
+        }
+        
+        .homepage-title {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .homepage-subtitle {
+            font-size: 1.2rem;
+            color: #718096;
+            margin-bottom: 10px;
+        }
+        
+        .homepage-description {
+            font-size: 1rem;
+            color: #a0aec0;
+            line-height: 1.6;
+            margin-bottom: 40px;
+        }
+        
+        .feature-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .feature-card {
+            background: #f7fafc;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: left;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: #667eea;
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.15);
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+        
+        .feature-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 15px;
+        }
+        
+        .feature-description {
+            color: #718096;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .feature-actions {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .btn-homepage {
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+        
+        .btn-primary-homepage {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .btn-primary-homepage:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-secondary-homepage {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+        
+        .btn-secondary-homepage:hover {
+            background: #cbd5e0;
+            transform: translateY(-2px);
+        }
+        
+        .stats-section {
+            background: #f7fafc;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 40px 0;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 30px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            color: #718096;
+            font-size: 0.9rem;
+        }
+        
+        .footer-info {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid #e2e8f0;
+            color: #a0aec0;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .homepage-content {
+                padding: 40px 30px;
+            }
+            
+            .homepage-title {
+                font-size: 2.2rem;
+            }
+            
+            .feature-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="homepage-container">
+        <div class="homepage-content">
+            <div class="homepage-header">
+                <h1 class="homepage-title">留学潜力评估系统</h1>
+                <p class="homepage-subtitle">Study Abroad Potential Assessment System</p>
+                <p class="homepage-description">
+                    基于科学评估的个性化留学规划工具，帮助学生全面了解自己的留学潜力，
+                    获得专业的院校推荐和提升建议。
+                </p>
+            </div>
+            
+            <div class="feature-cards">
+                <div class="feature-card">
+                    <span class="feature-icon">📋</span>
+                    <h3 class="feature-title">在线问卷调查</h3>
+                    <p class="feature-description">
+                        专业的留学潜力评估问卷，涵盖学术能力、语言水平、个人素养等30个维度，
+                        全面了解学生的留学准备情况。
+                    </p>
+                    <div class="feature-actions">
+                        <a href="survey.html" class="btn-homepage btn-primary-homepage">开始问卷</a>
+                        <a href="index.html#input-tab" class="btn-homepage btn-secondary-homepage">手动录入</a>
+                    </div>
+                </div>
+                
+                <div class="feature-card">
+                    <span class="feature-icon">⚙️</span>
+                    <h3 class="feature-title">管理后台</h3>
+                    <p class="feature-description">
+                        专业的后台管理系统，支持自定义评估标准、院校推荐、
+                        报告内容，满足不同机构的使用需求。
+                    </p>
+                    <div class="feature-actions">
+                        <a href="index.html#admin-tab" class="btn-homepage btn-primary-homepage">进入后台</a>
+                        <a href="index.html#excel-tab" class="btn-homepage btn-secondary-homepage">Excel导入</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="stats-section">
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-number">30+</div>
+                        <div class="stat-label">评估维度</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">200+</div>
+                        <div class="stat-label">全球院校</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">4</div>
+                        <div class="stat-label">能力维度</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">100%</div>
+                        <div class="stat-label">离线可用</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-info">
+                <p>© 2024 留学潜力评估系统 - 专业留学规划工具</p>
+                <p>技术支持：未名教育 | 数据来源：QS世界大学排名</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

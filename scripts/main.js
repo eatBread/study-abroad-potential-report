@@ -89,7 +89,43 @@ function getExcelValue(rowData, headerKey) {
         console.warn(`未找到表头映射: ${headerKey}`);
         return '';
     }
-    return rowData[headerName] || '';
+    
+    // 预处理：去除表头的前后空格
+    const trimmedHeaderName = headerName.trim();
+    
+    // 尝试多种匹配方式
+    let value = rowData[headerName] || rowData[trimmedHeaderName];
+    
+    // 如果还是找不到，尝试模糊匹配（去除所有空格）
+    if (value === undefined || value === null || value === '') {
+        const normalizedHeaderName = headerName.replace(/\s+/g, '');
+        const matchingKey = Object.keys(rowData).find(key => 
+            key.replace(/\s+/g, '') === normalizedHeaderName
+        );
+        if (matchingKey) {
+            value = rowData[matchingKey];
+            console.log(`模糊匹配成功: "${headerName}" -> "${matchingKey}"`);
+        }
+    }
+    
+    // 为英语总分字段添加特殊调试
+    if (headerKey === 'englishTotalScore') {
+        console.log(`getExcelValue调试 - ${headerKey}:`, {
+            'headerKey': headerKey,
+            'headerName': headerName,
+            'trimmedHeaderName': trimmedHeaderName,
+            'rowData中是否有原始键': headerName in rowData,
+            'rowData中是否有trimmed键': trimmedHeaderName in rowData,
+            'rowData中所有键': Object.keys(rowData),
+            '匹配的键': Object.keys(rowData).find(key => key === headerName),
+            'trimmed匹配的键': Object.keys(rowData).find(key => key === trimmedHeaderName),
+            '最终值': value,
+            '值的类型': typeof value,
+            '是否为空': value === '' || value === null || value === undefined
+        });
+    }
+    
+    return value || '';
 }
 
 // 四维能力评价数据库
@@ -571,6 +607,8 @@ function saveAdminSettings() {
             reach: [
                 {
                     name: safeGetValue('reach1Name'),
+                    englishName: safeGetValue('reach1EnglishName'),
+                    majorDirection: safeGetValue('reach1MajorDirection'),
                     major: safeGetValue('reach1Major'),
                     location: safeGetValue('reach1Location'),
                     logo: safeGetValue('reach1Logo'),
@@ -578,6 +616,8 @@ function saveAdminSettings() {
                 },
                 {
                     name: safeGetValue('reach2Name'),
+                    englishName: safeGetValue('reach2EnglishName'),
+                    majorDirection: safeGetValue('reach2MajorDirection'),
                     major: safeGetValue('reach2Major'),
                     location: safeGetValue('reach2Location'),
                     logo: safeGetValue('reach2Logo'),
@@ -587,6 +627,8 @@ function saveAdminSettings() {
             match: [
                 {
                     name: safeGetValue('match1Name'),
+                    englishName: safeGetValue('match1EnglishName'),
+                    majorDirection: safeGetValue('match1MajorDirection'),
                     major: safeGetValue('match1Major'),
                     location: safeGetValue('match1Location'),
                     logo: safeGetValue('match1Logo'),
@@ -594,6 +636,8 @@ function saveAdminSettings() {
                 },
                 {
                     name: safeGetValue('match2Name'),
+                    englishName: safeGetValue('match2EnglishName'),
+                    majorDirection: safeGetValue('match2MajorDirection'),
                     major: safeGetValue('match2Major'),
                     location: safeGetValue('match2Location'),
                     logo: safeGetValue('match2Logo'),
@@ -603,6 +647,8 @@ function saveAdminSettings() {
             safety: [
                 {
                     name: safeGetValue('safety1Name'),
+                    englishName: safeGetValue('safety1EnglishName'),
+                    majorDirection: safeGetValue('safety1MajorDirection'),
                     major: safeGetValue('safety1Major'),
                     location: safeGetValue('safety1Location'),
                     logo: safeGetValue('safety1Logo'),
@@ -610,6 +656,8 @@ function saveAdminSettings() {
                 },
                 {
                     name: safeGetValue('safety2Name'),
+                    englishName: safeGetValue('safety2EnglishName'),
+                    majorDirection: safeGetValue('safety2MajorDirection'),
                     major: safeGetValue('safety2Major'),
                     location: safeGetValue('safety2Location'),
                     logo: safeGetValue('safety2Logo'),
@@ -706,12 +754,16 @@ function loadAdminSettings() {
             // 冲刺院校
             if (adminSettings.universities.reach && adminSettings.universities.reach.length >= 2) {
                 safeSetValue('reach1Name', adminSettings.universities.reach[0].name);
+                safeSetValue('reach1EnglishName', adminSettings.universities.reach[0].englishName);
+                safeSetValue('reach1MajorDirection', adminSettings.universities.reach[0].majorDirection);
                 safeSetValue('reach1Major', adminSettings.universities.reach[0].major);
                 safeSetValue('reach1Location', adminSettings.universities.reach[0].location);
                 safeSetValue('reach1Logo', adminSettings.universities.reach[0].logo);
                 safeSetValue('reach1Reason', adminSettings.universities.reach[0].reason);
                 
                 safeSetValue('reach2Name', adminSettings.universities.reach[1].name);
+                safeSetValue('reach2EnglishName', adminSettings.universities.reach[1].englishName);
+                safeSetValue('reach2MajorDirection', adminSettings.universities.reach[1].majorDirection);
                 safeSetValue('reach2Major', adminSettings.universities.reach[1].major);
                 safeSetValue('reach2Location', adminSettings.universities.reach[1].location);
                 safeSetValue('reach2Logo', adminSettings.universities.reach[1].logo);
@@ -721,12 +773,16 @@ function loadAdminSettings() {
             // 稳妥院校
             if (adminSettings.universities.match && adminSettings.universities.match.length >= 2) {
                 safeSetValue('match1Name', adminSettings.universities.match[0].name);
+                safeSetValue('match1EnglishName', adminSettings.universities.match[0].englishName);
+                safeSetValue('match1MajorDirection', adminSettings.universities.match[0].majorDirection);
                 safeSetValue('match1Major', adminSettings.universities.match[0].major);
                 safeSetValue('match1Location', adminSettings.universities.match[0].location);
                 safeSetValue('match1Logo', adminSettings.universities.match[0].logo);
                 safeSetValue('match1Reason', adminSettings.universities.match[0].reason);
                 
                 safeSetValue('match2Name', adminSettings.universities.match[1].name);
+                safeSetValue('match2EnglishName', adminSettings.universities.match[1].englishName);
+                safeSetValue('match2MajorDirection', adminSettings.universities.match[1].majorDirection);
                 safeSetValue('match2Major', adminSettings.universities.match[1].major);
                 safeSetValue('match2Location', adminSettings.universities.match[1].location);
                 safeSetValue('match2Logo', adminSettings.universities.match[1].logo);
@@ -736,12 +792,16 @@ function loadAdminSettings() {
             // 保底院校
             if (adminSettings.universities.safety && adminSettings.universities.safety.length >= 2) {
                 safeSetValue('safety1Name', adminSettings.universities.safety[0].name);
+                safeSetValue('safety1EnglishName', adminSettings.universities.safety[0].englishName);
+                safeSetValue('safety1MajorDirection', adminSettings.universities.safety[0].majorDirection);
                 safeSetValue('safety1Major', adminSettings.universities.safety[0].major);
                 safeSetValue('safety1Location', adminSettings.universities.safety[0].location);
                 safeSetValue('safety1Logo', adminSettings.universities.safety[0].logo);
                 safeSetValue('safety1Reason', adminSettings.universities.safety[0].reason);
                 
                 safeSetValue('safety2Name', adminSettings.universities.safety[1].name);
+                safeSetValue('safety2EnglishName', adminSettings.universities.safety[1].englishName);
+                safeSetValue('safety2MajorDirection', adminSettings.universities.safety[1].majorDirection);
                 safeSetValue('safety2Major', adminSettings.universities.safety[1].major);
                 safeSetValue('safety2Location', adminSettings.universities.safety[1].location);
                 safeSetValue('safety2Logo', adminSettings.universities.safety[1].logo);
@@ -1222,6 +1282,12 @@ function fillStudentFormFromExcel(rowIndex = 0) {
         'englishTotalScore', 'englishListening', 'englishSpeaking', 'englishReading', 'englishWriting'
     ];
     
+    console.log('英语成绩字段映射检查:');
+    englishScoreFields.forEach(fieldName => {
+        const headerMapping = EXCEL_HEADER_MAPPING[fieldName];
+        console.log(`${fieldName} -> "${headerMapping}"`);
+    });
+    
     const englishTestTypeField = document.getElementById('englishTestType');
     if (englishTestTypeField) {
         const testType = getExcelValue(rowData, 'englishTestType');
@@ -1247,10 +1313,41 @@ function fillStudentFormFromExcel(rowIndex = 0) {
         }
     }
     
+    console.log('=== 英语考试数据读取调试 ===');
+    console.log('rowData的所有键:', Object.keys(rowData));
+    console.log('查找包含"总分"的键:', Object.keys(rowData).filter(key => key.includes('总分')));
+    console.log('查找包含"英语"的键:', Object.keys(rowData).filter(key => key.includes('英语')));
+    console.log('查找包含"考试"的键:', Object.keys(rowData).filter(key => key.includes('考试')));
+    
+    console.log('原始rowData中的英语相关字段:', {
+        '请填写其中一项国际英语考试的成绩—总分': rowData['请填写其中一项国际英语考试的成绩—总分'],
+        '听力': rowData['听力'],
+        '口语': rowData['口语'],
+        '阅读': rowData['阅读'],
+        '写作': rowData['写作']
+    });
+    
+    // 检查所有可能的总分字段
+    const possibleTotalKeys = Object.keys(rowData).filter(key => 
+        key.includes('总分') || key.includes('英语') || key.includes('考试')
+    );
+    console.log('可能的总分相关字段:', possibleTotalKeys.map(key => ({
+        key: key,
+        value: rowData[key],
+        type: typeof rowData[key]
+    })));
+    
     englishScoreFields.forEach(fieldName => {
         const field = document.getElementById(fieldName);
         if (field) {
             const score = getExcelValue(rowData, fieldName);
+            console.log(`英语成绩字段 ${fieldName}:`, {
+                '字段名': fieldName,
+                '映射的表头': EXCEL_HEADER_MAPPING[fieldName],
+                '读取到的值': score,
+                '值的类型': typeof score,
+                '是否为空': score === '' || score === null || score === undefined
+            });
             if (score === '（跳过）') {
                 field.value = '';
             } else {
@@ -1258,6 +1355,8 @@ function fillStudentFormFromExcel(rowIndex = 0) {
             }
         }
     });
+    
+    console.log('=== 英语考试数据读取调试结束 ===');
     
     // 填充留学意向（多选，用"┋"分隔）
     const studyDestinationData = getExcelValue(rowData, 'studyDestination');
@@ -1420,6 +1519,10 @@ function convertExcelToStudentData(rowData) {
         majorPreference: getExcelValue(rowData, 'majorPreference'),
         englishTestType: getExcelValue(rowData, 'englishTestType'),
         englishScore: getExcelValue(rowData, 'englishTotalScore'),
+        englishListening: getExcelValue(rowData, 'englishListening'),
+        englishSpeaking: getExcelValue(rowData, 'englishSpeaking'),
+        englishReading: getExcelValue(rowData, 'englishReading'),
+        englishWriting: getExcelValue(rowData, 'englishWriting'),
         budget: getExcelValue(rowData, 'budget'),
         hasClub: getExcelValue(rowData, 'hasClub'),
         clubActivities: getExcelValue(rowData, 'clubActivities'),
@@ -2003,8 +2106,192 @@ function setTalents(talents) {
     calculateSocialAbility();
 }
 
+// 检查是否有问卷数据需要导入
+function checkSurveyData() {
+    const surveyData = localStorage.getItem('surveyData');
+    if (surveyData) {
+        try {
+            const data = JSON.parse(surveyData);
+            fillFormFromSurveyData(data);
+            // 清除问卷数据，避免重复导入
+            localStorage.removeItem('surveyData');
+        } catch (e) {
+            console.error('导入问卷数据失败:', e);
+        }
+    }
+}
+
+// 从问卷数据填充表单
+function fillFormFromSurveyData(data) {
+    console.log('开始导入问卷数据:', data);
+    
+    // 基本信息
+    if (data.studentName) document.getElementById('studentName').value = data.studentName;
+    if (data.gender) {
+        const genderSelect = document.getElementById('gender');
+        if (genderSelect) {
+            genderSelect.value = data.gender;
+            console.log('设置性别:', data.gender);
+        } else {
+            console.error('未找到性别选择框');
+        }
+    }
+    if (data.grade) {
+        const gradeSelect = document.getElementById('grade');
+        if (gradeSelect) {
+            gradeSelect.value = data.grade;
+            console.log('设置年级:', data.grade);
+        } else {
+            console.error('未找到年级选择框');
+        }
+    }
+    if (data.school) document.getElementById('school').value = data.school;
+    if (data.subjectGroup) {
+        const subjectSelect = document.getElementById('subjectGroup');
+        if (subjectSelect) {
+            subjectSelect.value = data.subjectGroup;
+            console.log('设置学科分组:', data.subjectGroup);
+        } else {
+            console.error('未找到学科分组选择框');
+        }
+    }
+    
+    // 学业成绩
+    if (data.currentChinese) document.getElementById('currentChinese').value = data.currentChinese;
+    if (data.currentMath) document.getElementById('currentMath').value = data.currentMath;
+    if (data.currentEnglish) document.getElementById('currentEnglish').value = data.currentEnglish;
+    if (data.currentPhysics) document.getElementById('currentPhysics').value = data.currentPhysics;
+    if (data.currentBiology) document.getElementById('currentBiology').value = data.currentBiology;
+    if (data.currentChemistry) document.getElementById('currentChemistry').value = data.currentChemistry;
+    if (data.currentHistory) document.getElementById('currentHistory').value = data.currentHistory;
+    if (data.currentPolitics) document.getElementById('currentPolitics').value = data.currentPolitics;
+    if (data.currentGeography) document.getElementById('currentGeography').value = data.currentGeography;
+    
+    if (data.predictedChinese) document.getElementById('predictedChinese').value = data.predictedChinese;
+    if (data.predictedMath) document.getElementById('predictedMath').value = data.predictedMath;
+    if (data.predictedEnglish) document.getElementById('predictedEnglish').value = data.predictedEnglish;
+    if (data.predictedPhysics) document.getElementById('predictedPhysics').value = data.predictedPhysics;
+    if (data.predictedBiology) document.getElementById('predictedBiology').value = data.predictedBiology;
+    if (data.predictedChemistry) document.getElementById('predictedChemistry').value = data.predictedChemistry;
+    if (data.predictedHistory) document.getElementById('predictedHistory').value = data.predictedHistory;
+    if (data.predictedPolitics) document.getElementById('predictedPolitics').value = data.predictedPolitics;
+    if (data.predictedGeography) document.getElementById('predictedGeography').value = data.predictedGeography;
+    
+    // 学业水平考试
+    if (data.academicLevelPass) {
+        const academicSelect = document.getElementById('academicLevelPass');
+        if (academicSelect) academicSelect.value = data.academicLevelPass;
+    }
+    if (data.academicSubject1) document.getElementById('academicSubject1').value = data.academicSubject1;
+    if (data.academicScore1) document.getElementById('academicScore1').value = data.academicScore1;
+    if (data.academicSubject2) document.getElementById('academicSubject2').value = data.academicSubject2;
+    if (data.academicScore2) document.getElementById('academicScore2').value = data.academicScore2;
+    if (data.academicSubject3) document.getElementById('academicSubject3').value = data.academicSubject3;
+    if (data.academicScore3) document.getElementById('academicScore3').value = data.academicScore3;
+    
+    // 补习情况
+    if (data.hasTutoring) {
+        const tutoringSelect = document.getElementById('hasTutoring');
+        if (tutoringSelect) tutoringSelect.value = data.hasTutoring;
+    }
+    if (data.tutoringSubjects) document.getElementById('tutoringSubjects').value = data.tutoringSubjects;
+    
+    // 专业倾向
+    if (data.majorPreference && Array.isArray(data.majorPreference)) {
+        data.majorPreference.forEach(preference => {
+            const checkbox = document.querySelector(`input[name="majorPreference"][value="${preference}"]`);
+            if (checkbox) checkbox.checked = true;
+        });
+    }
+    
+    // 英语成绩
+    if (data.englishTestType) {
+        const englishSelect = document.getElementById('englishTestType');
+        if (englishSelect) englishSelect.value = data.englishTestType;
+    }
+    if (data.englishTotalScore) document.getElementById('englishTotalScore').value = data.englishTotalScore;
+    if (data.englishListening) document.getElementById('englishListening').value = data.englishListening;
+    if (data.englishReading) document.getElementById('englishReading').value = data.englishReading;
+    if (data.englishSpeaking) document.getElementById('englishSpeaking').value = data.englishSpeaking;
+    if (data.englishWriting) document.getElementById('englishWriting').value = data.englishWriting;
+    
+    // 留学意向
+    if (data.studyDestination && Array.isArray(data.studyDestination)) {
+        data.studyDestination.forEach(destination => {
+            const checkbox = document.querySelector(`input[name="studyDestination"][value="${destination}"]`);
+            if (checkbox) checkbox.checked = true;
+        });
+    }
+    if (data.budget) {
+        const budgetSelect = document.getElementById('budget');
+        if (budgetSelect) budgetSelect.value = data.budget;
+    }
+    
+    // 社团和兴趣
+    if (data.hasClub) {
+        const clubSelect = document.getElementById('hasClub');
+        if (clubSelect) clubSelect.value = data.hasClub;
+    }
+    if (data.clubActivities) document.getElementById('clubActivities').value = data.clubActivities;
+    if (data.hasLongTermHobby) {
+        const hobbySelect = document.getElementById('hasLongTermHobby');
+        if (hobbySelect) hobbySelect.value = data.hasLongTermHobby;
+    }
+    if (data.hobbies) document.getElementById('hobbies').value = data.hobbies;
+    if (data.friendsCount) {
+        const friendsSelect = document.getElementById('friendsCount');
+        if (friendsSelect) friendsSelect.value = data.friendsCount;
+    }
+    
+    // 才艺相关 - 处理多选数据
+    if (data.talents) {
+        const talentsInput = document.getElementById('talents');
+        if (talentsInput) {
+            // 如果数据包含┋分隔符，直接使用；否则尝试处理
+            if (data.talents.includes('┋')) {
+                talentsInput.value = data.talents;
+            } else {
+                talentsInput.value = data.talents;
+            }
+            console.log('设置才艺:', data.talents);
+        } else {
+            console.error('未找到才艺输入框');
+        }
+    }
+    if (data.certificates) document.getElementById('certificates').value = data.certificates;
+    if (data.organizationFrequency) {
+        const orgSelect = document.getElementById('organizationFrequency');
+        if (orgSelect) orgSelect.value = data.organizationFrequency;
+    }
+    
+    // 其他评估维度
+    if (data.askForHelp) document.getElementById('askForHelp').value = data.askForHelp;
+    if (data.studyPersistence) document.getElementById('studyPersistence').value = data.studyPersistence;
+    if (data.internationalExperience) {
+        const intlSelect = document.getElementById('internationalExperience');
+        if (intlSelect) intlSelect.value = data.internationalExperience;
+    }
+    if (data.campExperience) {
+        const campSelect = document.getElementById('campExperience');
+        if (campSelect) campSelect.value = data.campExperience;
+    }
+    if (data.canCook) document.getElementById('canCook').value = data.canCook;
+    if (data.readingTime) document.getElementById('readingTime').value = data.readingTime;
+    
+    // 重新计算各项分数
+    calculateAcademicAbility();
+    calculateLanguageAbility();
+    calculateArtisticQuality();
+    calculateSocialAbility();
+    
+    // 显示成功提示
+    alert('问卷数据已成功导入！');
+}
+
 // 文件选择事件处理
 document.addEventListener('DOMContentLoaded', function() {
+    // 检查并导入问卷数据
+    checkSurveyData();
     const fileInput = document.getElementById('xlsxFile');
     if (fileInput) {
         fileInput.addEventListener('change', function(e) {
@@ -2234,6 +2521,7 @@ function selectUniversity(university) {
     
     // 更新表单字段
     document.getElementById(currentUniversityField + 'Name').value = university.chineseName;
+    document.getElementById(currentUniversityField + 'EnglishName').value = university.name;
     document.getElementById(currentUniversityField + 'Location').value = university.country;
     document.getElementById(currentUniversityField + 'Logo').value = university.logo;
     
