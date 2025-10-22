@@ -83,6 +83,7 @@ const QS_TOP_UNIVERSITIES = [
     { rank: 79, name: "University of Glasgow", chineseName: "格拉斯哥大学", country: "英国", logo: "image/global-universities/University_of_Glasgow.png" },
     { rank: 80, name: "Heidelberg University", chineseName: "海德堡大学", country: "德国", logo: "image/global-universities/Heidelberg_University.png" },
     { rank: 81, name: "University of Washington", chineseName: "华盛顿大学", country: "美国", logo: "image/global-universities/University_of_Washington.png" },
+    { rank: 82, name: "The University of Adelaide", chineseName: "阿德莱德大学", country: "澳大利亚", logo: "image/global-universities/The_University_of_Adelaide.png" },
     { rank: 82, name: "Pennsylvania State University", chineseName: "宾夕法尼亚州立大学", country: "美国", logo: "image/global-universities/Pennsylvania_State_University.png" },
     { rank: 84, name: "Universidad de Buenos Aires", chineseName: "布宜诺斯艾利斯大学", country: "阿根廷", logo: "" },
     { rank: 85, name: "Tokyo Institute of Technology", chineseName: "东京工业大学", country: "日本", logo: "image/global-universities/Tokyo_Institute_of_Technology.png" },
