@@ -345,6 +345,21 @@
             color: #e53e3e;
         }
         
+        .form-input:disabled {
+            background-color: #f7fafc;
+            color: #a0aec0;
+            cursor: not-allowed;
+            border-color: #e2e8f0;
+        }
+        
+        .form-input:disabled::placeholder {
+            color: #cbd5e0;
+        }
+        
+        .disabled-field {
+            opacity: 0.6;
+        }
+        
         .score-display {
             background: #f0f4ff;
             border: 2px solid #667eea;
@@ -571,8 +586,9 @@
                         <input type="number" id="predictedEnglish" name="predictedEnglish" class="form-input" min="0" max="150" placeholder="0-150分">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">物理</label>
+                        <label class="form-label">物理 <span class="required" id="physicsRequired" style="display: none;">*</span></label>
                         <input type="number" id="predictedPhysics" name="predictedPhysics" class="form-input" min="0" max="100" placeholder="0-100分">
+                        <div class="help-text" id="physicsHelp" style="display: none;">物理组必填</div>
                     </div>
                     <div class="form-group">
                         <label class="form-label">生物</label>
@@ -583,8 +599,9 @@
                         <input type="number" id="predictedChemistry" name="predictedChemistry" class="form-input" min="0" max="100" placeholder="0-100分">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">历史</label>
+                        <label class="form-label">历史 <span class="required" id="historyRequired" style="display: none;">*</span></label>
                         <input type="number" id="predictedHistory" name="predictedHistory" class="form-input" min="0" max="100" placeholder="0-100分">
+                        <div class="help-text" id="historyHelp" style="display: none;">历史组必填</div>
                     </div>
                     <div class="form-group">
                         <label class="form-label">政治</label>

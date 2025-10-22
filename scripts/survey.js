@@ -259,7 +259,10 @@ function collectFormData() {
     // 处理文本输入
     const textInputs = form.querySelectorAll('input[type="text"], input[type="number"], textarea');
     textInputs.forEach(input => {
-        if (input.value.trim()) {
+        if (input.disabled) {
+            // 禁用的字段设为0
+            data[input.name] = '0';
+        } else if (input.value.trim()) {
             data[input.name] = input.value.trim();
         }
     });
@@ -589,5 +592,70 @@ function handleConditionalDisplay(input) {
         if (question20) {
             question20.style.display = value === '是' ? 'block' : 'none';
         }
+    }
+    
+    // 第6题：根据第5题的学科分组控制物理/历史成绩的必填和禁用
+    if (name === 'subjectGroup') {
+        handleSubjectGroupChange(value);
+    }
+}
+
+// 处理学科分组变化
+function handleSubjectGroupChange(subjectGroup) {
+    const physicsInput = document.getElementById('predictedPhysics');
+    const historyInput = document.getElementById('predictedHistory');
+    const physicsRequired = document.getElementById('physicsRequired');
+    const historyRequired = document.getElementById('historyRequired');
+    const physicsHelp = document.getElementById('physicsHelp');
+    const historyHelp = document.getElementById('historyHelp');
+    
+    if (subjectGroup === '物理组') {
+        // 物理组：物理必填，历史禁用
+        if (physicsInput) {
+            physicsInput.required = true;
+            physicsInput.disabled = false;
+            physicsInput.value = physicsInput.value || '';
+        }
+        if (historyInput) {
+            historyInput.required = false;
+            historyInput.disabled = true;
+            historyInput.value = '0'; // 禁用时设为0
+        }
+        if (physicsRequired) physicsRequired.style.display = 'inline';
+        if (historyRequired) historyRequired.style.display = 'none';
+        if (physicsHelp) physicsHelp.style.display = 'block';
+        if (historyHelp) historyHelp.style.display = 'none';
+        
+    } else if (subjectGroup === '历史组') {
+        // 历史组：历史必填，物理禁用
+        if (physicsInput) {
+            physicsInput.required = false;
+            physicsInput.disabled = true;
+            physicsInput.value = '0'; // 禁用时设为0
+        }
+        if (historyInput) {
+            historyInput.required = true;
+            historyInput.disabled = false;
+            historyInput.value = historyInput.value || '';
+        }
+        if (physicsRequired) physicsRequired.style.display = 'none';
+        if (historyRequired) historyRequired.style.display = 'inline';
+        if (physicsHelp) physicsHelp.style.display = 'none';
+        if (historyHelp) historyHelp.style.display = 'block';
+        
+    } else {
+        // 未选择：都设为可选
+        if (physicsInput) {
+            physicsInput.required = false;
+            physicsInput.disabled = false;
+        }
+        if (historyInput) {
+            historyInput.required = false;
+            historyInput.disabled = false;
+        }
+        if (physicsRequired) physicsRequired.style.display = 'none';
+        if (historyRequired) historyRequired.style.display = 'none';
+        if (physicsHelp) physicsHelp.style.display = 'none';
+        if (historyHelp) historyHelp.style.display = 'none';
     }
 }
