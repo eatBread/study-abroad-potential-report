@@ -8,6 +8,8 @@ document.addEventListener('DOMContentLoaded', function() {
     updateProgress();
     // 显示所有问题
     showAllQuestions();
+    // 显示机构信息
+    displayInstitutionInfo();
 });
 
 // 初始化问卷
@@ -277,6 +279,11 @@ function collectFormData() {
     if (data.talents && Array.isArray(data.talents)) {
         data.talents = data.talents.join('┋');
     }
+    
+    // 添加机构信息
+    data.institutionCode = localStorage.getItem('institutionCode') || '';
+    data.surveyStartTime = localStorage.getItem('surveyStartTime') || '';
+    data.surveyEndTime = new Date().toISOString();
     
     return data;
 }
@@ -657,5 +664,28 @@ function handleSubjectGroupChange(subjectGroup) {
         if (historyRequired) historyRequired.style.display = 'none';
         if (physicsHelp) physicsHelp.style.display = 'none';
         if (historyHelp) historyHelp.style.display = 'none';
+    }
+}
+
+// 显示机构信息
+function displayInstitutionInfo() {
+    const institutionCode = localStorage.getItem('institutionCode');
+    const studentName = localStorage.getItem('studentName');
+    
+    if (institutionCode && studentName) {
+        // 显示机构信息
+        document.getElementById('institutionCodeDisplay').textContent = institutionCode;
+        document.getElementById('studentNameDisplay').textContent = studentName;
+        document.getElementById('surveyInfo').style.display = 'flex';
+        
+        // 如果学生姓名已填写，自动填入第1题
+        const nameInput = document.getElementById('studentName');
+        if (nameInput && !nameInput.value) {
+            nameInput.value = studentName;
+        }
+    } else {
+        // 如果没有机构信息，显示提示并跳转回首页
+        alert('请先输入机构码和学生姓名');
+        window.location.href = 'home.html';
     }
 }

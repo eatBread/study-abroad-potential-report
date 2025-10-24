@@ -169,6 +169,129 @@
             font-size: 0.9rem;
         }
         
+        /* 机构码输入模态框样式 */
+        .institution-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+        }
+        
+        .institution-modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 40px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            text-align: center;
+            position: relative;
+        }
+        
+        .institution-modal-header {
+            margin-bottom: 30px;
+        }
+        
+        .institution-modal-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+        
+        .institution-modal-subtitle {
+            color: #718096;
+            font-size: 1rem;
+        }
+        
+        .institution-form {
+            margin-bottom: 30px;
+        }
+        
+        .institution-input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        .institution-label {
+            display: block;
+            font-weight: 500;
+            color: #4a5568;
+            margin-bottom: 8px;
+        }
+        
+        .institution-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+            box-sizing: border-box;
+        }
+        
+        .institution-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .institution-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+        
+        .btn-institution {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+        
+        .btn-institution-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .btn-institution-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-institution-secondary {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+        
+        .btn-institution-secondary:hover {
+            background: #cbd5e0;
+            transform: translateY(-2px);
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 1.5rem;
+            color: #a0aec0;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        
+        .close-modal:hover {
+            color: #4a5568;
+        }
+        
         @media (max-width: 768px) {
             .homepage-content {
                 padding: 40px 30px;
@@ -180,6 +303,15 @@
             
             .feature-cards {
                 grid-template-columns: 1fr;
+            }
+            
+            .institution-modal-content {
+                margin: 20% auto;
+                padding: 30px 20px;
+            }
+            
+            .institution-actions {
+                flex-direction: column;
             }
         }
     </style>
@@ -205,8 +337,8 @@
                         全面了解学生的留学准备情况。
                     </p>
                     <div class="feature-actions">
-                        <a href="survey.html" class="btn-homepage btn-primary-homepage">开始问卷</a>
-                        <a href="index.html#input-tab" class="btn-homepage btn-secondary-homepage">手动录入</a>
+                        <button onclick="showInstitutionModal()" class="btn-homepage btn-primary-homepage">开始问卷</button>
+                        <a href="admin.html#input-tab" class="btn-homepage btn-secondary-homepage">手动录入</a>
                     </div>
                 </div>
                 
@@ -218,8 +350,8 @@
                         报告内容，满足不同机构的使用需求。
                     </p>
                     <div class="feature-actions">
-                        <a href="index.html#admin-tab" class="btn-homepage btn-primary-homepage">进入后台</a>
-                        <a href="index.html#excel-tab" class="btn-homepage btn-secondary-homepage">Excel导入</a>
+                        <a href="admin.html" class="btn-homepage btn-primary-homepage">进入后台</a>
+                        <a href="admin.html#excel-tab" class="btn-homepage btn-secondary-homepage">Excel导入</a>
                     </div>
                 </div>
             </div>
@@ -251,5 +383,94 @@
             </div>
         </div>
     </div>
+    
+    <!-- 机构码输入模态框 -->
+    <div id="institutionModal" class="institution-modal">
+        <div class="institution-modal-content">
+            <span class="close-modal" onclick="closeInstitutionModal()">&times;</span>
+            <div class="institution-modal-header">
+                <h2 class="institution-modal-title">机构验证</h2>
+                <p class="institution-modal-subtitle">请输入您的机构码以开始问卷</p>
+            </div>
+            <form class="institution-form" onsubmit="handleInstitutionSubmit(event)">
+                <div class="institution-input-group">
+                    <label for="institutionCode" class="institution-label">机构码</label>
+                    <input 
+                        type="text" 
+                        id="institutionCode" 
+                        name="institutionCode" 
+                        class="institution-input" 
+                        placeholder="请输入机构码"
+                        required
+                    >
+                </div>
+                <div class="institution-input-group">
+                    <label for="studentName" class="institution-label">学生姓名</label>
+                    <input 
+                        type="text" 
+                        id="studentName" 
+                        name="studentName" 
+                        class="institution-input" 
+                        placeholder="请输入学生姓名"
+                        required
+                    >
+                </div>
+                <div class="institution-actions">
+                    <button type="submit" class="btn-institution btn-institution-primary">开始问卷</button>
+                    <button type="button" class="btn-institution btn-institution-secondary" onclick="closeInstitutionModal()">取消</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        // 显示机构码输入模态框
+        function showInstitutionModal() {
+            document.getElementById('institutionModal').style.display = 'block';
+            document.body.style.overflow = 'hidden'; // 防止背景滚动
+        }
+        
+        // 关闭机构码输入模态框
+        function closeInstitutionModal() {
+            document.getElementById('institutionModal').style.display = 'none';
+            document.body.style.overflow = 'auto'; // 恢复滚动
+        }
+        
+        // 处理机构码提交
+        function handleInstitutionSubmit(event) {
+            event.preventDefault();
+            
+            const institutionCode = document.getElementById('institutionCode').value.trim();
+            const studentName = document.getElementById('studentName').value.trim();
+            
+            if (!institutionCode || !studentName) {
+                alert('请填写完整信息');
+                return;
+            }
+            
+            // 保存机构码和学生姓名到localStorage
+            localStorage.setItem('institutionCode', institutionCode);
+            localStorage.setItem('studentName', studentName);
+            localStorage.setItem('surveyStartTime', new Date().toISOString());
+            
+            // 跳转到问卷页面
+            window.location.href = 'survey.html';
+        }
+        
+        // 点击模态框外部关闭
+        window.onclick = function(event) {
+            const modal = document.getElementById('institutionModal');
+            if (event.target === modal) {
+                closeInstitutionModal();
+            }
+        }
+        
+        // ESC键关闭模态框
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeInstitutionModal();
+            }
+        });
+    </script>
 </body>
 </html>

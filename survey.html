@@ -68,6 +68,35 @@
             opacity: 0.9;
         }
         
+        .survey-info {
+            background: rgba(255,255,255,0.15);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .info-label {
+            font-weight: 500;
+            opacity: 0.9;
+        }
+        
+        .info-value {
+            font-weight: 600;
+            background: rgba(255,255,255,0.2);
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+        
         .question-section {
             background: white;
             border-radius: 15px;
@@ -419,6 +448,16 @@
         <div class="survey-header">
             <h1 class="survey-title">留学潜力评估问卷</h1>
             <p class="survey-subtitle">Study Abroad Potential Assessment Survey</p>
+            <div class="survey-info" id="surveyInfo" style="display: none;">
+                <div class="info-item">
+                    <span class="info-label">机构码：</span>
+                    <span class="info-value" id="institutionCodeDisplay"></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">学生姓名：</span>
+                    <span class="info-value" id="studentNameDisplay"></span>
+                </div>
+            </div>
             <div class="survey-progress">
                 <div class="progress-bar">
                     <div class="progress-fill" id="progressFill"></div>

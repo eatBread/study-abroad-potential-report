@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>留学潜力报告生成系统 - 管理后台</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- 添加xlsx库 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <div class="header-text">
+                    <h1>留学潜力报告生成系统</h1>
+                    <p>基于科学评估的个性化留学规划报告</p>
+                </div>
+                <div class="header-actions">
+                    <a href="home.html" class="btn btn-outline">🏠 返回首页</a>
+                    <a href="survey.html" class="btn btn-outline">📋 在线问卷</a>
+                </div>
+            </div>
+        </header>
+
+        <nav class="nav-tabs">
+            <button class="tab-btn active" onclick="showTab('excel')">📊 Excel导入</button>
+            <button class="tab-btn" onclick="showTab('input')">✏️ 学生信息录入</button>
+            <button class="tab-btn" onclick="showTab('admin')">⚙️ 后台管理</button>
+        </nav>
+
+        <main class="main-content">
+            <!-- Excel导入标签页 -->
+            <div id="excel-tab" class="tab-content active">
+                <div class="section">
+                    <h2>📊 Excel数据导入</h2>
+                    <p>支持批量导入学生数据，快速生成多份报告</p>
+                    
+                    <div class="upload-area" id="uploadArea">
+                        <div class="upload-content">
+                            <div class="upload-icon">📁</div>
+                            <h3>拖拽Excel文件到此处</h3>
+                            <p>或点击选择文件</p>
+                            <input type="file" id="excelFile" accept=".xlsx,.xls" style="display: none;">
+                            <button class="btn btn-primary" onclick="document.getElementById('excelFile').click()">选择文件</button>
+                        </div>
+                    </div>
+                    
+                    <div class="import-options">
+                        <h3>导入选项</h3>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="autoGenerate" checked>
+                                自动生成报告
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="saveToLocal" checked>
+                                保存到本地存储
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 学生信息录入标签页 -->
+            <div id="input-tab" class="tab-content">
+                <div class="section">
+                    <h2>✏️ 学生信息录入</h2>
+                    <p>手动录入学生信息，生成个性化留学潜力报告</p>
+                    
+                    <form id="studentForm" class="form">
+                        <div class="form-section">
+                            <h3>基本信息</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="studentName">学生姓名 *</label>
+                                    <input type="text" id="studentName" name="studentName" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="gender">性别 *</label>
+                                    <select id="gender" name="gender" required>
+                                        <option value="">请选择</option>
+                                        <option value="男">男</option>
+                                        <option value="女">女</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="grade">年级 *</label>
+                                    <select id="grade" name="grade" required>
+                                        <option value="">请选择</option>
+                                        <option value="高一">高一</option>
+                                        <option value="高二">高二</option>
+                                        <option value="高三">高三</option>
+                                        <option value="大一">大一</option>
+                                        <option value="大二">大二</option>
+                                        <option value="大三">大三</option>
+                                        <option value="大四">大四</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="school">学校</label>
+                                    <input type="text" id="school" name="school">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <h3>学术能力</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="subjectGroup">学科分组 *</label>
+                                    <select id="subjectGroup" name="subjectGroup" required onchange="handleSubjectGroupChange(this.value)">
+                                        <option value="">请选择</option>
+                                        <option value="物理组">物理组</option>
+                                        <option value="历史组">历史组</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="predictedTotal">预估总分 *</label>
+                                    <input type="number" id="predictedTotal" name="predictedTotal" min="0" max="750" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="predictedPhysics">物理 <span class="required" id="physicsRequired" style="display: none;">*</span></label>
+                                    <input type="number" id="predictedPhysics" name="predictedPhysics" min="0" max="100" placeholder="0-100分">
+                                    <div class="help-text" id="physicsHelp" style="display: none;">物理组必填</div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="predictedHistory">历史 <span class="required" id="historyRequired" style="display: none;">*</span></label>
+                                    <input type="number" id="predictedHistory" name="predictedHistory" min="0" max="100" placeholder="0-100分">
+                                    <div class="help-text" id="historyHelp" style="display: none;">历史组必填</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <h3>语言能力</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="englishTestType">英语考试类型</label>
+                                    <select id="englishTestType" name="englishTestType">
+                                        <option value="">请选择</option>
+                                        <option value="雅思">雅思</option>
+                                        <option value="托福">托福</option>
+                                        <option value="多邻国">多邻国</option>
+                                        <option value="暂无">暂无</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="englishTotalScore">英语总分</label>
+                                    <input type="number" id="englishTotalScore" name="englishTotalScore" min="0" max="120">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <h3>其他信息</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="budget">留学预算</label>
+                                    <select id="budget" name="budget">
+                                        <option value="">请选择</option>
+                                        <option value="20万以下">20万以下</option>
+                                        <option value="20-40万">20-40万</option>
+                                        <option value="40-60万">40-60万</option>
+                                        <option value="60万以上">60万以上</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="hasClub">是否有社团经历</label>
+                                    <select id="hasClub" name="hasClub">
+                                        <option value="">请选择</option>
+                                        <option value="是">是</option>
+                                        <option value="否">否</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-secondary" onclick="loadSurveyData()">从问卷导入</button>
+                            <button type="submit" class="btn btn-primary">生成报告</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- 后台管理标签页 -->
+            <div id="admin-tab" class="tab-content">
+                <div class="section">
+                    <h2>⚙️ 后台管理</h2>
+                    <p>管理系统设置、数据统计和报告配置</p>
+                    
+                    <div class="admin-grid">
+                        <div class="admin-card">
+                            <h3>📊 数据统计</h3>
+                            <p>查看系统使用情况和数据统计</p>
+                            <button class="btn btn-outline" onclick="showStatistics()">查看统计</button>
+                        </div>
+                        
+                        <div class="admin-card">
+                            <h3>🎯 评估标准</h3>
+                            <p>自定义评估标准和权重设置</p>
+                            <button class="btn btn-outline" onclick="showEvaluationSettings()">设置标准</button>
+                        </div>
+                        
+                        <div class="admin-card">
+                            <h3>🏫 院校管理</h3>
+                            <p>管理推荐院校列表和权重</p>
+                            <button class="btn btn-outline" onclick="showUniversityManagement()">管理院校</button>
+                        </div>
+                        
+                        <div class="admin-card">
+                            <h3>📝 报告模板</h3>
+                            <p>自定义报告内容和模板</p>
+                            <button class="btn btn-outline" onclick="showReportTemplates()">编辑模板</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="scripts/main.js"></script>
+</body>
+</html>
