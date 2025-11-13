@@ -460,6 +460,50 @@ function fillRecommendationPage() {
         }
     }
     
+    // 先保存当前表单数据到 localStorage（确保数据是最新的）
+    const form = document.getElementById('student-form');
+    if (form) {
+        const formData = new FormData(form);
+        const currentStudentData = {};
+        
+        for (let [key, value] of formData.entries()) {
+            currentStudentData[key] = value;
+        }
+        
+        // 处理 checkbox 数据
+        const selectedDestinations = [];
+        document.querySelectorAll('input[name="studyDestination"]:checked').forEach(cb => {
+            selectedDestinations.push(cb.value);
+        });
+        if (selectedDestinations.length > 0) {
+            currentStudentData.studyDestination = selectedDestinations.join('┋');
+        }
+        
+        const selectedMajors = [];
+        document.querySelectorAll('input[name="majorPreference"]:checked').forEach(cb => {
+            selectedMajors.push(cb.value);
+        });
+        if (selectedMajors.length > 0) {
+            currentStudentData.majorPreference = selectedMajors.join('┋');
+        }
+        
+        // 处理才艺字段
+        const talentsField = document.getElementById('talents');
+        if (talentsField && talentsField.value.trim()) {
+            currentStudentData.talents = talentsField.value.trim();
+        }
+        
+        // 保存到 localStorage
+        localStorage.setItem('studentData', JSON.stringify(currentStudentData));
+        console.log('已保存最新学生数据到 localStorage:', currentStudentData);
+    }
+    
+    // 确保当前总分已计算
+    const currentTotalField = document.getElementById('currentTotal');
+    if (currentTotalField && (!currentTotalField.value || currentTotalField.value === '0')) {
+        calculateCurrentTotalScore();
+    }
+    
     // 确保预测总分已计算（如果用户没有手动填写）
     const predictedTotalField = document.getElementById('predictedTotal');
     if (predictedTotalField && (!predictedTotalField.value || predictedTotalField.value === '0')) {
@@ -468,88 +512,97 @@ function fillRecommendationPage() {
         console.log('自动计算预测总分:', predictedTotalField.value);
     }
     
-    // 直接计算四维能力分数（不依赖DOM元素）
-    const academicAbility = calculateAcademicAbilityValue();
-    const languageAbility = calculateLanguageAbilityValue();
-    const artisticQuality = calculateArtisticQualityValue();
-    const socialAbility = calculateSocialAbilityValue();
+    // 确保所有依赖字段都已更新（触发change事件以确保值被正确设置）
+    const subjectGroupField = document.getElementById('subjectGroup');
+    if (subjectGroupField) {
+        subjectGroupField.dispatchEvent(new Event('change', { bubbles: true }));
+    }
     
-    console.log('计算出的能力值:', { 
-        academicAbility, 
-        languageAbility, 
-        artisticQuality, 
-        socialAbility,
-        predictedTotal: predictedTotalField?.value,
-        subjectGroup: document.getElementById('subjectGroup')?.value
-    });
-    
-    // 生成合并的分析内容
-    const academicAnalysis = generateMergedAnalysis('academic', academicAbility);
-    const languageAnalysis = generateMergedAnalysis('language', languageAbility);
-    const artisticAnalysis = generateMergedAnalysis('artistic', artisticQuality);
-    const socialAnalysis = generateMergedAnalysis('social', socialAbility);
-    
-    // 生成综合提升建议（根据四维分析自动生成）
-    // 从描述文本中提取建议部分（兼容新旧格式）
-    const getSuggestionFromEvaluation = (evaluation) => {
-        if (evaluation?.suggestions) {
-            return evaluation.suggestions;
-        }
-        if (evaluation?.description) {
-            // 尝试从描述中提取建议部分（以"建议"开头的内容）
-            const match = evaluation.description.match(/建议[^。]+[。]/g);
-            return match ? match.join(' ') : '';
-        }
-        return '';
-    };
-    
-    const detailedAnalysis = {
-        academic: { suggestions: getSuggestionFromEvaluation(getAbilityEvaluation('academic', academicAbility)) },
-        language: { suggestions: getSuggestionFromEvaluation(getAbilityEvaluation('language', languageAbility)) },
-        artistic: { suggestions: getSuggestionFromEvaluation(getAbilityEvaluation('artistic', artisticQuality)) },
-        social: { suggestions: getSuggestionFromEvaluation(getAbilityEvaluation('social', socialAbility)) }
-    };
-    const overallSuggestions = generateOverallSuggestions(detailedAnalysis);
-    
-    console.log('生成的分析内容:', { academicAnalysis, languageAnalysis, artisticAnalysis, socialAnalysis });
-    console.log('生成的综合建议:', overallSuggestions);
-    
-    // 保存到localStorage，供推荐信息录入页面使用
-    localStorage.setItem('recommendationData', JSON.stringify({
-        academicAbility,
-        languageAbility,
-        artisticQuality,
-        socialAbility,
-        academicAnalysis,
-        languageAnalysis,
-        artisticAnalysis,
-        socialAnalysis,
-        overallSuggestions
-    }));
-    
-    // 跳转到推荐信息录入页面
-    showTab('admin');
-    
-    // 使用多次尝试确保填充成功
-    let attempts = 0;
-    const maxAttempts = 10;
-    
-    const tryFillFields = () => {
-        attempts++;
-        const filled = fillRecommendationFields();
+    // 等待一小段时间确保所有计算完成
+    setTimeout(() => {
+        // 直接计算四维能力分数（从表单读取最新值）
+        const academicAbility = calculateAcademicAbilityValue();
+        const languageAbility = calculateLanguageAbilityValue();
+        const artisticQuality = calculateArtisticQualityValue();
+        const socialAbility = calculateSocialAbilityValue();
         
-        // 如果填充失败且还有尝试次数，继续尝试
-        if (!filled && attempts < maxAttempts) {
-            setTimeout(tryFillFields, 100);
-        } else if (filled) {
-            console.log(`填充成功，尝试了 ${attempts} 次`);
-        } else {
-            console.warn(`填充失败，已尝试 ${attempts} 次`);
-        }
-    };
-    
-    // 延迟后开始尝试填充
-    setTimeout(tryFillFields, 300);
+        console.log('计算出的能力值:', { 
+            academicAbility, 
+            languageAbility, 
+            artisticQuality, 
+            socialAbility,
+            predictedTotal: predictedTotalField?.value,
+            subjectGroup: document.getElementById('subjectGroup')?.value
+        });
+        
+        // 生成合并的分析内容
+        const academicAnalysis = generateMergedAnalysis('academic', academicAbility);
+        const languageAnalysis = generateMergedAnalysis('language', languageAbility);
+        const artisticAnalysis = generateMergedAnalysis('artistic', artisticQuality);
+        const socialAnalysis = generateMergedAnalysis('social', socialAbility);
+        
+        // 生成综合提升建议（根据四维分析自动生成）
+        // 从描述文本中提取建议部分（兼容新旧格式）
+        const getSuggestionFromEvaluation = (evaluation) => {
+            if (evaluation?.suggestions) {
+                return evaluation.suggestions;
+            }
+            if (evaluation?.description) {
+                // 尝试从描述中提取建议部分（以"建议"开头的内容）
+                const match = evaluation.description.match(/建议[^。]+[。]/g);
+                return match ? match.join(' ') : '';
+            }
+            return '';
+        };
+        
+        const detailedAnalysis = {
+            academic: { suggestions: getSuggestionFromEvaluation(getAbilityEvaluation('academic', academicAbility)) },
+            language: { suggestions: getSuggestionFromEvaluation(getAbilityEvaluation('language', languageAbility)) },
+            artistic: { suggestions: getSuggestionFromEvaluation(getAbilityEvaluation('artistic', artisticQuality)) },
+            social: { suggestions: getSuggestionFromEvaluation(getAbilityEvaluation('social', socialAbility)) }
+        };
+        const overallSuggestions = generateOverallSuggestions(detailedAnalysis);
+        
+        console.log('生成的分析内容:', { academicAnalysis, languageAnalysis, artisticAnalysis, socialAnalysis });
+        console.log('生成的综合建议:', overallSuggestions);
+        
+        // 保存到localStorage，供推荐信息录入页面使用
+        localStorage.setItem('recommendationData', JSON.stringify({
+            academicAbility,
+            languageAbility,
+            artisticQuality,
+            socialAbility,
+            academicAnalysis,
+            languageAnalysis,
+            artisticAnalysis,
+            socialAnalysis,
+            overallSuggestions
+        }));
+        
+        // 跳转到推荐信息录入页面
+        showTab('admin');
+        
+        // 使用多次尝试确保填充成功
+        let attempts = 0;
+        const maxAttempts = 10;
+        
+        const tryFillFields = () => {
+            attempts++;
+            const filled = fillRecommendationFields();
+            
+            // 如果填充失败且还有尝试次数，继续尝试
+            if (!filled && attempts < maxAttempts) {
+                setTimeout(tryFillFields, 100);
+            } else if (filled) {
+                console.log(`填充成功，尝试了 ${attempts} 次`);
+            } else {
+                console.warn(`填充失败，已尝试 ${attempts} 次`);
+            }
+        };
+        
+        // 延迟后开始尝试填充
+        setTimeout(tryFillFields, 300);
+    }, 100); // 等待100ms确保所有计算完成
 }
 
 // 生成合并的分析内容（直接返回描述文本）
@@ -1128,30 +1181,93 @@ function generateReportFromAdmin() {
     // 首先保存当前的管理设置
     saveAdminSettings();
     
-    // 检查是否有学生数据
-    const savedStudentData = localStorage.getItem('studentData');
-    if (!savedStudentData) {
-        // 如果没有学生数据，提示用户并切换到学生信息录入页面
-        if (confirm('还没有学生信息数据。是否要切换到"学生信息录入"页面填写学生信息？')) {
-            showTab('input');
+    // 先从表单读取最新的学生数据（而不是从localStorage读取旧数据）
+    const form = document.getElementById('student-form');
+    let studentData = {};
+    
+    if (form) {
+        // 收集表单数据
+        const formData = new FormData(form);
+        
+        for (let [key, value] of formData.entries()) {
+            studentData[key] = value;
         }
-        return;
+        
+        // 处理 checkbox 数据
+        const selectedDestinations = [];
+        document.querySelectorAll('input[name="studyDestination"]:checked').forEach(cb => {
+            selectedDestinations.push(cb.value);
+        });
+        if (selectedDestinations.length > 0) {
+            studentData.studyDestination = selectedDestinations.join('┋');
+        }
+        
+        const selectedMajors = [];
+        document.querySelectorAll('input[name="majorPreference"]:checked').forEach(cb => {
+            selectedMajors.push(cb.value);
+        });
+        if (selectedMajors.length > 0) {
+            studentData.majorPreference = selectedMajors.join('┋');
+        }
+        
+        // 处理才艺字段
+        const talentsField = document.getElementById('talents');
+        if (talentsField && talentsField.value.trim()) {
+            studentData.talents = talentsField.value.trim();
+        }
+        
+        // 验证必填字段
+        const requiredFields = ['studentName', 'gender', 'grade', 'school', 'subjectGroup'];
+        let hasAllRequired = true;
+        for (const field of requiredFields) {
+            if (!studentData[field] || studentData[field].trim() === '') {
+                hasAllRequired = false;
+                break;
+            }
+        }
+        
+        if (!hasAllRequired) {
+            alert('请填写所有必填字段（姓名、性别、年级、学校、学科分组）！');
+            return;
+        }
+        
+        // 保存最新的学生数据到 localStorage
+        localStorage.setItem('studentData', JSON.stringify(studentData));
+        console.log('已从表单读取最新学生数据:', studentData);
+    } else {
+        // 如果表单不存在，尝试从 localStorage 读取
+        const savedStudentData = localStorage.getItem('studentData');
+        if (!savedStudentData) {
+            if (confirm('还没有学生信息数据。是否要切换到"学生信息录入"页面填写学生信息？')) {
+                showTab('input');
+            }
+            return;
+        }
+        try {
+            studentData = JSON.parse(savedStudentData);
+        } catch (error) {
+            console.error('解析学生数据失败:', error);
+            alert('学生数据格式错误，请重新填写学生信息。');
+            return;
+        }
     }
     
-    // 如果有学生数据，直接生成报告
+    // 生成报告
     try {
-        const parsedStudentData = JSON.parse(savedStudentData);
+        // 获取当前的 surveyId（如果存在）
+        const currentSurveyId = localStorage.getItem('currentSurveyId');
         
         // 将数据传递给报告页面
         const reportData = {
-            student: parsedStudentData,
+            student: studentData,
             admin: adminSettings
         };
         
         localStorage.setItem('reportData', JSON.stringify(reportData));
         
-        // 打开报告页面
-        window.open('report.html', '_blank');
+        // 打开报告页面，如果有 surveyId 则通过 URL 参数传递
+        const reportUrl = currentSurveyId ? `report.html?surveyId=${currentSurveyId}` : 'report.html';
+        window.open(reportUrl, '_blank');
     } catch (error) {
         console.error('生成报告失败:', error);
         alert('生成报告失败，请检查数据格式或重新填写学生信息。');
@@ -2472,26 +2588,55 @@ function fillFormFromSurveyData(data) {
         }
     }
     
-    // 学业成绩
-    if (data.currentChinese) document.getElementById('currentChinese').value = data.currentChinese;
-    if (data.currentMath) document.getElementById('currentMath').value = data.currentMath;
-    if (data.currentEnglish) document.getElementById('currentEnglish').value = data.currentEnglish;
-    if (data.currentPhysics) document.getElementById('currentPhysics').value = data.currentPhysics;
-    if (data.currentBiology) document.getElementById('currentBiology').value = data.currentBiology;
-    if (data.currentChemistry) document.getElementById('currentChemistry').value = data.currentChemistry;
-    if (data.currentHistory) document.getElementById('currentHistory').value = data.currentHistory;
-    if (data.currentPolitics) document.getElementById('currentPolitics').value = data.currentPolitics;
-    if (data.currentGeography) document.getElementById('currentGeography').value = data.currentGeography;
+    // 学业成绩（只填充数据中存在的字段，不存在的字段保持为空）
+    const currentScoreFields = {
+        'currentChinese': 'currentChinese',
+        'currentMath': 'currentMath',
+        'currentEnglish': 'currentEnglish',
+        'currentPhysics': 'currentPhysics',
+        'currentBiology': 'currentBiology',
+        'currentChemistry': 'currentChemistry',
+        'currentHistory': 'currentHistory',
+        'currentGeography': 'currentGeography',
+        'currentPolitics': 'currentPolitics'
+    };
     
-    if (data.predictedChinese) document.getElementById('predictedChinese').value = data.predictedChinese;
-    if (data.predictedMath) document.getElementById('predictedMath').value = data.predictedMath;
-    if (data.predictedEnglish) document.getElementById('predictedEnglish').value = data.predictedEnglish;
-    if (data.predictedPhysics) document.getElementById('predictedPhysics').value = data.predictedPhysics;
-    if (data.predictedBiology) document.getElementById('predictedBiology').value = data.predictedBiology;
-    if (data.predictedChemistry) document.getElementById('predictedChemistry').value = data.predictedChemistry;
-    if (data.predictedHistory) document.getElementById('predictedHistory').value = data.predictedHistory;
-    if (data.predictedPolitics) document.getElementById('predictedPolitics').value = data.predictedPolitics;
-    if (data.predictedGeography) document.getElementById('predictedGeography').value = data.predictedGeography;
+    Object.keys(currentScoreFields).forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field) {
+            // 如果数据中存在该字段且有值，则填充；否则清空
+            if (data[fieldId] !== undefined && data[fieldId] !== null && data[fieldId] !== '') {
+                field.value = data[fieldId];
+            } else {
+                field.value = '';
+            }
+        }
+    });
+    
+    // 预测成绩（只填充数据中存在的字段，不存在的字段保持为空）
+    const predictedScoreFields = {
+        'predictedChinese': 'predictedChinese',
+        'predictedMath': 'predictedMath',
+        'predictedEnglish': 'predictedEnglish',
+        'predictedPhysics': 'predictedPhysics',
+        'predictedBiology': 'predictedBiology',
+        'predictedChemistry': 'predictedChemistry',
+        'predictedHistory': 'predictedHistory',
+        'predictedGeography': 'predictedGeography',
+        'predictedPolitics': 'predictedPolitics'
+    };
+    
+    Object.keys(predictedScoreFields).forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field) {
+            // 如果数据中存在该字段且有值，则填充；否则清空
+            if (data[fieldId] !== undefined && data[fieldId] !== null && data[fieldId] !== '' && data[fieldId] !== '0') {
+                field.value = data[fieldId];
+            } else {
+                field.value = '';
+            }
+        }
+    });
     
     // 学业水平考试
     if (data.academicLevelPass) {
@@ -2802,20 +2947,39 @@ function initUniversityData() {
     }
 }
 
+// 存储选中的大学（临时选择，未确认）
+let selectedUniversity = null;
+
 // 打开大学选择器
 function openUniversitySelector(fieldId) {
     currentUniversityField = fieldId;
+    selectedUniversity = null; // 重置选中状态
     const modal = document.getElementById('universitySelectorModal');
     modal.style.display = 'block';
     
     // 重置搜索和筛选
     document.getElementById('universitySearch').value = '';
     document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-    document.querySelector('.filter-btn[onclick="filterByCountry(\'all\')"]').classList.add('active');
+    // 查找"全部"按钮并激活
+    const allBtn = document.querySelector('.filter-btn[onclick*="all"]');
+    if (allBtn) {
+        allBtn.classList.add('active');
+    } else {
+        // 如果没有找到，尝试通过文本内容查找
+        const buttons = document.querySelectorAll('.filter-btn');
+        buttons.forEach(btn => {
+            if (btn.textContent.trim() === '全部') {
+                btn.classList.add('active');
+            }
+        });
+    }
     
     // 显示所有大学
     filteredUniversities = QS_TOP_UNIVERSITIES;
     renderUniversities();
+    
+    // 初始化确定按钮状态
+    updateConfirmButton();
 }
 
 // 关闭大学选择器
@@ -2823,6 +2987,7 @@ function closeUniversitySelector() {
     const modal = document.getElementById('universitySelectorModal');
     modal.style.display = 'none';
     currentUniversityField = '';
+    selectedUniversity = null; // 清除选中状态
 }
 
 // 渲染大学列表
@@ -2837,7 +3002,9 @@ function renderUniversities() {
     
     filteredUniversities.forEach(university => {
         const item = document.createElement('div');
-        item.className = 'university-item-selector';
+        // 如果这是选中的大学，添加选中样式
+        const isSelected = selectedUniversity && selectedUniversity.name === university.name;
+        item.className = isSelected ? 'university-item-selector selected' : 'university-item-selector';
         item.onclick = () => selectUniversity(university);
         
         // 将图片路径转换为绝对路径
@@ -2847,7 +3014,7 @@ function renderUniversities() {
             <img src="${logoPath}" alt="${university.name}" class="university-logo-small" 
                  onerror="this.style.display='none'; this.parentElement.querySelector('.university-info').style.marginLeft='0';">
             <div class="university-info">
-                <h4>${university.chineseName}</h4>
+                <h4>${university.chineseName}${isSelected ? ' <span style="color: #4299e1; font-size: 0.9em;">✓ 已选择</span>' : ''}</h4>
                 <p>${university.name} • ${university.country}</p>
             </div>
             <div class="university-rank">QS ${university.rank}</div>
@@ -2857,18 +3024,73 @@ function renderUniversities() {
     });
 }
 
-// 选择大学
+// 选择大学（临时选择，显示选中状态）
 function selectUniversity(university) {
     if (!currentUniversityField) return;
     
+    // 存储选中的大学（临时选择，未确认）
+    selectedUniversity = university;
+    
+    // 重新渲染列表以显示选中状态
+    renderUniversities();
+    
+    // 更新确定按钮状态
+    updateConfirmButton();
+}
+
+// 确认选择大学（更新表单并关闭模态框）
+function confirmUniversitySelection() {
+    if (!currentUniversityField || !selectedUniversity) {
+        alert('请先选择一所大学');
+        return;
+    }
+    
     // 更新表单字段
-    document.getElementById(currentUniversityField + 'Name').value = university.chineseName;
-    document.getElementById(currentUniversityField + 'EnglishName').value = university.name;
-    document.getElementById(currentUniversityField + 'Location').value = university.country;
-    document.getElementById(currentUniversityField + 'Logo').value = university.logo;
+    const nameField = document.getElementById(currentUniversityField + 'Name');
+    const englishNameField = document.getElementById(currentUniversityField + 'EnglishName');
+    const locationField = document.getElementById(currentUniversityField + 'Location');
+    const logoField = document.getElementById(currentUniversityField + 'Logo');
+    
+    if (nameField) {
+        nameField.value = selectedUniversity.chineseName;
+        nameField.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+    if (englishNameField) {
+        englishNameField.value = selectedUniversity.name;
+        englishNameField.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+    if (locationField) {
+        locationField.value = selectedUniversity.country;
+        locationField.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+    if (logoField) {
+        // 将logo路径转换为绝对路径
+        const logoPath = selectedUniversity.logo ? 
+            (selectedUniversity.logo.startsWith('/') || selectedUniversity.logo.startsWith('http') ? 
+                selectedUniversity.logo : '/' + selectedUniversity.logo) : '';
+        logoField.value = logoPath;
+        // 触发input和change事件，确保值被正确更新
+        logoField.dispatchEvent(new Event('input', { bubbles: true }));
+        logoField.dispatchEvent(new Event('change', { bubbles: true }));
+        console.log('已更新logo路径:', logoPath, '字段ID:', currentUniversityField + 'Logo');
+    }
     
     // 关闭模态框
     closeUniversitySelector();
+}
+
+// 更新确定按钮状态
+function updateConfirmButton() {
+    const confirmBtn = document.getElementById('confirmUniversityBtn');
+    if (confirmBtn) {
+        if (selectedUniversity) {
+            confirmBtn.disabled = false;
+            confirmBtn.textContent = `确定 (已选择: ${selectedUniversity.chineseName})`;
+        } else {
+            confirmBtn.disabled = true;
+            confirmBtn.textContent = '确定';
+        }
+    }
 }
 
 // 搜索大学

@@ -568,16 +568,28 @@
                 <!-- 添加机构码表单 -->
                 <div class="admin-section" style="margin-bottom: 30px;">
                     <h3>添加新机构码</h3>
-                    <form id="institutionForm" onsubmit="handleInstitutionSubmit(event)" style="display: grid; grid-template-columns: 1fr 1fr auto auto; gap: 15px; align-items: end;">
+                    <form id="institutionForm" onsubmit="handleInstitutionSubmit(event)" style="display: grid; grid-template-columns: 1fr 1fr 120px auto auto; gap: 15px; align-items: end;">
                         <div class="form-group" style="margin-bottom: 0;">
                             <label for="institutionCode">机构码 *</label>
                             <input type="text" id="institutionCode" name="code" required placeholder="请输入机构码或点击生成">
                         </div>
                         <div class="form-group" style="margin-bottom: 0;">
-                            <label for="institutionName">机构名称</label>
-                            <input type="text" id="institutionName" name="name" placeholder="请输入机构名称（可选）">
+                            <label for="institutionName">机构名称 *</label>
+                            <input type="text" id="institutionName" name="name" required placeholder="请输入机构名称或从列表选择" list="institutionNamesList" autocomplete="off">
+                            <datalist id="institutionNamesList">
+                                <!-- 选项将通过 JavaScript 动态填充 -->
+                            </datalist>
                         </div>
-                        <button type="button" class="btn btn-secondary" onclick="generateRandomCode()" style="white-space: nowrap;">🎲 随机生成</button>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label for="generateCount">生成数量</label>
+                            <select id="generateCount" style="width: 100%; padding: 8px; border: 1px solid #cbd5e0; border-radius: 6px;">
+                                <option value="1">1个</option>
+                                <option value="10">10个</option>
+                                <option value="50">50个</option>
+                                <option value="100">100个</option>
+                            </select>
+                        </div>
+                        <button type="button" class="btn btn-secondary" onclick="generateRandomCodes()" style="white-space: nowrap;">🎲 随机生成</button>
                         <button type="submit" class="btn btn-primary">添加机构码</button>
                     </form>
                 </div>
@@ -825,6 +837,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" onclick="closeUniversitySelector()">取消</button>
+                <button type="button" id="confirmUniversityBtn" class="btn btn-primary" onclick="confirmUniversitySelection()" disabled>确定</button>
             </div>
         </div>
     </div>
@@ -864,6 +877,7 @@
                                 <th style="padding: 12px; text-align: left; font-weight: 600; color: #2d3748; font-size: 0.9rem;">学校</th>
                                 <th style="padding: 12px; text-align: left; font-weight: 600; color: #2d3748; font-size: 0.9rem;">提交时间</th>
                                 <th style="padding: 12px; text-align: center; font-weight: 600; color: #2d3748; font-size: 0.9rem;">状态</th>
+                                <th style="padding: 12px; text-align: center; font-weight: 600; color: #2d3748; font-size: 0.9rem;">报告</th>
                                 <th style="padding: 12px; text-align: center; font-weight: 600; color: #2d3748; font-size: 0.9rem;">操作</th>
                             </tr>
                         </thead>
@@ -880,7 +894,7 @@
                         minute: '2-digit'
                     });
                     const statusBadge = survey.status === 'completed' ? 
-                        '<span style="background: #48bb78; color: white; padding: 4px 10px; border-radius: 12px; font-size: 0.8rem;">已完成</span>' :
+                        '<span style="background: #48bb78; color: white; padding: 4px 10px; border-radius: 12px; font-size: 0.8rem;">已处理</span>' :
                         '<span style="background: #ed8936; color: white; padding: 4px 10px; border-radius: 12px; font-size: 0.8rem;">待处理</span>';
                     
                     const rowBg = index % 2 === 0 ? '#ffffff' : '#f7fafc';
@@ -889,6 +903,12 @@
                     const institutionName = survey.institution_name ? `(${survey.institution_name})` : '';
                     const grade = surveyData.grade || '-';
                     const school = surveyData.school || '-';
+                    
+                    // 检查是否有报告
+                    const hasReport = survey.report_html && survey.report_html.trim() !== '';
+                    const reportCell = hasReport 
+                        ? `<a href="#" onclick="event.stopPropagation(); viewReport(${survey.id}); return false;" style="color: #4299e1; text-decoration: none; font-weight: 500;">查看报告</a>`
+                        : `<span style="color: #a0aec0;">未生成</span>`;
                     
                     html += `
                         <tr style="background: ${rowBg}; border-bottom: 1px solid #e2e8f0; cursor: pointer;" 
@@ -902,6 +922,7 @@
                             <td style="padding: 12px; color: #4a5568; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${school}">${school}</td>
                             <td style="padding: 12px; color: #718096; font-size: 0.85rem;">${submitTime}</td>
                             <td style="padding: 12px; text-align: center;">${statusBadge}</td>
+                            <td style="padding: 12px; text-align: center;">${reportCell}</td>
                             <td style="padding: 12px; text-align: center;">
                                 <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.85rem;" 
                                         onclick="event.stopPropagation(); viewSurveyDetails(${survey.id})">
@@ -924,6 +945,66 @@
             }
         }
         
+        // 查看报告
+        async function viewReport(surveyId) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/surveys/${surveyId}/report`);
+                const result = await response.json();
+                
+                if (!response.ok) {
+                    alert(result.error || '报告尚未生成');
+                    return;
+                }
+                
+                // 打开新窗口显示报告
+                const reportWindow = window.open('', '_blank');
+                reportWindow.document.write(result.reportHtml);
+                reportWindow.document.close();
+            } catch (error) {
+                console.error('查看报告错误:', error);
+                alert('查看报告失败，请稍后重试');
+            }
+        }
+        
+        // 清空学生信息录入表单
+        function clearStudentForm() {
+            const form = document.getElementById('student-form');
+            if (form) {
+                // 重置表单（清空所有输入字段）
+                form.reset();
+                
+                // 清空所有 checkbox
+                document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                    cb.checked = false;
+                });
+                
+                // 清空所有 textarea
+                document.querySelectorAll('textarea').forEach(ta => {
+                    ta.value = '';
+                });
+                
+                // 清空所有 number 输入框（确保为0或空）
+                const numberFields = [
+                    'currentChinese', 'currentMath', 'currentEnglish', 'currentPhysics', 
+                    'currentBiology', 'currentChemistry', 'currentHistory', 'currentGeography', 'currentPolitics',
+                    'predictedChinese', 'predictedMath', 'predictedEnglish', 'predictedPhysics',
+                    'predictedBiology', 'predictedChemistry', 'predictedHistory', 'predictedGeography', 'predictedPolitics',
+                    'currentTotal', 'predictedTotal', 'predictedEnglish', 'englishTotalScore',
+                    'englishListening', 'englishReading', 'englishSpeaking', 'englishWriting',
+                    'readingTime'
+                ];
+                
+                numberFields.forEach(fieldId => {
+                    const field = document.getElementById(fieldId);
+                    if (field) {
+                        field.value = '';
+                    }
+                });
+                
+                console.log('表单已清空');
+            }
+        }
+        
         // 查看问卷详情
         async function viewSurveyDetails(surveyId) {
             try {
@@ -934,6 +1015,12 @@
                     alert(survey.error || '加载失败');
                     return;
                 }
+                
+                // 先清空表单，避免残留上一个学生的数据
+                clearStudentForm();
+                
+                // 等待一小段时间确保表单已清空
+                await new Promise(resolve => setTimeout(resolve, 50));
                 
                 // 填充到学生信息录入表单
                 const surveyData = survey.survey_data;
@@ -993,7 +1080,10 @@
                         
                         // 保存到 localStorage
                         localStorage.setItem('studentData', JSON.stringify(studentData));
+                        // 保存当前 surveyId，用于后续保存报告
+                        localStorage.setItem('currentSurveyId', surveyId.toString());
                         console.log('学生数据已保存到 localStorage:', studentData);
+                        console.log('当前 Survey ID:', surveyId);
                     }
                 }, 500);
                 
@@ -1010,11 +1100,15 @@
             }
         }
         
-        // 页面加载时自动加载问卷列表
+        // 页面加载时自动加载数据
         document.addEventListener('DOMContentLoaded', function() {
             // 如果当前在surveys标签页，则加载问卷列表
             if (document.getElementById('surveys-tab').classList.contains('active')) {
                 loadSurveys();
+            }
+            // 如果当前在institutions标签页，则加载机构码列表（同时会更新机构名称下拉列表）
+            if (document.getElementById('institutions-tab').classList.contains('active')) {
+                loadInstitutions();
             }
         });
         
@@ -1041,12 +1135,138 @@
             for (let i = 0; i < 10; i++) {
                 code += Math.floor(Math.random() * 10);
             }
+            return code;
+        }
+        
+        // 批量生成随机机构码
+        async function generateRandomCodes() {
+            const nameField = document.getElementById('institutionName');
+            const name = nameField.value.trim();
             
-            // 填充到输入框
-            document.getElementById('institutionCode').value = code;
+            if (!name) {
+                alert('请先填写机构名称！');
+                nameField.focus();
+                return;
+            }
             
-            // 可选：自动聚焦到机构名称输入框
-            document.getElementById('institutionName').focus();
+            const countSelect = document.getElementById('generateCount');
+            const count = parseInt(countSelect.value) || 1;
+            
+            if (count <= 0 || count > 1000) {
+                alert('生成数量必须在1-1000之间！');
+                return;
+            }
+            
+            // 确认批量生成
+            if (count > 1) {
+                if (!confirm(`确定要生成 ${count} 个机构码吗？`)) {
+                    return;
+                }
+            }
+            
+            const submitBtn = document.querySelector('#institutionForm button[type="submit"]');
+            const generateBtn = document.querySelector('button[onclick="generateRandomCodes()"]');
+            const originalSubmitText = submitBtn.textContent;
+            const originalGenerateText = generateBtn.textContent;
+            
+            submitBtn.disabled = true;
+            generateBtn.disabled = true;
+            generateBtn.textContent = '生成中...';
+            
+            try {
+                let successCount = 0;
+                let failCount = 0;
+                const failedCodes = [];
+                
+                for (let i = 0; i < count; i++) {
+                    const code = generateRandomCode();
+                    
+                    try {
+                        const response = await fetch(`${API_BASE_URL}/institutions`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ code, name })
+                        });
+                        
+                        const data = await response.json();
+                        
+                        if (response.ok) {
+                            successCount++;
+                        } else {
+                            failCount++;
+                            failedCodes.push({ code, error: data.error || '添加失败' });
+                        }
+                    } catch (error) {
+                        failCount++;
+                        failedCodes.push({ code, error: error.message });
+                    }
+                    
+                    // 更新进度提示
+                    if (count > 1 && (i + 1) % 10 === 0) {
+                        generateBtn.textContent = `生成中... (${i + 1}/${count})`;
+                    }
+                }
+                
+                // 显示结果
+                if (count === 1) {
+                    if (successCount > 0) {
+                        document.getElementById('institutionCode').value = '';
+                        alert('机构码生成并添加成功！');
+                    } else {
+                        alert('机构码生成失败，请重试。');
+                    }
+                } else {
+                    let message = `批量生成完成！\n成功: ${successCount} 个\n失败: ${failCount} 个`;
+                    if (failedCodes.length > 0 && failedCodes.length <= 10) {
+                        message += '\n\n失败的机构码：\n';
+                        failedCodes.forEach(item => {
+                            message += `${item.code}: ${item.error}\n`;
+                        });
+                    }
+                    alert(message);
+                }
+                
+                // 刷新列表
+                loadInstitutions();
+                
+                // 清空表单（如果只生成1个）
+                if (count === 1) {
+                    document.getElementById('institutionForm').reset();
+                }
+                
+            } catch (error) {
+                console.error('批量生成机构码错误:', error);
+                alert('批量生成失败，请稍后重试');
+            } finally {
+                submitBtn.disabled = false;
+                generateBtn.disabled = false;
+                generateBtn.textContent = originalGenerateText;
+            }
+        }
+        
+        // 更新机构名称下拉列表
+        function updateInstitutionNamesList(institutions) {
+            const datalist = document.getElementById('institutionNamesList');
+            if (!datalist) return;
+            
+            // 提取所有唯一的机构名称（过滤空值）
+            const uniqueNames = [...new Set(
+                institutions
+                    .map(inst => inst.name)
+                    .filter(name => name && name.trim() !== '')
+            )].sort();
+            
+            // 清空现有选项
+            datalist.innerHTML = '';
+            
+            // 添加选项
+            uniqueNames.forEach(name => {
+                const option = document.createElement('option');
+                option.value = name;
+                datalist.appendChild(option);
+            });
         }
         
         // 加载机构码列表
@@ -1061,6 +1281,9 @@
                 if (!response.ok) {
                     throw new Error(institutions.error || '加载失败');
                 }
+                
+                // 更新机构名称下拉列表
+                updateInstitutionNamesList(institutions);
                 
                 if (institutions.length === 0) {
                     container.innerHTML = '<div style="text-align: center; color: #718096; padding: 40px; background: white;"><p>暂无机构码，请添加</p></div>';
@@ -1145,6 +1368,12 @@
             
             if (!code) {
                 alert('请输入机构码');
+                return;
+            }
+            
+            if (!name) {
+                alert('请输入机构名称');
+                document.getElementById('institutionName').focus();
                 return;
             }
             

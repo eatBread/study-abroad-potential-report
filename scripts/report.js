@@ -10,9 +10,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // 加载报告数据
 function loadReportData() {
-    // 检查URL参数，看是否有指定的学生索引
+    // 检查URL参数
     const urlParams = new URLSearchParams(window.location.search);
     const studentIndex = urlParams.get('student');
+    const surveyId = urlParams.get('surveyId');
+    
+    // 如果有 surveyId，保存到 localStorage（用于后续保存报告）
+    if (surveyId) {
+        localStorage.setItem('currentSurveyId', surveyId);
+        console.log('从URL参数获取 Survey ID:', surveyId);
+    }
     
     let dataKey = 'reportData';
     if (studentIndex !== null) {
@@ -126,6 +133,105 @@ function initializeReport() {
     
     // 填充服务引流内容
     fillServiceContent();
+    
+    // 保存报告到数据库（如果有 surveyId）
+    setTimeout(() => {
+        saveReportToDatabase();
+    }, 1000); // 等待1秒确保所有内容都已渲染
+}
+
+// 保存报告到数据库
+async function saveReportToDatabase() {
+    try {
+        const surveyId = localStorage.getItem('currentSurveyId');
+        if (!surveyId) {
+            console.log('没有找到 surveyId，跳过保存报告');
+            return;
+        }
+        
+        // 获取报告HTML内容
+        const reportContent = document.getElementById('report-content');
+        if (!reportContent) {
+            console.error('找不到报告内容元素');
+            return;
+        }
+        
+        // 获取完整的HTML（包括样式）
+        // 注意：不包含会重新加载数据的脚本，只保存已渲染的静态HTML
+        const reportHtml = `
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>留学潜力报告</title>
+    <link rel="stylesheet" href="/styles/report.css">
+    <style>
+        @import url('https://fonts.loli.net/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        * {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', 'Helvetica Neue', Arial, sans-serif !important;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+    ${reportContent.outerHTML}
+    <!-- 不包含 report.js，避免重新从 localStorage 加载数据 -->
+    <!-- 只保留导出PDF的功能脚本 -->
+    <script>
+        // 导出PDF功能（如果需要）
+        function exportToPDF() {
+            const element = document.getElementById('report-content');
+            const actionButtons = document.querySelector('.action-buttons');
+            
+            if (actionButtons) {
+                actionButtons.style.display = 'none';
+            }
+            
+            const opt = {
+                margin: 0.5,
+                filename: '留学潜力报告.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+            
+            html2pdf().set(opt).from(element).save().then(() => {
+                if (actionButtons) {
+                    actionButtons.style.display = 'flex';
+                }
+            });
+        }
+    </script>
+</body>
+</html>`;
+        
+        // 保存到数据库
+        const response = await fetch(`/api/surveys/${surveyId}/report`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ reportHtml })
+        });
+        
+        const result = await response.json();
+        if (response.ok) {
+            console.log(`报告已保存到数据库（Survey ID: ${surveyId}），状态已更新为已处理`);
+            // 注意：不清除 surveyId，因为可能用户会重新生成报告覆盖之前的
+            // 只有在成功保存后才保留，这样如果用户重新生成报告，会覆盖之前的报告
+            
+            // 如果是在管理后台页面，刷新问卷列表以显示最新状态
+            if (window.opener && typeof window.opener.loadSurveys === 'function') {
+                window.opener.loadSurveys();
+            }
+        } else {
+            console.error('保存报告失败:', result.error);
+        }
+    } catch (error) {
+        console.error('保存报告到数据库错误:', error);
+    }
 }
 
 // 填充学生基本信息

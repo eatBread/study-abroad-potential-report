@@ -13,7 +13,8 @@ const {
     getAllSurveys,
     getSurveyById,
     updateSurveyStatus,
-    getAllInstitutions
+    getAllInstitutions,
+    saveReportHtml
 } = require('./database');
 
 const app = express();
@@ -209,6 +210,45 @@ app.put('/api/surveys/:id/status', async (req, res) => {
         res.json(result);
     } catch (error) {
         console.error('更新问卷状态错误:', error);
+        res.status(500).json({ error: '服务器错误' });
+    }
+});
+
+// 保存报告HTML
+app.post('/api/surveys/:id/report', async (req, res) => {
+    try {
+        const id = parseInt(req.params.id);
+        const { reportHtml } = req.body;
+        
+        if (!reportHtml) {
+            return res.status(400).json({ error: '报告HTML不能为空' });
+        }
+        
+        const result = await saveReportHtml(id, reportHtml);
+        res.json({ success: true, id: result.id });
+    } catch (error) {
+        console.error('保存报告错误:', error);
+        res.status(500).json({ error: '服务器错误' });
+    }
+});
+
+// 获取报告HTML
+app.get('/api/surveys/:id/report', async (req, res) => {
+    try {
+        const id = parseInt(req.params.id);
+        const survey = await getSurveyById(id);
+        
+        if (!survey) {
+            return res.status(404).json({ error: '问卷不存在' });
+        }
+        
+        if (!survey.report_html) {
+            return res.status(404).json({ error: '报告尚未生成' });
+        }
+        
+        res.json({ success: true, reportHtml: survey.report_html });
+    } catch (error) {
+        console.error('获取报告错误:', error);
         res.status(500).json({ error: '服务器错误' });
     }
 });

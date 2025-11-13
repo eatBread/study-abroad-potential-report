@@ -47,6 +47,7 @@ function initDatabase() {
                     student_name TEXT NOT NULL,
                     survey_data TEXT NOT NULL,
                     status TEXT DEFAULT 'pending',
+                    report_html TEXT,
                     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                     survey_start_time TEXT,
@@ -59,6 +60,16 @@ function initDatabase() {
                     reject(err);
                 } else {
                     console.log('问卷表已创建或已存在');
+                }
+            });
+            
+            // 为现有表添加 report_html 字段（如果不存在）
+            db.run(`
+                ALTER TABLE surveys ADD COLUMN report_html TEXT
+            `, (err) => {
+                // 忽略错误，因为字段可能已存在
+                if (err && !err.message.includes('duplicate column name')) {
+                    console.error('添加report_html字段错误:', err.message);
                 }
             });
             
@@ -199,21 +210,22 @@ function getAllSurveys() {
     const db = getDatabase();
     
     return new Promise((resolve, reject) => {
-        db.all(
-            `SELECT 
-                s.id,
-                s.institution_code,
-                s.student_name,
-                s.survey_data,
-                s.status,
-                s.created_at,
-                s.updated_at,
-                s.survey_start_time,
-                s.survey_end_time,
-                i.name as institution_name
-             FROM surveys s
-             LEFT JOIN institutions i ON s.institution_code = i.code
-             ORDER BY s.created_at DESC`,
+            db.all(
+                `SELECT 
+                    s.id,
+                    s.institution_code,
+                    s.student_name,
+                    s.survey_data,
+                    s.status,
+                    s.report_html,
+                    s.created_at,
+                    s.updated_at,
+                    s.survey_start_time,
+                    s.survey_end_time,
+                    i.name as institution_name
+                 FROM surveys s
+                 LEFT JOIN institutions i ON s.institution_code = i.code
+                 ORDER BY s.created_at DESC`,
             [],
             (err, rows) => {
                 if (err) {
@@ -271,6 +283,26 @@ function updateSurveyStatus(id, status) {
                     reject(err);
                 } else {
                     resolve({ id, status, changes: this.changes });
+                }
+            }
+        );
+    });
+}
+
+// 保存报告HTML到数据库（同时更新状态为已处理）
+function saveReportHtml(surveyId, reportHtml) {
+    const db = getDatabase();
+    
+    return new Promise((resolve, reject) => {
+        // 同时更新报告HTML和状态为completed（已处理）
+        db.run(
+            'UPDATE surveys SET report_html = ?, status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+            [reportHtml, 'completed', surveyId],
+            function(err) {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve({ id: surveyId, changes: this.changes });
                 }
             }
         );
@@ -346,6 +378,7 @@ module.exports = {
     getAllSurveys,
     getSurveyById,
     updateSurveyStatus,
-    getAllInstitutions
+    getAllInstitutions,
+    saveReportHtml
 };
 

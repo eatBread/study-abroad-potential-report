@@ -911,6 +911,16 @@ body {
     background-color: var(--background-color);
 }
 
+.university-item-selector.selected {
+    background-color: #e6f2ff;
+    border-left: 3px solid #4299e1;
+    font-weight: 500;
+}
+
+.university-item-selector.selected:hover {
+    background-color: #d0e7ff;
+}
+
 .university-item-selector:last-child {
     border-bottom: none;
 }
