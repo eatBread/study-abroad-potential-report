@@ -1,13 +1,18 @@
 // 问卷逻辑
 let currentQuestion = 1;
 const totalQuestions = 30;
+let currentSection = 1;
+const totalSections = 4;
 
 // 页面加载完成后初始化
 document.addEventListener('DOMContentLoaded', function() {
+    // 清除可能存在的旧数据
+    clearOldData();
+    
     initializeSurvey();
     updateProgress();
-    // 显示所有问题
-    showAllQuestions();
+    // 显示第一部分
+    showSection(1);
     // 显示机构信息
     displayInstitutionInfo();
 });
@@ -58,6 +63,21 @@ function initializeSurvey() {
         e.preventDefault();
         submitSurvey();
     });
+    
+    // 为radio-item添加点击事件监听器
+    const radioItems = form.querySelectorAll('.radio-item');
+    radioItems.forEach(item => {
+        item.addEventListener('click', function(e) {
+            // 如果点击的不是input或label，则触发input的点击
+            if (e.target === this) {
+                const radioInput = this.querySelector('input[type="radio"]');
+                if (radioInput && !radioInput.disabled) {
+                    radioInput.checked = true;
+                    radioInput.dispatchEvent(new Event('change'));
+                }
+            }
+        });
+    });
 }
 
 // 显示所有问题
@@ -93,19 +113,41 @@ function updateProgress() {
     const progressFill = document.getElementById('progressFill');
     const progressText = document.getElementById('progressText');
     
-    // 计算已完成的题目数量
+    // 计算当前部分已完成的题目数量
     const completedQuestions = getCompletedQuestionsCount();
-    const progress = (completedQuestions / totalQuestions) * 100;
+    
+    // 计算当前部分的总题目数量
+    const currentSectionElement = document.getElementById(`section-${currentSection}`);
+    let currentSectionTotal = 0;
+    if (currentSectionElement) {
+        const visibleQuestions = currentSectionElement.querySelectorAll('.question-section:not([style*="display: none"])');
+        currentSectionTotal = visibleQuestions.length;
+    }
+    
+    // 计算进度百分比
+    const progress = currentSectionTotal > 0 ? (completedQuestions / currentSectionTotal) * 100 : 0;
     progressFill.style.width = progress + '%';
-    progressText.textContent = `已完成 ${completedQuestions} 题，共 ${totalQuestions} 题`;
+    
+    // 更新进度文本
+    const sectionNames = ['', '基本信息', '学业成绩', '留学意向', '个人素养'];
+    const sectionName = sectionNames[currentSection] || `第${currentSection}部分`;
+    progressText.textContent = `${sectionName}：已完成 ${completedQuestions} 题，共 ${currentSectionTotal} 题`;
 }
 
 // 获取已完成的题目数量
 function getCompletedQuestionsCount() {
     let completed = 0;
-    const questions = document.querySelectorAll('.question-section');
+    
+    // 只计算当前显示部分的问题
+    const currentSectionElement = document.getElementById(`section-${currentSection}`);
+    if (!currentSectionElement) return 0;
+    
+    const questions = currentSectionElement.querySelectorAll('.question-section');
     
     questions.forEach(question => {
+        // 跳过隐藏的问题
+        if (question.style.display === 'none') return;
+        
         const requiredInputs = question.querySelectorAll('[required]');
         let isCompleted = true;
         
@@ -213,8 +255,11 @@ function validateAllQuestions() {
     return true;
 }
 
+// API基础URL
+const API_BASE_URL = '/api';
+
 // 提交问卷
-function submitSurvey() {
+async function submitSurvey() {
     if (!validateCurrentQuestion()) {
         return;
     }
@@ -222,11 +267,52 @@ function submitSurvey() {
     // 收集所有表单数据
     const formData = collectFormData();
     
-    // 保存到localStorage
-    localStorage.setItem('surveyData', JSON.stringify(formData));
+    // 显示提交中状态
+    const submitBtn = document.getElementById('submitBtn');
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = '提交中...';
+    }
     
-    // 跳转到报告生成页面
-    window.location.href = 'index.html#input-tab';
+    try {
+        // 提交到API
+        const response = await fetch(`${API_BASE_URL}/surveys`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        });
+        
+        const data = await response.json();
+        
+        if (!response.ok) {
+            alert(data.error || '提交失败，请稍后重试');
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = '提交问卷';
+            }
+            return;
+        }
+        
+        // 保存到localStorage（作为备份）
+        localStorage.setItem('surveyData', JSON.stringify(formData));
+        
+        // 清除机构码和学生姓名（防止重复提交）
+        localStorage.removeItem('institutionCode');
+        localStorage.removeItem('studentName');
+        localStorage.removeItem('surveyStartTime');
+        
+        // 跳转到感谢页面
+        window.location.href = 'thankyou.html';
+    } catch (error) {
+        console.error('提交问卷错误:', error);
+        alert('网络错误，请稍后重试');
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = '提交问卷';
+        }
+    }
 }
 
 // 收集表单数据
@@ -282,6 +368,7 @@ function collectFormData() {
     
     // 添加机构信息
     data.institutionCode = localStorage.getItem('institutionCode') || '';
+    data.studentName = localStorage.getItem('studentName') || data.studentName || '';
     data.surveyStartTime = localStorage.getItem('surveyStartTime') || '';
     data.surveyEndTime = new Date().toISOString();
     
@@ -489,9 +576,11 @@ document.addEventListener('keydown', function(e) {
 // 自动保存功能
 function autoSave() {
     const formData = collectFormData();
+    const currentInstitutionCode = localStorage.getItem('institutionCode') || '';
     localStorage.setItem('surveyAutoSave', JSON.stringify({
         data: formData,
         currentQuestion: currentQuestion,
+        institutionCode: currentInstitutionCode, // 保存当前机构码
         timestamp: new Date().toISOString()
     }));
 }
@@ -501,9 +590,29 @@ function restoreAutoSave() {
     const saved = localStorage.getItem('surveyAutoSave');
     if (saved) {
         try {
-            const { data, currentQuestion: savedQuestion } = JSON.parse(saved);
+            const { data, currentQuestion: savedQuestion, institutionCode: savedInstitutionCode } = JSON.parse(saved);
             
-            // 恢复表单数据
+            // 获取当前机构码
+            const currentInstitutionCode = localStorage.getItem('institutionCode') || '';
+            
+            // 检查机构码是否匹配
+            // 如果保存的数据有机构码，但当前机构码不匹配，则清除旧的自动保存数据
+            if (savedInstitutionCode) {
+                if (savedInstitutionCode !== currentInstitutionCode) {
+                    console.log('机构码不匹配，清除旧的自动保存数据');
+                    localStorage.removeItem('surveyAutoSave');
+                    return; // 不恢复数据
+                }
+            } else {
+                // 如果保存的数据没有机构码（旧数据），但有当前机构码，也清除旧数据
+                if (currentInstitutionCode) {
+                    console.log('检测到旧格式的自动保存数据，但当前有机构码，清除旧数据');
+                    localStorage.removeItem('surveyAutoSave');
+                    return; // 不恢复数据
+                }
+            }
+            
+            // 机构码匹配，恢复表单数据
             Object.keys(data).forEach(key => {
                 if (Array.isArray(data[key])) {
                     // 处理复选框数组
@@ -688,4 +797,93 @@ function displayInstitutionInfo() {
         alert('请先输入机构码和学生姓名');
         window.location.href = 'home.html';
     }
+}
+
+// 显示指定部分
+function showSection(sectionNumber) {
+    // 隐藏所有部分
+    for (let i = 1; i <= totalSections; i++) {
+        const section = document.getElementById(`section-${i}`);
+        if (section) {
+            section.style.display = 'none';
+        }
+    }
+    
+    // 显示指定部分
+    const currentSectionElement = document.getElementById(`section-${sectionNumber}`);
+    if (currentSectionElement) {
+        currentSectionElement.style.display = 'block';
+    }
+    
+    currentSection = sectionNumber;
+    updateProgress();
+}
+
+// 下一步
+function nextSection() {
+    if (currentSection < totalSections) {
+        // 验证当前部分
+        if (validateCurrentSection()) {
+            showSection(currentSection + 1);
+        }
+    }
+}
+
+// 上一步
+function prevSection() {
+    if (currentSection > 1) {
+        showSection(currentSection - 1);
+    }
+}
+
+// 验证当前部分
+function validateCurrentSection() {
+    const currentSectionElement = document.getElementById(`section-${currentSection}`);
+    if (!currentSectionElement) return true;
+    
+    const requiredInputs = currentSectionElement.querySelectorAll('input[required], select[required], textarea[required]');
+    let isValid = true;
+    
+    requiredInputs.forEach(input => {
+        if (!input.value.trim()) {
+            input.style.borderColor = '#e53e3e';
+            isValid = false;
+        } else {
+            input.style.borderColor = '';
+        }
+    });
+    
+    if (!isValid) {
+        alert('请填写当前部分的所有必填项');
+    }
+    
+    return isValid;
+}
+
+// 清除旧数据
+function clearOldData() {
+    // 清除可能存在的旧问卷数据
+    const keysToRemove = [];
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('survey_')) {
+            keysToRemove.push(key);
+        }
+    }
+    
+    keysToRemove.forEach(key => {
+        localStorage.removeItem(key);
+    });
+    
+    // 重置表单
+    const form = document.getElementById('surveyForm');
+    if (form) {
+        form.reset();
+    }
+    
+    // 重置所有输入字段的样式
+    const inputs = document.querySelectorAll('input, textarea, select');
+    inputs.forEach(input => {
+        input.style.borderColor = '';
+    });
 }

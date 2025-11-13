@@ -33,4 +33,7 @@ university_logos_result.json
 test-logos.html
 
 # Excel数据文件（如果包含敏感信息）
-# image/top200.xlsx
+# image/top200.xlsxdatabase.sqlite
+node_modules/
+*.log
+.env

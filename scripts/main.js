@@ -135,27 +135,19 @@ const abilityEvaluations = {
         ranges: [
             {
                 min: 0, max: 60,
-                strengths: '基础知识有一定积累，具备学习潜力。',
-                weaknesses: '学术基础相对薄弱，理论知识掌握不够扎实，解决复杂问题的能力有待提升。',
-                suggestions: '建议加强基础学科学习，多做练习题巩固知识点，可考虑参加补习班或找学科导师指导。'
+                description: '基础知识有一定积累，具备学习潜力。学术基础相对薄弱，理论知识掌握不够扎实，解决复杂问题的能力有待提升。建议加强基础学科学习，多做练习题巩固知识点，可考虑参加补习班或找学科导师指导。'
             },
             {
                 min: 60, max: 80,
-                strengths: '学术基础较为扎实，理论知识掌握良好，具备一定的学科思维能力。',
-                weaknesses: '在深层次理解和创新思维方面还有提升空间，缺乏跨学科整合能力。',
-                suggestions: '建议参与更多学术挑战项目，如数学竞赛、科学实验等，培养批判性思维和创新能力。'
+                description: '学术基础较为扎实，理论知识掌握良好，具备一定的学科思维能力。在深层次理解和创新思维方面还有提升空间，缺乏跨学科整合能力。建议参与更多学术挑战项目，如数学竞赛、科学实验等，培养批判性思维和创新能力。'
             },
             {
                 min: 80, max: 90,
-                strengths: '学术水平优秀，知识结构完整，具备强的逻辑思维和分析能力，能够独立解决复杂问题。',
-                weaknesses: '在某些前沿领域的探索深度可能不够，需要更多实践应用经验。',
-                suggestions: '建议参与科研项目或学术竞赛，发表学术论文，申请参加高校夏令营等学术活动。'
+                description: '学术水平优秀，知识结构完整，具备强的逻辑思维和分析能力，能够独立解决复杂问题。在某些前沿领域的探索深度可能不够，需要更多实践应用经验。建议参与科研项目或学术竞赛，发表学术论文，申请参加高校夏令营等学术活动。'
             },
             {
                 min: 90, max: 100,
-                strengths: '学术能力卓越，知识面广博且深入，具备强大的研究能力和创新思维，在学科领域表现突出。',
-                weaknesses: '需要注意保持学习的广度，避免过分专精而忽视其他重要能力的发展。',
-                suggestions: '建议申请顶尖大学，参与国际学术交流，考虑提前接触大学级别的研究项目。'
+                description: '学术能力卓越，知识面广博且深入，具备强大的研究能力和创新思维，在学科领域表现突出。需要注意保持学习的广度，避免过分专精而忽视其他重要能力的发展。建议申请顶尖大学，参与国际学术交流，考虑提前接触大学级别的研究项目。'
             }
         ]
     },
@@ -193,27 +185,27 @@ const abilityEvaluations = {
         ranges: [
             {
                 min: 0, max: 60,
-                strengths: '具备基本的中文表达能力，在母语环境下沟通无障碍。',
-                weaknesses: '英语水平有限，听说读写能力都需要大幅提升，国际化交流存在较大障碍。',
-                suggestions: '建议报读英语培训班，加强基础语法和词汇学习，多看英语原版材料，练习日常口语对话。'
+                description: '在此级别，考生能够理解并使用熟悉的日常表达和非常基本的短语来满足具体类型的需求。能够自我介绍和他人介绍，并能够询问和回答有关个人信息的问题，例如居住地、认识的人以及拥有的物品。能够进行简单的互动，前提是对方说话缓慢清晰，并愿意提供帮助。'
             },
             {
-                min: 60, max: 80,
-                strengths: '英语基础较好，能够进行基本的英语交流，阅读理解能力不错。',
-                weaknesses: '口语表达的流利度和准确性有待提升，学术英语写作能力需要加强。',
-                suggestions: '建议参加雅思/托福培训，多进行英语口语练习，阅读英文学术文章，练习学术写作。'
+                min: 60, max: 65,
+                description: '这个水平的考生能够理解与最直接相关领域（例如，非常基本的个人和家庭信息、购物、当地地理、就业）相关的句子和常用表达。能够就简单日常的任务进行交流，这些任务需要就熟悉的日常事务进行简单直接的信息交换。能够用简单的术语描述自己的背景、周围环境以及急需解决的问题。'
+            },
+            {
+                min: 65, max: 70,
+                description: '该级别的考生应具备以下素质：能够理解清晰标准输入的要点，这些输入内容通常涉及工作、学习、休闲等日常常见话题。能够应对使用该语言的地区可能遇到的大多数情况。能够就熟悉或个人感兴趣的话题撰写简单连贯的文字。能够描述经历和事件、梦想、希望和抱负，并简要阐述观点和计划的理由和解释。'
+            },
+            {
+                min: 70, max: 80,
+                description: '这个级别的考生能够理解关于具体和抽象主题的复杂文本的主要思想，包括其专业领域的技术讨论。能够以一定的口语流利度和自发性进行交流，从而能够与流利的说话者进行日常交流，且不会给双方带来任何压力。能够就广泛的主题撰写清晰、详细的文本，并阐述对某个热门话题的观点，并列举各种方案的优缺点。'
             },
             {
                 min: 80, max: 90,
-                strengths: '英语水平良好，能够流利进行英语交流，具备较强的语言学习能力。',
-                weaknesses: '在专业学术交流和复杂话题讨论方面还需要进一步提升。',
-                suggestions: '建议参加高级英语课程，多参与英语辩论和演讲活动，考虑学习第二外语。'
+                description: '这是非常高的英语水平。本科课程通常不要求达到这一水平。达到这一水平的考生：能够理解各种难度较高的长篇文章，并能理解文章的隐含含义。能够流利、自然地表达自己，无需刻意寻找表达方式。能够灵活有效地运用语言进行社交、学术和职业交流。能够就复杂主题撰写清晰、结构良好、内容详尽的文本，并能熟练运用组织模式、连接词和衔接手段。'
             },
             {
                 min: 90, max: 100,
-                strengths: '语言能力出色，英语接近母语水平，能够自如应对各种语言场景。',
-                weaknesses: '需要保持语言技能的持续练习，避免在特定环境下出现退化。',
-                suggestions: '建议考虑语言类相关专业或国际化程度高的专业，充分发挥语言优势。'
+                description: '达到这一水平的考生：能够轻松理解几乎所有听到或读到的内容。能够概括来自不同口头和书面来源的信息，并以连贯的方式重构论点和叙述。能够自如、流利且准确地表达自己，即使在更复杂的情况下也能区分细微的含义。'
             }
         ]
     },
@@ -280,27 +272,15 @@ const abilityEvaluations = {
         ranges: [
             {
                 min: 0, max: 60,
-                strengths: '具备基本的文体活动参与意识。',
-                weaknesses: '文体特长发展不足，缺乏持续的兴趣爱好，在艺术和体育方面表现平平。',
-                suggestions: '建议培养1-2项文体兴趣爱好，参加相关培训班或社团活动，提升文体素养。'
+                description: '学生的文体相关的活动比较有限。在这个阶段，学生的兴趣爱好更多的是停留在喜欢的层面上，并没有把兴趣爱好、才艺或知识转化成实际的产出。因此不利于申请对学生综合素质要求高的院校。'
             },
             {
                 min: 60, max: 80,
-                strengths: '具备一定的文体特长，有稳定的兴趣爱好，在某个领域表现不错。',
-                weaknesses: '文体技能还需要进一步提升，缺乏相关证书或奖项，在专业水平上还有发展空间。',
-                suggestions: '建议深化文体特长发展，参加相关比赛和考级，争取获得证书或奖项。'
+                description: '学生有一定程度的文体活动和素养。这个阶段的学生专注于其中一项或者两项爱好或特长，并有参与与之相关的活动。'
             },
             {
-                min: 80, max: 90,
-                strengths: '文体素养优秀，具备突出的特长，在相关领域有良好表现和认可。',
-                weaknesses: '可能在某些文体项目上还可以进一步拓展，增加多样化的文体技能。',
-                suggestions: '建议在优势领域继续精进，同时尝试新的文体项目，丰富个人才艺。'
-            },
-            {
-                min: 90, max: 100,
-                strengths: '文体素养卓越，具备多项文体特长，在相关领域有突出成就和影响力。',
-                weaknesses: '需要注意平衡文体活动与学术学习，避免过度投入影响其他方面发展。',
-                suggestions: '建议在文体领域建立个人品牌，考虑相关专业发展，充分发挥文体优势。'
+                min: 80, max: 100,
+                description: '学生有丰富的文体活动，且家庭能够提供很好的氛围和经济支持。这个阶段的学生通常才艺和兴趣广泛，有一定程度的生活见识或海外生活。'
             }
         ]
     },
@@ -309,27 +289,19 @@ const abilityEvaluations = {
         ranges: [
             {
                 min: 0, max: 60,
-                strengths: '具备基本的生活自理能力，能够处理简单的日常生活事务。',
-                weaknesses: '生活能力相对薄弱，时间管理能力不足，自我管理意识有待提升。',
-                suggestions: '建议培养独立生活技能，学习时间管理，提升自我管理能力，为留学做好准备。'
+                description: '学生的生活技能和社交能力都比较匮乏。这意味着学生海外求学时在需要多人协作的场合会遭遇一些的困难，同时生活上暂时无法节约太多，需要经过一定时间的适应。'
             },
             {
-                min: 60, max: 80,
-                strengths: '生活能力较好，具备基本的时间管理和自我管理能力，能够应对大部分日常生活需求。',
-                weaknesses: '在某些生活技能方面还需要进一步提升，适应新环境的能力有待加强。',
-                suggestions: '建议学习更多生活技能，提升适应能力，培养独立解决问题的能力。'
+                min: 60, max: 70,
+                description: '学生的生活技能和社交能力的其中一项能力还不错。这表示学生可能在生活上可以依靠自己的能力节约一部分生活费用，或者能够在学校中通过社交较快地融入身边的社群。'
             },
             {
-                min: 80, max: 90,
-                strengths: '生活能力出色，具备良好的时间管理和自我管理能力，适应能力强，能够独立应对各种生活挑战。',
-                weaknesses: '可能在某些特定生活场景下还需要进一步提升应变能力。',
-                suggestions: '建议参与更多独立生活实践，提升跨文化适应能力，为海外生活做好充分准备。'
+                min: 70, max: 90,
+                description: '学生的生活技能和社交能力均达到一定程度，且其中一项比较突出。这样的学生通常拥有较好的独立生活能力，在生活或学习上陷入困境时具备较好的自我调节能力。'
             },
             {
                 min: 90, max: 100,
-                strengths: '生活能力卓越，具备强大的自我管理能力和适应能力，能够快速适应新环境，完全独立应对留学生活。',
-                weaknesses: '需要注意保持独立生活技能，避免过度依赖他人。',
-                suggestions: '建议在独立生活方面建立个人优势，考虑相关专业发展，充分发挥独立生活能力。'
+                description: '学生的生活技能和社交能力出类拔萃。这样的学生通常能够自主解决生活中的方方面面，能够在陌生环境中认识并筛选适合自己的朋友。'
             }
         ]
     }
@@ -339,6 +311,7 @@ const abilityEvaluations = {
 document.addEventListener('DOMContentLoaded', function() {
     initializeApp();
     loadAdminSettings();
+    initUniversityData();
 });
 
 // 初始化应用
@@ -378,9 +351,13 @@ function showTab(tabName) {
         activeBtn.classList.add('active');
     }
     
-    // 如果切换到后台管理页面，更新状态提示
+    // 如果切换到推荐信息录入页面，更新状态提示并填充推荐数据
     if (tabName === 'admin') {
         updateAdminStatus();
+        // 检查是否有推荐数据需要填充
+        setTimeout(() => {
+            fillRecommendationFields();
+        }, 300);
     }
 }
 
@@ -444,8 +421,14 @@ function handleFormSubmit(event) {
     // 保存学生数据到localStorage
     localStorage.setItem('studentData', JSON.stringify(studentData));
     
-    // 生成报告
-    generateReport();
+    // 先计算四维能力分数
+    calculateAcademicAbility();
+    calculateLanguageAbility();
+    calculateArtisticQuality();
+    calculateSocialAbility();
+    
+    // 跳转到推荐信息录入页面并填充数据
+    fillRecommendationPage();
 }
 
 // 验证必填字段
@@ -459,6 +442,265 @@ function validateRequiredFields() {
     }
     
     return true;
+}
+
+// 填充推荐信息录入页面
+function fillRecommendationPage() {
+    // 验证必填字段（但不阻止执行）
+    const studentName = document.getElementById('studentName')?.value;
+    const gender = document.getElementById('gender')?.value;
+    const grade = document.getElementById('grade')?.value;
+    const school = document.getElementById('school')?.value;
+    const subjectGroup = document.getElementById('subjectGroup')?.value;
+    
+    if (!studentName || !gender || !grade || !school || !subjectGroup) {
+        const confirmFill = confirm('部分必填字段未填写，是否继续计算并填入推荐信息？\n（未填写的字段将使用默认值或空值）');
+        if (!confirmFill) {
+            return;
+        }
+    }
+    
+    // 确保预测总分已计算（如果用户没有手动填写）
+    const predictedTotalField = document.getElementById('predictedTotal');
+    if (predictedTotalField && (!predictedTotalField.value || predictedTotalField.value === '0')) {
+        // 如果预测总分为空或0，尝试自动计算
+        calculatePredictedTotalScore();
+        console.log('自动计算预测总分:', predictedTotalField.value);
+    }
+    
+    // 直接计算四维能力分数（不依赖DOM元素）
+    const academicAbility = calculateAcademicAbilityValue();
+    const languageAbility = calculateLanguageAbilityValue();
+    const artisticQuality = calculateArtisticQualityValue();
+    const socialAbility = calculateSocialAbilityValue();
+    
+    console.log('计算出的能力值:', { 
+        academicAbility, 
+        languageAbility, 
+        artisticQuality, 
+        socialAbility,
+        predictedTotal: predictedTotalField?.value,
+        subjectGroup: document.getElementById('subjectGroup')?.value
+    });
+    
+    // 生成合并的分析内容
+    const academicAnalysis = generateMergedAnalysis('academic', academicAbility);
+    const languageAnalysis = generateMergedAnalysis('language', languageAbility);
+    const artisticAnalysis = generateMergedAnalysis('artistic', artisticQuality);
+    const socialAnalysis = generateMergedAnalysis('social', socialAbility);
+    
+    // 生成综合提升建议（根据四维分析自动生成）
+    // 从描述文本中提取建议部分（兼容新旧格式）
+    const getSuggestionFromEvaluation = (evaluation) => {
+        if (evaluation?.suggestions) {
+            return evaluation.suggestions;
+        }
+        if (evaluation?.description) {
+            // 尝试从描述中提取建议部分（以"建议"开头的内容）
+            const match = evaluation.description.match(/建议[^。]+[。]/g);
+            return match ? match.join(' ') : '';
+        }
+        return '';
+    };
+    
+    const detailedAnalysis = {
+        academic: { suggestions: getSuggestionFromEvaluation(getAbilityEvaluation('academic', academicAbility)) },
+        language: { suggestions: getSuggestionFromEvaluation(getAbilityEvaluation('language', languageAbility)) },
+        artistic: { suggestions: getSuggestionFromEvaluation(getAbilityEvaluation('artistic', artisticQuality)) },
+        social: { suggestions: getSuggestionFromEvaluation(getAbilityEvaluation('social', socialAbility)) }
+    };
+    const overallSuggestions = generateOverallSuggestions(detailedAnalysis);
+    
+    console.log('生成的分析内容:', { academicAnalysis, languageAnalysis, artisticAnalysis, socialAnalysis });
+    console.log('生成的综合建议:', overallSuggestions);
+    
+    // 保存到localStorage，供推荐信息录入页面使用
+    localStorage.setItem('recommendationData', JSON.stringify({
+        academicAbility,
+        languageAbility,
+        artisticQuality,
+        socialAbility,
+        academicAnalysis,
+        languageAnalysis,
+        artisticAnalysis,
+        socialAnalysis,
+        overallSuggestions
+    }));
+    
+    // 跳转到推荐信息录入页面
+    showTab('admin');
+    
+    // 使用多次尝试确保填充成功
+    let attempts = 0;
+    const maxAttempts = 10;
+    
+    const tryFillFields = () => {
+        attempts++;
+        const filled = fillRecommendationFields();
+        
+        // 如果填充失败且还有尝试次数，继续尝试
+        if (!filled && attempts < maxAttempts) {
+            setTimeout(tryFillFields, 100);
+        } else if (filled) {
+            console.log(`填充成功，尝试了 ${attempts} 次`);
+        } else {
+            console.warn(`填充失败，已尝试 ${attempts} 次`);
+        }
+    };
+    
+    // 延迟后开始尝试填充
+    setTimeout(tryFillFields, 300);
+}
+
+// 生成合并的分析内容（直接返回描述文本）
+function generateMergedAnalysis(abilityType, score) {
+    const evaluation = getAbilityEvaluation(abilityType, score);
+    if (!evaluation) {
+        return '';
+    }
+    
+    // 直接返回描述文本（新格式）或合并旧格式（兼容性）
+    if (evaluation.description) {
+        return evaluation.description;
+    }
+    
+    // 兼容旧格式：合并优势、不足和建议为一个完整的分析文本
+    let analysis = '';
+    if (evaluation.strengths) {
+        analysis += `${evaluation.strengths} `;
+    }
+    if (evaluation.weaknesses) {
+        analysis += `${evaluation.weaknesses} `;
+    }
+    if (evaluation.suggestions) {
+        analysis += evaluation.suggestions;
+    }
+    
+    return analysis.trim();
+}
+
+// 填充推荐信息录入页面的字段
+function fillRecommendationFields() {
+    const data = localStorage.getItem('recommendationData');
+    if (!data) {
+        console.log('没有找到推荐数据');
+        return false;
+    }
+    
+    try {
+        const recommendationData = JSON.parse(data);
+        console.log('准备填充推荐数据:', recommendationData);
+        
+        // 填充四维能力分数
+        const academicAbilityField = document.getElementById('academicAbility');
+        const languageAbilityField = document.getElementById('languageAbility');
+        const artisticQualityField = document.getElementById('artisticQuality');
+        const socialAbilityField = document.getElementById('socialAbility');
+        
+        let filledCount = 0;
+        const totalFields = 4;
+        
+        if (academicAbilityField) {
+            // 确保数值正确填充，包括0值
+            const academicValue = recommendationData.academicAbility !== undefined && recommendationData.academicAbility !== null 
+                ? recommendationData.academicAbility 
+                : '';
+            academicAbilityField.value = academicValue;
+            // 触发input事件，确保值被正确设置
+            academicAbilityField.dispatchEvent(new Event('input', { bubbles: true }));
+            console.log('已填充学术能力:', academicValue, '(原始值:', recommendationData.academicAbility, ')');
+            filledCount++;
+        } else {
+            console.warn('未找到学术能力字段');
+        }
+        
+        if (languageAbilityField) {
+            const languageValue = recommendationData.languageAbility !== undefined && recommendationData.languageAbility !== null 
+                ? recommendationData.languageAbility 
+                : '';
+            languageAbilityField.value = languageValue;
+            languageAbilityField.dispatchEvent(new Event('input', { bubbles: true }));
+            console.log('已填充语言能力:', languageValue);
+            filledCount++;
+        } else {
+            console.warn('未找到语言能力字段');
+        }
+        
+        if (artisticQualityField) {
+            const artisticValue = recommendationData.artisticQuality !== undefined && recommendationData.artisticQuality !== null 
+                ? recommendationData.artisticQuality 
+                : '';
+            artisticQualityField.value = artisticValue;
+            artisticQualityField.dispatchEvent(new Event('input', { bubbles: true }));
+            console.log('已填充文体素养:', artisticValue);
+            filledCount++;
+        } else {
+            console.warn('未找到文体素养字段');
+        }
+        
+        if (socialAbilityField) {
+            const socialValue = recommendationData.socialAbility !== undefined && recommendationData.socialAbility !== null 
+                ? recommendationData.socialAbility 
+                : '';
+            socialAbilityField.value = socialValue;
+            socialAbilityField.dispatchEvent(new Event('input', { bubbles: true }));
+            console.log('已填充生活能力:', socialValue);
+            filledCount++;
+        } else {
+            console.warn('未找到生活能力字段');
+        }
+        
+        // 填充分析内容
+        const academicAnalysisField = document.getElementById('academicAnalysis');
+        const languageAnalysisField = document.getElementById('languageAnalysis');
+        const artisticAnalysisField = document.getElementById('artisticAnalysis');
+        const socialAnalysisField = document.getElementById('socialAnalysis');
+        
+        if (academicAnalysisField) {
+            academicAnalysisField.value = recommendationData.academicAnalysis || '';
+            academicAnalysisField.dispatchEvent(new Event('input', { bubbles: true }));
+            console.log('已填充学术分析');
+        }
+        if (languageAnalysisField) {
+            languageAnalysisField.value = recommendationData.languageAnalysis || '';
+            languageAnalysisField.dispatchEvent(new Event('input', { bubbles: true }));
+            console.log('已填充语言分析');
+        }
+        if (artisticAnalysisField) {
+            artisticAnalysisField.value = recommendationData.artisticAnalysis || '';
+            artisticAnalysisField.dispatchEvent(new Event('input', { bubbles: true }));
+            console.log('已填充文体分析');
+        }
+        if (socialAnalysisField) {
+            socialAnalysisField.value = recommendationData.socialAnalysis || '';
+            socialAnalysisField.dispatchEvent(new Event('input', { bubbles: true }));
+            console.log('已填充生活分析');
+        }
+        
+        // 填充综合提升建议
+        const overallSuggestionsField = document.getElementById('overallSuggestions');
+        if (overallSuggestionsField && recommendationData.overallSuggestions) {
+            overallSuggestionsField.value = recommendationData.overallSuggestions;
+            overallSuggestionsField.dispatchEvent(new Event('input', { bubbles: true }));
+            console.log('已填充综合建议');
+        }
+        
+        // 滚动到顶部
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        
+        // 如果所有四维能力字段都填充成功，返回true
+        const success = filledCount === totalFields;
+        if (success) {
+            console.log('推荐信息填充完成，所有字段已填充');
+        } else {
+            console.warn(`推荐信息部分填充完成，成功填充 ${filledCount}/${totalFields} 个能力字段`);
+        }
+        
+        return success;
+    } catch (error) {
+        console.error('填充推荐信息失败:', error);
+        return false;
+    }
 }
 
 // 生成报告
@@ -518,27 +760,35 @@ function generateIntelligentAnalysis() {
         socialAbility: parseInt(safeGetValue('socialAbility', '85')) || 85
     };
 
-    const analysis = {
-        academic: {
-            strengths: safeGetValue('academicStrengths') || (getAbilityEvaluation('academic', radar.academicAbility)?.strengths || '学术能力有待提升'),
-            weaknesses: safeGetValue('academicWeaknesses') || (getAbilityEvaluation('academic', radar.academicAbility)?.weaknesses || '学术基础需要加强'),
-            suggestions: safeGetValue('academicSuggestions') || (getAbilityEvaluation('academic', radar.academicAbility)?.suggestions || '建议加强学术学习')
-        },
-        language: {
-            strengths: safeGetValue('languageStrengths') || (getAbilityEvaluation('language', radar.languageAbility)?.strengths || '语言能力有待提升'),
-            weaknesses: safeGetValue('languageWeaknesses') || (getAbilityEvaluation('language', radar.languageAbility)?.weaknesses || '语言基础需要加强'),
-            suggestions: safeGetValue('languageSuggestions') || (getAbilityEvaluation('language', radar.languageAbility)?.suggestions || '建议加强语言学习')
-        },
-        artistic: {
-            strengths: safeGetValue('artisticStrengths') || (getAbilityEvaluation('artistic', radar.artisticQuality)?.strengths || '文体素养有待提升'),
-            weaknesses: safeGetValue('artisticWeaknesses') || (getAbilityEvaluation('artistic', radar.artisticQuality)?.weaknesses || '文体基础需要加强'),
-            suggestions: safeGetValue('artisticSuggestions') || (getAbilityEvaluation('artistic', radar.artisticQuality)?.suggestions || '建议加强文体素养')
-        },
-        social: {
-            strengths: safeGetValue('socialStrengths') || (getAbilityEvaluation('social', radar.socialAbility)?.strengths || '社交能力有待提升'),
-            weaknesses: safeGetValue('socialWeaknesses') || (getAbilityEvaluation('social', radar.socialAbility)?.weaknesses || '社交基础需要加强'),
-            suggestions: safeGetValue('socialSuggestions') || (getAbilityEvaluation('social', radar.socialAbility)?.suggestions || '建议加强社交能力')
+    // 从新的单文本框读取分析内容，如果没有则根据分数生成
+    const academicAnalysis = safeGetValue('academicAnalysis') || generateMergedAnalysis('academic', radar.academicAbility);
+    const languageAnalysis = safeGetValue('languageAnalysis') || generateMergedAnalysis('language', radar.languageAbility);
+    const artisticAnalysis = safeGetValue('artisticAnalysis') || generateMergedAnalysis('artistic', radar.artisticQuality);
+    const socialAnalysis = safeGetValue('socialAnalysis') || generateMergedAnalysis('social', radar.socialAbility);
+    
+    // 解析分析内容，提取优势、不足和建议（为了兼容旧格式）
+    function parseAnalysis(analysisText) {
+        if (!analysisText) {
+            return { strengths: '', weaknesses: '', suggestions: '' };
         }
+        
+        const strengthsMatch = analysisText.match(/【优势】([^\n]+)/);
+        const weaknessesMatch = analysisText.match(/【不足】([^\n]+)/);
+        const suggestionsMatch = analysisText.match(/【建议】([^\n]+)/);
+        
+        return {
+            strengths: strengthsMatch ? strengthsMatch[1].trim() : '',
+            weaknesses: weaknessesMatch ? weaknessesMatch[1].trim() : '',
+            suggestions: suggestionsMatch ? suggestionsMatch[1].trim() : '',
+            fullText: analysisText // 保存完整文本
+        };
+    }
+
+    const analysis = {
+        academic: parseAnalysis(academicAnalysis),
+        language: parseAnalysis(languageAnalysis),
+        artistic: parseAnalysis(artisticAnalysis),
+        social: parseAnalysis(socialAnalysis)
     };
 
     return analysis;
@@ -591,6 +841,17 @@ function saveAdminSettings() {
     }
     
     const detailedAnalysis = generateIntelligentAnalysis();
+    
+    // 保存新的单文本框分析内容到fullText字段
+    const academicAnalysisText = safeGetValue('academicAnalysis');
+    const languageAnalysisText = safeGetValue('languageAnalysis');
+    const artisticAnalysisText = safeGetValue('artisticAnalysis');
+    const socialAnalysisText = safeGetValue('socialAnalysis');
+    
+    if (academicAnalysisText) detailedAnalysis.academic.fullText = academicAnalysisText;
+    if (languageAnalysisText) detailedAnalysis.language.fullText = languageAnalysisText;
+    if (artisticAnalysisText) detailedAnalysis.artistic.fullText = artisticAnalysisText;
+    if (socialAnalysisText) detailedAnalysis.social.fullText = socialAnalysisText;
     
     adminSettings = {
         radar: {
@@ -688,54 +949,74 @@ function loadAdminSettings() {
         
         // 填充表单字段
         if (adminSettings.radar) {
-            document.getElementById('academicAbility').value = adminSettings.radar.academicAbility || 75;
-            document.getElementById('languageAbility').value = adminSettings.radar.languageAbility || 70;
-            document.getElementById('artisticQuality').value = adminSettings.radar.artisticQuality || 80;
-            document.getElementById('socialAbility').value = adminSettings.radar.socialAbility || 85;
+            const academicAbilityEl = document.getElementById('academicAbility');
+            const languageAbilityEl = document.getElementById('languageAbility');
+            const artisticQualityEl = document.getElementById('artisticQuality');
+            const socialAbilityEl = document.getElementById('socialAbility');
+            
+            if (academicAbilityEl) academicAbilityEl.value = adminSettings.radar.academicAbility || 75;
+            if (languageAbilityEl) languageAbilityEl.value = adminSettings.radar.languageAbility || 70;
+            if (artisticQualityEl) artisticQualityEl.value = adminSettings.radar.artisticQuality || 80;
+            if (socialAbilityEl) socialAbilityEl.value = adminSettings.radar.socialAbility || 85;
         }
         
-        // 填充四维详细分析
+        // 填充四维详细分析（支持新旧两种格式）
         if (adminSettings.detailedAnalysis) {
-            // 学术能力
-            if (adminSettings.detailedAnalysis.academic) {
-                const academicStrengths = document.getElementById('academicStrengths');
-                const academicWeaknesses = document.getElementById('academicWeaknesses');
-                const academicSuggestions = document.getElementById('academicSuggestions');
-                if (academicStrengths) academicStrengths.value = adminSettings.detailedAnalysis.academic.strengths || '';
-                if (academicWeaknesses) academicWeaknesses.value = adminSettings.detailedAnalysis.academic.weaknesses || '';
-                if (academicSuggestions) academicSuggestions.value = adminSettings.detailedAnalysis.academic.suggestions || '';
+            // 优先使用新的单文本框格式
+            const academicAnalysisField = document.getElementById('academicAnalysis');
+            const languageAnalysisField = document.getElementById('languageAnalysis');
+            const artisticAnalysisField = document.getElementById('artisticAnalysis');
+            const socialAnalysisField = document.getElementById('socialAnalysis');
+            
+            // 如果有新的单文本框，使用fullText或合并旧格式
+            if (academicAnalysisField && adminSettings.detailedAnalysis.academic) {
+                if (adminSettings.detailedAnalysis.academic.fullText) {
+                    academicAnalysisField.value = adminSettings.detailedAnalysis.academic.fullText;
+                } else if (adminSettings.detailedAnalysis.academic.strengths || adminSettings.detailedAnalysis.academic.weaknesses || adminSettings.detailedAnalysis.academic.suggestions) {
+                    // 合并旧格式的三个字段
+                    let merged = '';
+                    if (adminSettings.detailedAnalysis.academic.strengths) merged += `【优势】${adminSettings.detailedAnalysis.academic.strengths}\n\n`;
+                    if (adminSettings.detailedAnalysis.academic.weaknesses) merged += `【不足】${adminSettings.detailedAnalysis.academic.weaknesses}\n\n`;
+                    if (adminSettings.detailedAnalysis.academic.suggestions) merged += `【建议】${adminSettings.detailedAnalysis.academic.suggestions}`;
+                    academicAnalysisField.value = merged.trim();
+                }
             }
             
-            // 语言能力
-            if (adminSettings.detailedAnalysis.language) {
-                const languageStrengths = document.getElementById('languageStrengths');
-                const languageWeaknesses = document.getElementById('languageWeaknesses');
-                const languageSuggestions = document.getElementById('languageSuggestions');
-                if (languageStrengths) languageStrengths.value = adminSettings.detailedAnalysis.language.strengths || '';
-                if (languageWeaknesses) languageWeaknesses.value = adminSettings.detailedAnalysis.language.weaknesses || '';
-                if (languageSuggestions) languageSuggestions.value = adminSettings.detailedAnalysis.language.suggestions || '';
+            if (languageAnalysisField && adminSettings.detailedAnalysis.language) {
+                if (adminSettings.detailedAnalysis.language.fullText) {
+                    languageAnalysisField.value = adminSettings.detailedAnalysis.language.fullText;
+                } else if (adminSettings.detailedAnalysis.language.strengths || adminSettings.detailedAnalysis.language.weaknesses || adminSettings.detailedAnalysis.language.suggestions) {
+                    let merged = '';
+                    if (adminSettings.detailedAnalysis.language.strengths) merged += `【优势】${adminSettings.detailedAnalysis.language.strengths}\n\n`;
+                    if (adminSettings.detailedAnalysis.language.weaknesses) merged += `【不足】${adminSettings.detailedAnalysis.language.weaknesses}\n\n`;
+                    if (adminSettings.detailedAnalysis.language.suggestions) merged += `【建议】${adminSettings.detailedAnalysis.language.suggestions}`;
+                    languageAnalysisField.value = merged.trim();
+                }
             }
             
-            // 文体素养
-            if (adminSettings.detailedAnalysis.artistic) {
-                const artisticStrengths = document.getElementById('artisticStrengths');
-                const artisticWeaknesses = document.getElementById('artisticWeaknesses');
-                const artisticSuggestions = document.getElementById('artisticSuggestions');
-                if (artisticStrengths) artisticStrengths.value = adminSettings.detailedAnalysis.artistic.strengths || '';
-                if (artisticWeaknesses) artisticWeaknesses.value = adminSettings.detailedAnalysis.artistic.weaknesses || '';
-                if (artisticSuggestions) artisticSuggestions.value = adminSettings.detailedAnalysis.artistic.suggestions || '';
+            if (artisticAnalysisField && adminSettings.detailedAnalysis.artistic) {
+                if (adminSettings.detailedAnalysis.artistic.fullText) {
+                    artisticAnalysisField.value = adminSettings.detailedAnalysis.artistic.fullText;
+                } else if (adminSettings.detailedAnalysis.artistic.strengths || adminSettings.detailedAnalysis.artistic.weaknesses || adminSettings.detailedAnalysis.artistic.suggestions) {
+                    let merged = '';
+                    if (adminSettings.detailedAnalysis.artistic.strengths) merged += `【优势】${adminSettings.detailedAnalysis.artistic.strengths}\n\n`;
+                    if (adminSettings.detailedAnalysis.artistic.weaknesses) merged += `【不足】${adminSettings.detailedAnalysis.artistic.weaknesses}\n\n`;
+                    if (adminSettings.detailedAnalysis.artistic.suggestions) merged += `【建议】${adminSettings.detailedAnalysis.artistic.suggestions}`;
+                    artisticAnalysisField.value = merged.trim();
+                }
             }
             
-            // 社交能力
-            if (adminSettings.detailedAnalysis.social) {
-                const socialStrengths = document.getElementById('socialStrengths');
-                const socialWeaknesses = document.getElementById('socialWeaknesses');
-                const socialSuggestions = document.getElementById('socialSuggestions');
-                if (socialStrengths) socialStrengths.value = adminSettings.detailedAnalysis.social.strengths || '';
-                if (socialWeaknesses) socialWeaknesses.value = adminSettings.detailedAnalysis.social.weaknesses || '';
-                if (socialSuggestions) socialSuggestions.value = adminSettings.detailedAnalysis.social.suggestions || '';
+            if (socialAnalysisField && adminSettings.detailedAnalysis.social) {
+                if (adminSettings.detailedAnalysis.social.fullText) {
+                    socialAnalysisField.value = adminSettings.detailedAnalysis.social.fullText;
+                } else if (adminSettings.detailedAnalysis.social.strengths || adminSettings.detailedAnalysis.social.weaknesses || adminSettings.detailedAnalysis.social.suggestions) {
+                    let merged = '';
+                    if (adminSettings.detailedAnalysis.social.strengths) merged += `【优势】${adminSettings.detailedAnalysis.social.strengths}\n\n`;
+                    if (adminSettings.detailedAnalysis.social.weaknesses) merged += `【不足】${adminSettings.detailedAnalysis.social.weaknesses}\n\n`;
+                    if (adminSettings.detailedAnalysis.social.suggestions) merged += `【建议】${adminSettings.detailedAnalysis.social.suggestions}`;
+                    socialAnalysisField.value = merged.trim();
+                }
             }
-            
         }
         
         // 填充整体建议
@@ -1772,14 +2053,13 @@ function calculatePredictedTotalScore() {
     return totalScore;
 }
 
-// 计算学术能力
-function calculateAcademicAbility() {
+// 计算学术能力（返回值，不依赖DOM）
+function calculateAcademicAbilityValue() {
     const predictedTotalField = document.getElementById('predictedTotal');
     const subjectGroupField = document.getElementById('subjectGroup');
-    const academicAbilityField = document.getElementById('academicAbility');
     
-    if (!predictedTotalField || !subjectGroupField || !academicAbilityField) {
-        return;
+    if (!predictedTotalField || !subjectGroupField) {
+        return 75; // 默认值
     }
     
     const predictedTotal = parseFloat(predictedTotalField.value) || 0;
@@ -1792,8 +2072,8 @@ function calculateAcademicAbility() {
     } else if (subjectGroup === '历史组') {
         baseScore = 460;
     } else {
-        // 如果未选择学科分组，不计算学术能力
-        return;
+        // 如果未选择学科分组，返回默认值
+        return 75;
     }
     
     // 计算公式：60 + 0.2 * (预测总分 - 基准分)
@@ -1802,19 +2082,29 @@ function calculateAcademicAbility() {
     // 限制在0-100范围内
     academicAbility = Math.max(0, Math.min(100, academicAbility));
     
-    // 更新学术能力字段
-    academicAbilityField.value = Math.round(academicAbility);
+    return Math.round(academicAbility);
 }
 
-// 计算语言能力
-function calculateLanguageAbility() {
+// 计算学术能力（更新DOM）
+function calculateAcademicAbility() {
+    const academicAbilityField = document.getElementById('academicAbility');
+    const value = calculateAcademicAbilityValue();
+    
+    if (academicAbilityField) {
+        academicAbilityField.value = value;
+    }
+    
+    return value;
+}
+
+// 计算语言能力（返回值，不依赖DOM）
+function calculateLanguageAbilityValue() {
     const englishTestTypeField = document.getElementById('englishTestType');
     const englishTotalScoreField = document.getElementById('englishTotalScore');
     const predictedEnglishField = document.getElementById('predictedEnglish');
-    const languageAbilityField = document.getElementById('languageAbility');
     
-    if (!englishTestTypeField || !languageAbilityField) {
-        return;
+    if (!englishTestTypeField) {
+        return 70; // 默认值
     }
     
     const englishTestType = englishTestTypeField.value;
@@ -1855,11 +2145,23 @@ function calculateLanguageAbility() {
     
     // 限制在0-100范围内并取整
     languageAbility = Math.max(0, Math.min(100, languageAbility));
-    languageAbilityField.value = Math.round(languageAbility);
+    return Math.round(languageAbility);
 }
 
-// 计算文体素养
-function calculateArtisticQuality() {
+// 计算语言能力（更新DOM）
+function calculateLanguageAbility() {
+    const languageAbilityField = document.getElementById('languageAbility');
+    const value = calculateLanguageAbilityValue();
+    
+    if (languageAbilityField) {
+        languageAbilityField.value = value;
+    }
+    
+    return value;
+}
+
+// 计算文体素养（返回值，不依赖DOM）
+function calculateArtisticQualityValue() {
     const hasClubField = document.getElementById('hasClub');
     const hasLongTermHobbyField = document.getElementById('hasLongTermHobby');
     const talentsField = document.getElementById('talents');
@@ -1867,11 +2169,6 @@ function calculateArtisticQuality() {
     const internationalExperienceField = document.getElementById('internationalExperience');
     const campExperienceField = document.getElementById('campExperience');
     const readingTimeField = document.getElementById('readingTime');
-    const artisticQualityField = document.getElementById('artisticQuality');
-    
-    if (!artisticQualityField) {
-        return;
-    }
     
     let rawScore = 0; // 原始分，满分90
     
@@ -1931,22 +2228,29 @@ function calculateArtisticQuality() {
     
     // 转换为100分制
     const finalScore = Math.round((rawScore / 90) * 100);
-    artisticQualityField.value = Math.max(0, Math.min(100, finalScore));
+    return Math.max(0, Math.min(100, finalScore));
 }
 
-// 计算生活能力
-function calculateSocialAbility() {
+// 计算文体素养（更新DOM）
+function calculateArtisticQuality() {
+    const artisticQualityField = document.getElementById('artisticQuality');
+    const value = calculateArtisticQualityValue();
+    
+    if (artisticQualityField) {
+        artisticQualityField.value = value;
+    }
+    
+    return value;
+}
+
+// 计算生活能力（返回值，不依赖DOM）
+function calculateSocialAbilityValue() {
     const hasClubField = document.getElementById('hasClub');
     const friendsCountField = document.getElementById('friendsCount');
     const organizationFrequencyField = document.getElementById('organizationFrequency');
     const askForHelpField = document.getElementById('askForHelp');
     const studyPersistenceField = document.getElementById('studyPersistence');
     const canCookField = document.getElementById('canCook');
-    const socialAbilityField = document.getElementById('socialAbility');
-    
-    if (!socialAbilityField) {
-        return;
-    }
     
     let rawScore = 0; // 原始分，满分90
     
@@ -2012,7 +2316,19 @@ function calculateSocialAbility() {
     
     // 转换为100分制
     const finalScore = Math.round((rawScore / 90) * 100);
-    socialAbilityField.value = Math.max(0, Math.min(100, finalScore));
+    return Math.max(0, Math.min(100, finalScore));
+}
+
+// 计算生活能力（更新DOM）
+function calculateSocialAbility() {
+    const socialAbilityField = document.getElementById('socialAbility');
+    const value = calculateSocialAbilityValue();
+    
+    if (socialAbilityField) {
+        socialAbilityField.value = value;
+    }
+    
+    return value;
 }
 
 
@@ -2474,7 +2790,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // 大学选择器功能
 let currentUniversityField = '';
-let filteredUniversities = QS_TOP_UNIVERSITIES;
+let filteredUniversities = [];
+
+// 初始化大学数据
+function initUniversityData() {
+    if (typeof QS_TOP_UNIVERSITIES !== 'undefined') {
+        filteredUniversities = QS_TOP_UNIVERSITIES;
+    } else {
+        // 如果数据未加载，等待加载完成
+        setTimeout(initUniversityData, 100);
+    }
+}
 
 // 打开大学选择器
 function openUniversitySelector(fieldId) {

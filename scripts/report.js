@@ -289,22 +289,42 @@ function fillAnalysisAndSuggestions() {
     const detailedAnalysis = reportData.admin.detailedAnalysis;
     const overallSuggestions = reportData.admin.analysis?.suggestions || '暂无整体建议内容';
     
-    // 填充四维详细分析（合并为一段话）
+    // 填充四维详细分析（优先使用推荐信息录入的分析内容）
     if (detailedAnalysis) {
-        // 学术能力（使用新的分析函数）
-        const academicText = generateAcademicAnalysis();
+        // 学术能力（优先使用fullText，否则使用自动生成）
+        let academicText = '';
+        if (detailedAnalysis.academic && detailedAnalysis.academic.fullText) {
+            academicText = detailedAnalysis.academic.fullText;
+        } else {
+            academicText = generateAcademicAnalysis();
+        }
         document.getElementById('academic-analysis').textContent = academicText;
         
-        // 语言能力（使用新的分析函数）
-        const languageText = generateLanguageAnalysis();
+        // 语言能力（优先使用fullText，否则使用自动生成）
+        let languageText = '';
+        if (detailedAnalysis.language && detailedAnalysis.language.fullText) {
+            languageText = detailedAnalysis.language.fullText;
+        } else {
+            languageText = generateLanguageAnalysis();
+        }
         document.getElementById('language-analysis').textContent = languageText;
         
-        // 文体素养（使用新的分析函数）
-        const artisticText = generateArtisticAnalysis();
+        // 文体素养（优先使用fullText，否则使用自动生成）
+        let artisticText = '';
+        if (detailedAnalysis.artistic && detailedAnalysis.artistic.fullText) {
+            artisticText = detailedAnalysis.artistic.fullText;
+        } else {
+            artisticText = generateArtisticAnalysis();
+        }
         document.getElementById('artistic-analysis').textContent = artisticText;
         
-        // 生活能力（使用新的分析函数）
-        const socialText = generateSocialAnalysis();
+        // 生活能力（优先使用fullText，否则使用自动生成）
+        let socialText = '';
+        if (detailedAnalysis.social && detailedAnalysis.social.fullText) {
+            socialText = detailedAnalysis.social.fullText;
+        } else {
+            socialText = generateSocialAnalysis();
+        }
         document.getElementById('social-analysis').textContent = socialText;
         
     }

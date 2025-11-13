@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>感谢您的参与 - 留学潜力评估系统</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <style>
+        @import url('https://fonts.loli.net/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        * {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', 'Helvetica Neue', Arial, sans-serif !important;
+        }
+        
+        .thankyou-container {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .thankyou-content {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 60px;
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .thankyou-icon {
+            font-size: 5rem;
+            margin-bottom: 30px;
+            animation: bounce 1s ease-in-out;
+        }
+        
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+        
+        .thankyou-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .thankyou-message {
+            font-size: 1.1rem;
+            color: #718096;
+            line-height: 1.8;
+            margin-bottom: 40px;
+        }
+        
+        .thankyou-info {
+            background: #f7fafc;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 40px;
+            text-align: left;
+        }
+        
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .info-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        
+        .info-label {
+            font-weight: 500;
+            color: #4a5568;
+        }
+        
+        .info-value {
+            color: #2d3748;
+            font-weight: 600;
+        }
+        
+        .thankyou-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn-thankyou {
+            padding: 14px 28px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .btn-primary-thankyou {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .btn-primary-thankyou:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-secondary-thankyou {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+        
+        .btn-secondary-thankyou:hover {
+            background: #cbd5e0;
+            transform: translateY(-2px);
+        }
+        
+        @media (max-width: 768px) {
+            .thankyou-content {
+                padding: 40px 30px;
+            }
+            
+            .thankyou-title {
+                font-size: 2rem;
+            }
+            
+            .thankyou-icon {
+                font-size: 4rem;
+            }
+            
+            .thankyou-actions {
+                flex-direction: column;
+            }
+            
+            .btn-thankyou {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="thankyou-container">
+        <div class="thankyou-content">
+            <div class="thankyou-icon">✅</div>
+            <h1 class="thankyou-title">感谢您的参与！</h1>
+            <p class="thankyou-message">
+                您的问卷已成功提交。我们的工作人员将尽快处理您的信息，
+                并为您生成个性化的留学潜力评估报告。
+            </p>
+            
+            <div class="thankyou-info" id="thankyouInfo" style="display: none;">
+                <div class="info-item">
+                    <span class="info-label">学生姓名：</span>
+                    <span class="info-value" id="studentNameDisplay">-</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">机构码：</span>
+                    <span class="info-value" id="institutionCodeDisplay">-</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">提交时间：</span>
+                    <span class="info-value" id="submitTimeDisplay">-</span>
+                </div>
+            </div>
+            
+            <div class="thankyou-actions">
+                <a href="home.html" class="btn-thankyou btn-primary-thankyou">返回首页</a>
+                <a href="admin.html" class="btn-thankyou btn-secondary-thankyou">管理后台</a>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 显示提交信息（如果有）
+        document.addEventListener('DOMContentLoaded', function() {
+            const surveyData = localStorage.getItem('surveyData');
+            if (surveyData) {
+                try {
+                    const data = JSON.parse(surveyData);
+                    if (data.studentName || data.student_name) {
+                        document.getElementById('studentNameDisplay').textContent = data.studentName || data.student_name;
+                    }
+                    if (data.institutionCode) {
+                        document.getElementById('institutionCodeDisplay').textContent = data.institutionCode;
+                    }
+                    if (data.surveyEndTime) {
+                        const submitTime = new Date(data.surveyEndTime);
+                        document.getElementById('submitTimeDisplay').textContent = submitTime.toLocaleString('zh-CN');
+                    } else {
+                        document.getElementById('submitTimeDisplay').textContent = new Date().toLocaleString('zh-CN');
+                    }
+                    document.getElementById('thankyouInfo').style.display = 'block';
+                } catch (e) {
+                    console.error('解析数据错误:', e);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
+

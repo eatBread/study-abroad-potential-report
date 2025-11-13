@@ -5,7 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>留学潜力报告</title>
     <link rel="stylesheet" href="styles/report.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- 使用国内镜像，避免Google Fonts超时 -->
+    <style>
+        @import url('https://fonts.loli.net/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        /* 后备字体方案 */
+        * {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', 'Helvetica Neue', Arial, sans-serif !important;
+        }
+    </style>
     <style>
         .report-nav {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
