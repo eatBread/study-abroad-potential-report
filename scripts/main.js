@@ -2840,9 +2840,12 @@ function renderUniversities() {
         item.className = 'university-item-selector';
         item.onclick = () => selectUniversity(university);
         
+        // 将图片路径转换为绝对路径
+        const logoPath = university.logo ? (university.logo.startsWith('/') || university.logo.startsWith('http') ? university.logo : '/' + university.logo) : '';
+        
         item.innerHTML = `
-            <img src="${university.logo}" alt="${university.name}" class="university-logo-small" 
-                 onerror="this.src='https://via.placeholder.com/40x40?text=校徽'">
+            <img src="${logoPath}" alt="${university.name}" class="university-logo-small" 
+                 onerror="this.style.display='none'; this.parentElement.querySelector('.university-info').style.marginLeft='0';">
             <div class="university-info">
                 <h4>${university.chineseName}</h4>
                 <p>${university.name} • ${university.country}</p>

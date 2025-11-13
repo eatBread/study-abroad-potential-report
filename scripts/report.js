@@ -808,6 +808,19 @@ function getMajorDirectionClass(majorDirection) {
     return classMap[majorDirection] || 'other';
 }
 
+// 将相对路径转换为绝对路径
+function getAbsoluteImagePath(relativePath) {
+    if (!relativePath) return '';
+    
+    // 如果已经是绝对路径（以 http:// 或 https:// 或 / 开头），直接返回
+    if (relativePath.startsWith('http://') || relativePath.startsWith('https://') || relativePath.startsWith('/')) {
+        return relativePath;
+    }
+    
+    // 将相对路径转换为绝对路径（以 / 开头）
+    return '/' + relativePath.replace(/^\.\//, '');
+}
+
 // 填充单个院校类别
 function fillUniversityCategory(containerId, universityList) {
     const container = document.getElementById(containerId);
@@ -817,8 +830,10 @@ function fillUniversityCategory(containerId, universityList) {
         const universityItem = document.createElement('div');
         universityItem.className = 'university-item';
         
-        const logoElement = university.logo && university.logo.trim() !== ''
-            ? `<img src="${university.logo}" alt="${university.name}" class="university-logo" onerror="this.style.display='none';">`
+        // 将图片路径转换为绝对路径
+        const logoPath = university.logo ? getAbsoluteImagePath(university.logo) : '';
+        const logoElement = logoPath && logoPath.trim() !== ''
+            ? `<img src="${logoPath}" alt="${university.name}" class="university-logo" onerror="this.style.display='none';">`
             : `<div class="university-logo">${university.name ? university.name.substring(0, 2) : ''}</div>`;
         
         const displayName = university.name || '未填写';
@@ -862,9 +877,9 @@ function fillServiceContent() {
     // 设置二维码图片（可配置，默认使用默认图片）
     const qrCodeImg = document.getElementById('qr-code-image');
     if (service.qrCodeImage) {
-        qrCodeImg.src = service.qrCodeImage;
+        qrCodeImg.src = getAbsoluteImagePath(service.qrCodeImage);
     } else {
-        qrCodeImg.src = 'image/default-qr.png';
+        qrCodeImg.src = getAbsoluteImagePath('image/default-qr.png');
     }
     
     // 设置联系邮箱（可配置）
