@@ -808,17 +808,62 @@ function getMajorDirectionClass(majorDirection) {
     return classMap[majorDirection] || 'other';
 }
 
+// 根据大学名称查找实际的 logo 路径
+function findUniversityLogo(universityName, englishName) {
+    // 尝试从全局作用域获取 QS_TOP_UNIVERSITIES
+    const universities = typeof QS_TOP_UNIVERSITIES !== 'undefined' ? QS_TOP_UNIVERSITIES : 
+                        (typeof window !== 'undefined' && window.QS_TOP_UNIVERSITIES ? window.QS_TOP_UNIVERSITIES : null);
+    
+    if (universities && Array.isArray(universities)) {
+        // 先尝试用中文名查找
+        if (universityName) {
+            const foundByChinese = universities.find(u => 
+                u.chineseName === universityName || u.name === universityName
+            );
+            if (foundByChinese && foundByChinese.logo) {
+                return getAbsoluteImagePath(foundByChinese.logo);
+            }
+        }
+        
+        // 再尝试用英文名查找
+        if (englishName) {
+            const foundByEnglish = universities.find(u => 
+                u.name === englishName || u.chineseName === englishName
+            );
+            if (foundByEnglish && foundByEnglish.logo) {
+                return getAbsoluteImagePath(foundByEnglish.logo);
+            }
+        }
+    }
+    return '';
+}
+
 // 将相对路径转换为绝对路径
 function getAbsoluteImagePath(relativePath) {
-    if (!relativePath) return '';
+    if (!relativePath || typeof relativePath !== 'string') {
+        return '';
+    }
+    
+    // 去除首尾空格
+    const trimmedPath = relativePath.trim();
+    if (!trimmedPath) {
+        return '';
+    }
+    
+    // 如果是 placeholder URL，返回空字符串（使用默认显示）
+    if (trimmedPath.includes('via.placeholder.com') || trimmedPath.includes('placeholder')) {
+        return '';
+    }
     
     // 如果已经是绝对路径（以 http:// 或 https:// 或 / 开头），直接返回
-    if (relativePath.startsWith('http://') || relativePath.startsWith('https://') || relativePath.startsWith('/')) {
-        return relativePath;
+    if (trimmedPath.startsWith('http://') || trimmedPath.startsWith('https://') || trimmedPath.startsWith('/')) {
+        return trimmedPath;
     }
     
     // 将相对路径转换为绝对路径（以 / 开头）
-    return '/' + relativePath.replace(/^\.\//, '');
+    // 确保路径以 / 开头，并且去除开头的 ./ 或 ./
+    const cleanPath = trimmedPath.replace(/^\.\//, '').replace(/^\.\\/, '');
+    return '/' + cleanPath;
 }
 
 // 填充单个院校类别
@@ -831,9 +876,25 @@ function fillUniversityCategory(containerId, universityList) {
         universityItem.className = 'university-item';
         
         // 将图片路径转换为绝对路径
-        const logoPath = university.logo ? getAbsoluteImagePath(university.logo) : '';
+        let logoPath = '';
+        if (university.logo && typeof university.logo === 'string' && university.logo.trim() !== '') {
+            logoPath = getAbsoluteImagePath(university.logo.trim());
+        }
+        
+        // 如果 logoPath 为空（可能是 placeholder URL 或空值），尝试根据大学名称查找
+        if (!logoPath && (university.name || university.englishName)) {
+            logoPath = findUniversityLogo(university.name, university.englishName);
+        }
+        
+        // 调试信息（生产环境可删除）
+        if (logoPath) {
+            console.log(`[Report] 大学: ${university.name}, Logo路径: ${logoPath}, 原始路径: ${university.logo}`);
+        } else {
+            console.log(`[Report] 大学: ${university.name}, 未找到Logo，将显示默认文本`);
+        }
+        
         const logoElement = logoPath && logoPath.trim() !== ''
-            ? `<img src="${logoPath}" alt="${university.name}" class="university-logo" onerror="this.style.display='none';">`
+            ? `<img src="${logoPath}" alt="${university.name || ''}" class="university-logo" onerror="console.error('图片加载失败:', '${logoPath}'); this.style.display='none';">`
             : `<div class="university-logo">${university.name ? university.name.substring(0, 2) : ''}</div>`;
         
         const displayName = university.name || '未填写';
