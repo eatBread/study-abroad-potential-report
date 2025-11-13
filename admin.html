@@ -961,6 +961,42 @@
                     fillFormFromSurveyData(surveyData);
                 }
                 
+                // 等待表单填充完成后，收集数据并保存到 localStorage
+                setTimeout(() => {
+                    // 收集表单数据
+                    const form = document.getElementById('student-form');
+                    if (form) {
+                        const formData = new FormData(form);
+                        const studentData = {};
+                        
+                        // 收集所有表单字段
+                        for (let [key, value] of formData.entries()) {
+                            studentData[key] = value;
+                        }
+                        
+                        // 处理 checkbox 数据
+                        const selectedDestinations = [];
+                        document.querySelectorAll('input[name="studyDestination"]:checked').forEach(cb => {
+                            selectedDestinations.push(cb.value);
+                        });
+                        if (selectedDestinations.length > 0) {
+                            studentData.studyDestination = selectedDestinations.join('┋');
+                        }
+                        
+                        const selectedMajors = [];
+                        document.querySelectorAll('input[name="majorPreference"]:checked').forEach(cb => {
+                            selectedMajors.push(cb.value);
+                        });
+                        if (selectedMajors.length > 0) {
+                            studentData.majorPreference = selectedMajors.join('┋');
+                        }
+                        
+                        // 保存到 localStorage
+                        localStorage.setItem('studentData', JSON.stringify(studentData));
+                        console.log('学生数据已保存到 localStorage:', studentData);
+                    }
+                }, 500);
+                
                 // 切换到学生信息录入标签页
                 showTab('input');
                 
