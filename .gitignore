@@ -37,3 +37,6 @@ test-logos.html
 node_modules/
 *.log
 .env
+database.sqlite
+*.sqlite
+*.sqlite3
