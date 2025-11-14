@@ -86,7 +86,47 @@ function initDatabase() {
                 }
             });
             
-            resolve();
+            // 创建大学表
+            db.run(`
+                CREATE TABLE IF NOT EXISTS universities (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    rank INTEGER,
+                    name TEXT NOT NULL,
+                    chinese_name TEXT,
+                    country TEXT,
+                    logo TEXT,
+                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                )
+            `, (err) => {
+                if (err) {
+                    console.error('创建大学表错误:', err.message);
+                    reject(err);
+                } else {
+                    console.log('大学表已创建或已存在');
+                }
+            });
+            
+            // 为大学表创建索引
+            db.run(`CREATE INDEX IF NOT EXISTS idx_universities_rank ON universities(rank)`, (err) => {
+                if (err) {
+                    console.error('创建大学排名索引错误:', err.message);
+                }
+            });
+            
+            db.run(`CREATE INDEX IF NOT EXISTS idx_universities_country ON universities(country)`, (err) => {
+                if (err) {
+                    console.error('创建大学国家索引错误:', err.message);
+                }
+            });
+            
+            db.run(`CREATE INDEX IF NOT EXISTS idx_universities_name ON universities(name)`, (err) => {
+                if (err) {
+                    console.error('创建大学名称索引错误:', err.message);
+                }
+                // 在最后一个操作完成后resolve
+                resolve();
+            });
         });
     });
 }
@@ -366,6 +406,237 @@ function deleteInstitution(id) {
     });
 }
 
+// ==================== 大学数据相关函数 ====================
+
+// 获取所有大学
+function getAllUniversities() {
+    const db = getDatabase();
+    
+    return new Promise((resolve, reject) => {
+        db.all(
+            'SELECT * FROM universities ORDER BY rank ASC, id ASC',
+            [],
+            (err, rows) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    // 转换为前端需要的格式
+                    const universities = rows.map(row => ({
+                        id: row.id,
+                        rank: row.rank,
+                        name: row.name,
+                        chineseName: row.chinese_name,
+                        chinese_name: row.chinese_name, // 保留原始字段名以兼容
+                        country: row.country,
+                        logo: row.logo
+                    }));
+                    resolve(universities);
+                }
+            }
+        );
+    });
+}
+
+// 根据ID获取大学
+function getUniversityById(id) {
+    const db = getDatabase();
+    
+    return new Promise((resolve, reject) => {
+        db.get(
+            'SELECT * FROM universities WHERE id = ?',
+            [id],
+            (err, row) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    if (row) {
+                        resolve({
+                            id: row.id,
+                            rank: row.rank,
+                            name: row.name,
+                            chineseName: row.chinese_name,
+                            chinese_name: row.chinese_name, // 保留原始字段名以兼容
+                            country: row.country,
+                            logo: row.logo
+                        });
+                    } else {
+                        resolve(null);
+                    }
+                }
+            }
+        );
+    });
+}
+
+// 根据名称获取大学
+function getUniversityByName(name) {
+    const db = getDatabase();
+    
+    return new Promise((resolve, reject) => {
+        db.get(
+            'SELECT * FROM universities WHERE name = ? OR chinese_name = ?',
+            [name, name],
+            (err, row) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    if (row) {
+                        resolve({
+                            rank: row.rank,
+                            name: row.name,
+                            chineseName: row.chinese_name,
+                            country: row.country,
+                            logo: row.logo
+                        });
+                    } else {
+                        resolve(null);
+                    }
+                }
+            }
+        );
+    });
+}
+
+// 根据国家获取大学列表
+function getUniversitiesByCountry(country) {
+    const db = getDatabase();
+    
+    return new Promise((resolve, reject) => {
+        db.all(
+            'SELECT * FROM universities WHERE country = ? ORDER BY rank ASC',
+            [country],
+            (err, rows) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    const universities = rows.map(row => ({
+                        rank: row.rank,
+                        name: row.name,
+                        chineseName: row.chinese_name,
+                        country: row.country,
+                        logo: row.logo
+                    }));
+                    resolve(universities);
+                }
+            }
+        );
+    });
+}
+
+// 添加大学
+function createUniversity(rank, name, chineseName, country, logo) {
+    const db = getDatabase();
+    
+    return new Promise((resolve, reject) => {
+        db.run(
+            'INSERT INTO universities (rank, name, chinese_name, country, logo) VALUES (?, ?, ?, ?, ?)',
+            [rank, name, chineseName, country, logo],
+            function(err) {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve({ id: this.lastID, rank, name, chineseName, country, logo });
+                }
+            }
+        );
+    });
+}
+
+// 批量添加大学
+function batchCreateUniversities(universities) {
+    const db = getDatabase();
+    
+    return new Promise((resolve, reject) => {
+        db.serialize(() => {
+            db.run('BEGIN TRANSACTION');
+            
+            const stmt = db.prepare('INSERT INTO universities (rank, name, chinese_name, country, logo) VALUES (?, ?, ?, ?, ?)');
+            
+            let successCount = 0;
+            let errorCount = 0;
+            
+            universities.forEach(uni => {
+                stmt.run([uni.rank, uni.name, uni.chineseName, uni.country, uni.logo], (err) => {
+                    if (err) {
+                        errorCount++;
+                        console.error(`添加大学失败: ${uni.name}`, err.message);
+                    } else {
+                        successCount++;
+                    }
+                });
+            });
+            
+            stmt.finalize((err) => {
+                if (err) {
+                    db.run('ROLLBACK');
+                    reject(err);
+                } else {
+                    db.run('COMMIT', (err) => {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            resolve({ successCount, errorCount, total: universities.length });
+                        }
+                    });
+                }
+            });
+        });
+    });
+}
+
+// 更新大学
+function updateUniversity(id, rank, name, chineseName, country, logo) {
+    const db = getDatabase();
+    
+    return new Promise((resolve, reject) => {
+        db.run(
+            'UPDATE universities SET rank = ?, name = ?, chinese_name = ?, country = ?, logo = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+            [rank, name, chineseName, country, logo, id],
+            function(err) {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve({ id, rank, name, chineseName, country, logo, changes: this.changes });
+                }
+            }
+        );
+    });
+}
+
+// 删除大学
+function deleteUniversity(id) {
+    const db = getDatabase();
+    
+    return new Promise((resolve, reject) => {
+        db.run(
+            'DELETE FROM universities WHERE id = ?',
+            [id],
+            function(err) {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve({ id, changes: this.changes });
+                }
+            }
+        );
+    });
+}
+
+// 清空大学表（用于重新导入）
+function clearUniversities() {
+    const db = getDatabase();
+    
+    return new Promise((resolve, reject) => {
+        db.run('DELETE FROM universities', (err) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve({ success: true });
+            }
+        });
+    });
+}
+
 module.exports = {
     getDatabase,
     initDatabase,
@@ -379,6 +650,16 @@ module.exports = {
     getSurveyById,
     updateSurveyStatus,
     getAllInstitutions,
-    saveReportHtml
+    saveReportHtml,
+    // 大学数据相关
+    getAllUniversities,
+    getUniversityById,
+    getUniversityByName,
+    getUniversitiesByCountry,
+    createUniversity,
+    batchCreateUniversities,
+    updateUniversity,
+    deleteUniversity,
+    clearUniversities
 };
 

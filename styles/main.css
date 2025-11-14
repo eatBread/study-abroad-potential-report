@@ -228,6 +228,16 @@ body {
     font-size: 0.9rem;
 }
 
+.university-item textarea {
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 0.9rem;
+    resize: vertical;
+    min-height: 100px;
+    line-height: 1.5;
+}
+
 .form-actions {
     margin-top: 40px;
     text-align: center;

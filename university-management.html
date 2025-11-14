@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大学管理 - 留学潜力报告生成系统</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <style>
+        @import url('https://fonts.loli.net/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        * {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', 'Helvetica Neue', Arial, sans-serif !important;
+        }
+        
+        /* 模态框样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .close:hover,
+        .close:focus {
+            color: #000;
+        }
+        
+        /* 表格中的校徽图片样式 */
+        .university-logo-cell img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+            border-radius: 4px;
+        }
+        
+        /* 操作按钮样式 */
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn-small {
+            padding: 4px 12px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <div class="header-text">
+                    <h1>大学管理</h1>
+                    <p>管理大学数据库</p>
+                </div>
+                <div class="header-actions">
+                    <a href="admin.html" class="btn btn-outline">← 返回管理后台</a>
+                </div>
+            </div>
+        </header>
+        
+        <!-- 内容区域 -->
+        <div id="content-area" class="form-container">
+            <!-- 工具栏 -->
+            <div class="toolbar" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 15px; background: #f5f5f5; border-radius: 8px;">
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <button class="btn btn-primary" onclick="openAddModal()">➕ 添加大学</button>
+                    <input type="text" id="searchInput" placeholder="搜索大学名称..." style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; min-width: 200px;" onkeyup="filterUniversities()">
+                </div>
+                <div>
+                    <span id="universityCount" style="color: #666;">共 0 所大学</span>
+                </div>
+            </div>
+
+            <!-- 大学列表表格 -->
+            <div class="table-container">
+                <table id="universityTable" class="data-table">
+                    <thead>
+                        <tr>
+                            <th>排名</th>
+                            <th>中文名称</th>
+                            <th>英文名称</th>
+                            <th>国家</th>
+                            <th>校徽</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="universityTableBody">
+                        <tr>
+                            <td colspan="6" style="text-align: center; padding: 40px; color: #999;">加载中...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 添加/编辑大学模态框 -->
+        <div id="universityModal" class="modal" style="display: none;">
+            <div class="modal-content" style="max-width: 600px; max-height: 90vh; overflow-y: auto;">
+                <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; padding: 20px; border-bottom: 1px solid #eee;">
+                    <h2 id="modalTitle">添加大学</h2>
+                    <span class="close" onclick="closeModal()" style="font-size: 28px; font-weight: bold; cursor: pointer; color: #999;">&times;</span>
+                </div>
+                <div class="modal-body" style="padding: 20px;">
+                    <form id="universityForm">
+                        <input type="hidden" id="universityId">
+                        
+                        <div class="form-group" style="margin-bottom: 15px;">
+                            <label for="rank">排名 <span style="color: red;">*</span></label>
+                            <input type="number" id="rank" required min="1" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 15px;">
+                            <label for="chineseName">中文名称 <span style="color: red;">*</span></label>
+                            <input type="text" id="chineseName" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 15px;">
+                            <label for="name">英文名称 <span style="color: red;">*</span></label>
+                            <input type="text" id="name" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 15px;">
+                            <label for="country">国家 <span style="color: red;">*</span></label>
+                            <input type="text" id="country" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 15px;">
+                            <label for="logo">校徽</label>
+                            <div style="margin-bottom: 10px;">
+                                <input type="file" id="logoFile" accept="image/*" style="display: none;" onchange="handleLogoUpload(event)">
+                                <button type="button" class="btn btn-secondary" onclick="document.getElementById('logoFile').click()">选择图片</button>
+                                <span id="logoFileName" style="margin-left: 10px; color: #666;"></span>
+                            </div>
+                            <div id="logoPreview" style="margin-top: 10px;">
+                                <img id="logoPreviewImg" src="" alt="校徽预览" style="max-width: 100px; max-height: 100px; border: 1px solid #ddd; border-radius: 4px; display: none;">
+                            </div>
+                            <input type="text" id="logo" placeholder="或直接输入图片URL" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; margin-top: 10px;">
+                        </div>
+
+                        <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee;">
+                            <button type="button" class="btn btn-outline" onclick="closeModal()">取消</button>
+                            <button type="submit" class="btn btn-primary">保存</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        let universities = [];
+        let filteredUniversities = [];
+        let currentEditingId = null;
+        let logoFileData = null;
+
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUniversities();
+        });
+
+        // 加载大学列表
+        async function loadUniversities() {
+            try {
+                const response = await fetch('/api/universities');
+                if (response.ok) {
+                    universities = await response.json();
+                    filteredUniversities = universities;
+                    renderUniversities();
+                    updateCount();
+                } else {
+                    console.error('加载大学列表失败');
+                    document.getElementById('universityTableBody').innerHTML = 
+                        '<tr><td colspan="6" style="text-align: center; padding: 40px; color: #f00;">加载失败，请刷新重试</td></tr>';
+                }
+            } catch (error) {
+                console.error('加载大学列表错误:', error);
+                document.getElementById('universityTableBody').innerHTML = 
+                    '<tr><td colspan="6" style="text-align: center; padding: 40px; color: #f00;">网络错误，请检查连接</td></tr>';
+            }
+        }
+
+        // 渲染大学列表
+        function renderUniversities() {
+            const tbody = document.getElementById('universityTableBody');
+            if (filteredUniversities.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px; color: #999;">暂无数据</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = filteredUniversities.map(uni => {
+                const logoDisplay = uni.logo 
+                    ? `<img src="${uni.logo}" alt="${uni.chinese_name || uni.name}" onerror="this.style.display='none'">`
+                    : '<span style="color: #999;">无</span>';
+                
+                return `
+                    <tr>
+                        <td>${uni.rank || '-'}</td>
+                        <td>${uni.chinese_name || '-'}</td>
+                        <td>${uni.name || '-'}</td>
+                        <td>${uni.country || '-'}</td>
+                        <td class="university-logo-cell">${logoDisplay}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn btn-secondary btn-small" onclick="editUniversity(${uni.id})">编辑</button>
+                                <button class="btn btn-outline btn-small" onclick="deleteUniversity(${uni.id}, '${(uni.chinese_name || uni.name).replace(/'/g, "\\'")}')">删除</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // 更新计数
+        function updateCount() {
+            document.getElementById('universityCount').textContent = `共 ${filteredUniversities.length} 所大学`;
+        }
+
+        // 搜索过滤
+        function filterUniversities() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            filteredUniversities = universities.filter(uni => {
+                const chineseName = (uni.chinese_name || '').toLowerCase();
+                const englishName = (uni.name || '').toLowerCase();
+                const country = (uni.country || '').toLowerCase();
+                return chineseName.includes(searchTerm) || englishName.includes(searchTerm) || country.includes(searchTerm);
+            });
+            renderUniversities();
+            updateCount();
+        }
+
+        // 打开添加模态框
+        function openAddModal() {
+            currentEditingId = null;
+            logoFileData = null;
+            document.getElementById('modalTitle').textContent = '添加大学';
+            document.getElementById('universityForm').reset();
+            document.getElementById('universityId').value = '';
+            document.getElementById('logoPreviewImg').style.display = 'none';
+            document.getElementById('logoFileName').textContent = '';
+            document.getElementById('logo').value = '';
+            document.getElementById('universityModal').style.display = 'block';
+        }
+
+        // 关闭模态框
+        function closeModal() {
+            document.getElementById('universityModal').style.display = 'none';
+            currentEditingId = null;
+            logoFileData = null;
+        }
+
+        // 点击模态框外部关闭
+        window.onclick = function(event) {
+            const modal = document.getElementById('universityModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
+        // 编辑大学
+        async function editUniversity(id) {
+            try {
+                const response = await fetch(`/api/universities/${id}`);
+                if (response.ok) {
+                    const university = await response.json();
+                    currentEditingId = id;
+                    logoFileData = null;
+                    
+                    document.getElementById('modalTitle').textContent = '编辑大学';
+                    document.getElementById('universityId').value = university.id;
+                    document.getElementById('rank').value = university.rank || '';
+                    document.getElementById('chineseName').value = university.chinese_name || '';
+                    document.getElementById('name').value = university.name || '';
+                    document.getElementById('country').value = university.country || '';
+                    document.getElementById('logo').value = university.logo || '';
+                    
+                    // 显示现有logo预览
+                    const previewImg = document.getElementById('logoPreviewImg');
+                    if (university.logo) {
+                        previewImg.src = university.logo;
+                        previewImg.style.display = 'block';
+                    } else {
+                        previewImg.style.display = 'none';
+                    }
+                    document.getElementById('logoFileName').textContent = '';
+                    
+                    document.getElementById('universityModal').style.display = 'block';
+                } else {
+                    alert('加载大学信息失败');
+                }
+            } catch (error) {
+                console.error('编辑大学错误:', error);
+                alert('加载大学信息失败');
+            }
+        }
+
+        // 处理logo上传
+        function handleLogoUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('图片大小不能超过5MB');
+                    event.target.value = '';
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    logoFileData = e.target.result;
+                    document.getElementById('logoPreviewImg').src = logoFileData;
+                    document.getElementById('logoPreviewImg').style.display = 'block';
+                    document.getElementById('logoFileName').textContent = file.name;
+                    // 清空URL输入框
+                    document.getElementById('logo').value = '';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // 表单提交
+        document.getElementById('universityForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                rank: parseInt(document.getElementById('rank').value),
+                chineseName: document.getElementById('chineseName').value.trim(),
+                name: document.getElementById('name').value.trim(),
+                country: document.getElementById('country').value.trim(),
+                logo: document.getElementById('logo').value.trim()
+            };
+
+            // 如果上传了图片文件，使用base64数据
+            if (logoFileData) {
+                formData.logo = logoFileData;
+            }
+
+            try {
+                let response;
+                if (currentEditingId) {
+                    // 更新
+                    response = await fetch(`/api/universities/${currentEditingId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    });
+                } else {
+                    // 创建
+                    response = await fetch('/api/universities', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    });
+                }
+
+                if (response.ok) {
+                    const result = await response.json();
+                    alert(currentEditingId ? '更新成功' : '添加成功');
+                    closeModal();
+                    loadUniversities();
+                } else {
+                    // 尝试解析错误响应
+                    let errorMessage = '未知错误';
+                    try {
+                        const errorText = await response.text();
+                        console.error('服务器错误响应:', errorText);
+                        try {
+                            const error = JSON.parse(errorText);
+                            errorMessage = error.error || error.message || errorMessage;
+                        } catch (e) {
+                            // 如果不是JSON，可能是HTML错误页面
+                            errorMessage = `服务器返回错误 (${response.status}): ${errorText.substring(0, 100)}`;
+                        }
+                    } catch (e) {
+                        errorMessage = `请求失败 (${response.status} ${response.statusText})`;
+                    }
+                    alert('操作失败: ' + errorMessage);
+                }
+            } catch (error) {
+                console.error('提交表单错误:', error);
+                alert('操作失败: ' + (error.message || '请检查网络连接'));
+            }
+        });
+
+        // 删除大学
+        async function deleteUniversity(id, name) {
+            if (!confirm(`确定要删除"${name}"吗？此操作不可恢复。`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/universities/${id}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    alert('删除成功');
+                    loadUniversities();
+                } else {
+                    const error = await response.json();
+                    alert('删除失败: ' + (error.message || '未知错误'));
+                }
+            } catch (error) {
+                console.error('删除大学错误:', error);
+                alert('删除失败，请检查网络连接');
+            }
+        }
+    </script>
+</body>
+</html>
+
