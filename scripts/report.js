@@ -180,28 +180,55 @@ async function saveReportToDatabase() {
     <!-- 不包含 report.js，避免重新从 localStorage 加载数据 -->
     <!-- 只保留导出PDF的功能脚本 -->
     <script>
-        // 导出PDF功能（如果需要）
+        // 导出PDF功能（简化版本，用于保存到数据库的HTML）
         function exportToPDF() {
             const element = document.getElementById('report-content');
-            const actionButtons = document.querySelector('.action-buttons');
+            if (!element) {
+                alert('找不到报告内容，无法导出PDF');
+                return;
+            }
             
+            if (typeof html2pdf === 'undefined') {
+                alert('PDF导出功能未加载，请刷新页面后重试');
+                return;
+            }
+            
+            const actionButtons = document.querySelector('.action-buttons');
             if (actionButtons) {
                 actionButtons.style.display = 'none';
             }
             
-            const opt = {
-                margin: 0.5,
-                filename: '留学潜力报告.pdf',
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2 },
-                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-            };
+            const studentName = document.getElementById('student-name')?.textContent || '学生';
+            const dateStr = new Date().toLocaleDateString('zh-CN').replace(/\//g, '-');
+            const filename = '留学潜力报告_' + studentName + '_' + dateStr + '.pdf';
             
-            html2pdf().set(opt).from(element).save().then(() => {
-                if (actionButtons) {
-                    actionButtons.style.display = 'flex';
-                }
-            });
+            setTimeout(() => {
+                const opt = {
+                    margin: [10, 10, 10, 10],
+                    filename: filename,
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2, useCORS: true, logging: false },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                    pagebreak: { mode: ['css', 'legacy'], before: '.page-2' }
+                };
+                
+                html2pdf()
+                    .set(opt)
+                    .from(element)
+                    .save()
+                    .then(() => {
+                        if (actionButtons) {
+                            actionButtons.style.display = 'flex';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('PDF导出失败:', error);
+                        if (actionButtons) {
+                            actionButtons.style.display = 'flex';
+                        }
+                        alert('PDF导出失败，请重试');
+                    });
+            }, 300);
         }
     </script>
 </body>
@@ -255,6 +282,25 @@ function fillStudentInfo() {
 function createRadarChart() {
     const ctx = document.getElementById('radarChart').getContext('2d');
     const radar = reportData.admin.radar;
+    
+    // 填充能力评分显示
+    const academicScoreEl = document.getElementById('academic-score');
+    const languageScoreEl = document.getElementById('language-score');
+    const artisticScoreEl = document.getElementById('artistic-score');
+    const socialScoreEl = document.getElementById('social-score');
+    
+    if (academicScoreEl) {
+        academicScoreEl.textContent = `学术能力：${radar.academicAbility || 0}`;
+    }
+    if (languageScoreEl) {
+        languageScoreEl.textContent = `语言能力：${radar.languageAbility || 0}`;
+    }
+    if (artisticScoreEl) {
+        artisticScoreEl.textContent = `文体素养：${radar.artisticQuality || 0}`;
+    }
+    if (socialScoreEl) {
+        socialScoreEl.textContent = `生活能力：${radar.socialAbility || 0}`;
+    }
     
     radarChart = new Chart(ctx, {
         type: 'radar',
@@ -1057,84 +1103,509 @@ function fillServiceContent() {
     document.getElementById('tech-support').textContent = `本报告技术支持由 ${techSupport} 提供`;
 }
 
-// 导出PDF
+// 导出PDF（重写版本）
 function exportToPDF() {
     const element = document.getElementById('report-content');
-    const actionButtons = document.querySelector('.action-buttons');
+    if (!element) {
+        alert('找不到报告内容，无法导出PDF');
+        return;
+    }
     
-    // 临时隐藏操作按钮
+    // 检查html2pdf是否已加载
+    if (typeof html2pdf === 'undefined') {
+        alert('PDF导出功能未加载，请刷新页面后重试');
+        return;
+    }
+    
+    // 隐藏操作按钮
+    const actionButtons = document.querySelector('.action-buttons');
     if (actionButtons) {
         actionButtons.style.display = 'none';
     }
     
-    // 临时调整样式以优化PDF输出
-    const originalStyles = {
-        maxWidth: element.style.maxWidth,
-        boxShadow: element.style.boxShadow
-    };
+    // 获取学生姓名用于文件名
+    const studentName = reportData?.student?.studentName || '学生';
+    const dateStr = new Date().toLocaleDateString('zh-CN').replace(/\//g, '-');
+    const filename = `留学潜力报告_${studentName}_${dateStr}.pdf`;
     
-    // 为PDF导出优化样式
-    element.style.maxWidth = '210mm';
-    element.style.boxShadow = 'none';
-    
-    // 等待图表完全渲染
+    // 等待一小段时间确保页面完全渲染
     setTimeout(() => {
+        // 为PDF导出优化样式
+        const originalContainerStyle = element.style.cssText;
+        element.style.width = '210mm';
+        element.style.margin = '0 auto';
+        
+        // 确保页面元素有正确的分页标记
+        const page1 = element.querySelector('.page-1');
+        const page2 = element.querySelector('.page-2');
+        const page3 = element.querySelector('.page-3');
+        const page4 = element.querySelector('.page-4');
+        
+        if (page1) {
+            page1.style.pageBreakAfter = 'always';
+            page1.style.breakAfter = 'page';
+        }
+        if (page2) {
+            page2.style.pageBreakBefore = 'always';
+            page2.style.pageBreakAfter = 'always';
+            page2.style.breakBefore = 'page';
+            page2.style.breakAfter = 'page';
+        }
+        if (page3) {
+            page3.style.pageBreakBefore = 'always';
+            page3.style.pageBreakAfter = 'always';
+            page3.style.breakBefore = 'page';
+            page3.style.breakAfter = 'page';
+        }
+        if (page4) {
+            page4.style.pageBreakBefore = 'always';
+            page4.style.breakBefore = 'page';
+        }
+        
+        // PDF导出配置
         const opt = {
-            margin: [10, 10, 10, 10], // 设置小边距
-            filename: `留学潜力报告_${reportData.student.studentName || '学生'}_${new Date().toLocaleDateString('zh-CN').replace(/\//g, '')}.pdf`,
+            margin: [0, 0, 0, 0],
+            filename: filename,
             image: { 
                 type: 'jpeg', 
                 quality: 0.95 
             },
             html2canvas: { 
-                scale: 1.5, // 降低scale以减少渲染问题
+                scale: 2,
+                useCORS: true,
+                allowTaint: true,
+                logging: false,
+                letterRendering: true,
+                scrollX: 0,
+                scrollY: 0
+            },
+            jsPDF: { 
+                unit: 'mm', 
+                format: 'a4', 
+                orientation: 'portrait',
+                compress: true
+            },
+            pagebreak: { 
+                mode: ['avoid-all', 'css'],
+                before: ['.page-2', '.page-3', '.page-4'],
+                after: ['.page-1', '.page-2', '.page-3'],
+                avoid: ['.page']
+            }
+        };
+        
+        // 显示加载提示
+        const loadingMsg = document.createElement('div');
+        loadingMsg.id = 'pdf-loading';
+        loadingMsg.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.8); color: white; padding: 20px 40px; border-radius: 8px; z-index: 10000; font-size: 16px;';
+        loadingMsg.textContent = '正在生成PDF，请稍候...';
+        document.body.appendChild(loadingMsg);
+        
+        // 执行PDF导出
+        html2pdf()
+            .set(opt)
+            .from(element)
+            .save()
+            .then(() => {
+                // 恢复原始样式
+                element.style.cssText = originalContainerStyle;
+                if (page1) {
+                    page1.style.pageBreakAfter = '';
+                    page1.style.breakAfter = '';
+                }
+                if (page2) {
+                    page2.style.pageBreakBefore = '';
+                    page2.style.pageBreakAfter = '';
+                    page2.style.breakBefore = '';
+                    page2.style.breakAfter = '';
+                }
+                if (page3) {
+                    page3.style.pageBreakBefore = '';
+                    page3.style.pageBreakAfter = '';
+                    page3.style.breakBefore = '';
+                    page3.style.breakAfter = '';
+                }
+                if (page4) {
+                    page4.style.pageBreakBefore = '';
+                    page4.style.breakBefore = '';
+                }
+                
+                // 移除加载提示
+                const loading = document.getElementById('pdf-loading');
+                if (loading) {
+                    loading.remove();
+                }
+                
+                // 恢复显示操作按钮
+                if (actionButtons) {
+                    actionButtons.style.display = 'flex';
+                }
+                
+                console.log('PDF导出成功');
+            })
+            .catch(error => {
+                console.error('PDF导出失败:', error);
+                
+                // 恢复原始样式
+                element.style.cssText = originalContainerStyle;
+                if (page1) {
+                    page1.style.pageBreakAfter = '';
+                    page1.style.breakAfter = '';
+                }
+                if (page2) {
+                    page2.style.pageBreakBefore = '';
+                    page2.style.pageBreakAfter = '';
+                    page2.style.breakBefore = '';
+                    page2.style.breakAfter = '';
+                }
+                if (page3) {
+                    page3.style.pageBreakBefore = '';
+                    page3.style.pageBreakAfter = '';
+                    page3.style.breakBefore = '';
+                    page3.style.breakAfter = '';
+                }
+                if (page4) {
+                    page4.style.pageBreakBefore = '';
+                    page4.style.breakBefore = '';
+                }
+                
+                // 移除加载提示
+                const loading = document.getElementById('pdf-loading');
+                if (loading) {
+                    loading.remove();
+                }
+                
+                // 恢复显示操作按钮
+                if (actionButtons) {
+                    actionButtons.style.display = 'flex';
+                }
+                
+                alert('PDF导出失败：' + (error.message || '未知错误，请重试'));
+            });
+    }, 500);
+}
+
+// 导出4张图片（分别导出每一页）
+async function exportToImages() {
+    const element = document.getElementById('report-content');
+    if (!element) {
+        alert('找不到报告内容，无法导出图片');
+        return;
+    }
+    
+    // 检查html2canvas是否可用
+    if (typeof html2canvas === 'undefined') {
+        alert('图片导出功能未加载，请刷新页面后重试');
+        return;
+    }
+    
+    // 隐藏操作按钮
+    const actionButtons = document.querySelector('.action-buttons');
+    if (actionButtons) {
+        actionButtons.style.display = 'none';
+    }
+    
+    // 获取学生姓名用于文件名
+    const studentName = reportData?.student?.studentName || '学生';
+    const dateStr = new Date().toLocaleDateString('zh-CN').replace(/\//g, '-');
+    
+    // 获取4个页面元素
+    const page1 = element.querySelector('.page-1');
+    const page2 = element.querySelector('.page-2');
+    const page3 = element.querySelector('.page-3');
+    const page4 = element.querySelector('.page-4');
+    
+    if (!page1 || !page2 || !page3 || !page4) {
+        alert('找不到页面内容，无法导出图片');
+        if (actionButtons) {
+            actionButtons.style.display = 'flex';
+        }
+        return;
+    }
+    
+    // 显示加载提示
+    const loadingMsg = document.createElement('div');
+    loadingMsg.id = 'image-loading';
+    loadingMsg.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.8); color: white; padding: 20px 40px; border-radius: 8px; z-index: 10000; font-size: 16px;';
+    loadingMsg.textContent = '正在生成图片，请稍候...';
+    document.body.appendChild(loadingMsg);
+    
+    try {
+        const pages = [
+            { element: page1, name: '第1页', pageNum: 1 },
+            { element: page2, name: '第2页', pageNum: 2 },
+            { element: page3, name: '第3页', pageNum: 3 },
+            { element: page4, name: '第4页', pageNum: 4 }
+        ];
+        
+        // 保存原始样式
+        const originalContainerStyle = element.style.cssText;
+        element.style.width = '210mm';
+        element.style.margin = '0 auto';
+        
+        // 依次导出每一页
+        for (let i = 0; i < pages.length; i++) {
+            const page = pages[i];
+            loadingMsg.textContent = `正在生成${page.name}... (${i + 1}/4)`;
+            
+            // 等待一小段时间确保渲染完成
+            await new Promise(resolve => setTimeout(resolve, 300));
+            
+            // 使用html2canvas生成图片
+            const canvas = await html2canvas(page.element, {
+                scale: 2,
                 useCORS: true,
                 allowTaint: true,
                 logging: false,
                 letterRendering: true,
                 scrollX: 0,
                 scrollY: 0,
-                width: 794, // A4宽度像素 (210mm * 3.78)
-                height: 1123, // A4高度像素 (297mm * 3.78)
-                windowWidth: 794,
-                windowHeight: 1123
-            },
-            jsPDF: { 
-                unit: 'mm', 
-                format: 'a4', 
-                orientation: 'portrait' 
-            },
-            pagebreak: { 
-                mode: ['css', 'legacy'],
-                before: '.page-2'
-            }
-        };
+                backgroundColor: '#ffffff'
+            });
+            
+            // 将canvas转换为图片并下载
+            const imgData = canvas.toDataURL('image/png', 1.0);
+            const link = document.createElement('a');
+            link.download = `留学潜力报告_${studentName}_${dateStr}_${page.name}.png`;
+            link.href = imgData;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // 等待一小段时间再处理下一页
+            await new Promise(resolve => setTimeout(resolve, 500));
+        }
         
-        html2pdf().set(opt).from(element).save().then(() => {
-            // 恢复原始样式
-            element.style.maxWidth = originalStyles.maxWidth;
-            element.style.boxShadow = originalStyles.boxShadow;
+        // 恢复原始样式
+        element.style.cssText = originalContainerStyle;
+        
+        // 移除加载提示
+        loadingMsg.remove();
+        
+        // 恢复显示操作按钮
+        if (actionButtons) {
+            actionButtons.style.display = 'flex';
+        }
+        
+        alert('4张图片已全部导出完成！');
+    } catch (error) {
+        console.error('图片导出失败:', error);
+        
+        // 恢复原始样式
+        element.style.cssText = originalContainerStyle;
+        
+        // 移除加载提示
+        const loading = document.getElementById('image-loading');
+        if (loading) {
+            loading.remove();
+        }
+        
+        // 恢复显示操作按钮
+        if (actionButtons) {
+            actionButtons.style.display = 'flex';
+        }
+        
+        alert('图片导出失败：' + (error.message || '未知错误，请重试'));
+    }
+}
+
+// 将4张图片拼接成PDF
+async function combineImagesToPDF() {
+    const element = document.getElementById('report-content');
+    if (!element) {
+        alert('找不到报告内容，无法生成PDF');
+        return;
+    }
+    
+    // 检查html2canvas和jsPDF是否可用
+    if (typeof html2canvas === 'undefined') {
+        alert('图片导出功能未加载，请刷新页面后重试');
+        return;
+    }
+    
+    // 检查jsPDF（html2pdf包含jsPDF）
+    if (typeof html2pdf === 'undefined') {
+        alert('PDF生成功能未加载，请刷新页面后重试');
+        return;
+    }
+    
+    // 隐藏操作按钮
+    const actionButtons = document.querySelector('.action-buttons');
+    if (actionButtons) {
+        actionButtons.style.display = 'none';
+    }
+    
+    // 获取学生姓名用于文件名
+    const studentName = reportData?.student?.studentName || '学生';
+    const dateStr = new Date().toLocaleDateString('zh-CN').replace(/\//g, '-');
+    
+    // 获取4个页面元素
+    const page1 = element.querySelector('.page-1');
+    const page2 = element.querySelector('.page-2');
+    const page3 = element.querySelector('.page-3');
+    const page4 = element.querySelector('.page-4');
+    
+    if (!page1 || !page2 || !page3 || !page4) {
+        alert('找不到页面内容，无法生成PDF');
+        if (actionButtons) {
+            actionButtons.style.display = 'flex';
+        }
+        return;
+    }
+    
+    // 显示加载提示
+    const loadingMsg = document.createElement('div');
+    loadingMsg.id = 'pdf-combine-loading';
+    loadingMsg.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.8); color: white; padding: 20px 40px; border-radius: 8px; z-index: 10000; font-size: 16px;';
+    loadingMsg.textContent = '正在生成图片并合成PDF，请稍候...';
+    document.body.appendChild(loadingMsg);
+    
+    try {
+        const pages = [
+            { element: page1, name: '第1页', pageNum: 1 },
+            { element: page2, name: '第2页', pageNum: 2 },
+            { element: page3, name: '第3页', pageNum: 3 },
+            { element: page4, name: '第4页', pageNum: 4 }
+        ];
+        
+        // 保存原始样式
+        const originalContainerStyle = element.style.cssText;
+        element.style.width = '210mm';
+        element.style.margin = '0 auto';
+        
+        // 生成所有页面的图片
+        const imageDataUrls = [];
+        for (let i = 0; i < pages.length; i++) {
+            const page = pages[i];
+            loadingMsg.textContent = `正在生成${page.name}图片... (${i + 1}/4)`;
             
-            // 恢复显示操作按钮
-            if (actionButtons) {
-                actionButtons.style.display = 'flex';
+            // 等待一小段时间确保渲染完成
+            await new Promise(resolve => setTimeout(resolve, 300));
+            
+            // 使用html2canvas生成图片
+            const canvas = await html2canvas(page.element, {
+                scale: 2,
+                useCORS: true,
+                allowTaint: true,
+                logging: false,
+                letterRendering: true,
+                scrollX: 0,
+                scrollY: 0,
+                backgroundColor: '#ffffff'
+            });
+            
+            // 将canvas转换为图片数据
+            const imgData = canvas.toDataURL('image/png', 1.0);
+            imageDataUrls.push(imgData);
+        }
+        
+        // 使用jsPDF创建PDF并添加图片
+        loadingMsg.textContent = '正在合成PDF...';
+        
+        // 获取jsPDF（优先使用全局jsPDF，否则尝试从html2pdf获取）
+        let jsPDF;
+        if (window.jspdf && window.jspdf.jsPDF) {
+            jsPDF = window.jspdf.jsPDF;
+        } else if (window.jspdf) {
+            jsPDF = window.jspdf;
+        } else {
+            // 尝试从html2pdf的workflow中获取
+            try {
+                const worker = html2pdf().set({});
+                if (worker.jsPDF) {
+                    jsPDF = worker.jsPDF;
+                }
+            } catch (e) {
+                console.error('无法从html2pdf获取jsPDF:', e);
             }
-            
-            alert('PDF报告已成功导出！');
-        }).catch(error => {
-            console.error('PDF导出失败:', error);
-            alert('PDF导出失败，请重试。');
-            
-            // 恢复原始样式
-            element.style.maxWidth = originalStyles.maxWidth;
-            element.style.boxShadow = originalStyles.boxShadow;
-            
-            // 恢复显示操作按钮
-            if (actionButtons) {
-                actionButtons.style.display = 'flex';
-            }
+        }
+        
+        if (!jsPDF) {
+            throw new Error('无法访问jsPDF库，请确保jsPDF已正确加载');
+        }
+        
+        // 创建PDF文档
+        const pdf = new jsPDF({
+            unit: 'mm',
+            format: 'a4',
+            orientation: 'portrait'
         });
-    }, 500); // 给图表渲染留出时间
+        
+        // A4尺寸：210mm x 297mm
+        const pageWidth = 210;
+        const pageHeight = 297;
+        
+        // 固定图片宽度和顶部距离
+        const fixedImageWidth = 200; // 固定宽度200mm（留出左右各5mm边距）
+        const fixedTopMargin = 10; // 固定距离顶部10mm
+        
+        // 添加每一张图片到PDF
+        for (let i = 0; i < imageDataUrls.length; i++) {
+            if (i > 0) {
+                pdf.addPage();
+            }
+            
+            // 计算图片尺寸（固定宽度，高度按比例）
+            const img = new Image();
+            img.src = imageDataUrls[i];
+            
+            await new Promise((resolve) => {
+                img.onload = () => {
+                    const imgWidth = img.width;
+                    const imgHeight = img.height;
+                    
+                    // 固定宽度，高度按比例计算
+                    const width = fixedImageWidth;
+                    const height = (imgHeight / imgWidth) * width;
+                    
+                    // 固定位置：固定宽度，固定距离顶部
+                    const x = (pageWidth - width) / 2; // 水平居中（因为固定宽度）
+                    const y = fixedTopMargin; // 固定距离顶部
+                    
+                    pdf.addImage(imageDataUrls[i], 'PNG', x, y, width, height);
+                    resolve();
+                };
+                img.onerror = () => {
+                    console.error(`加载第${i + 1}张图片失败`);
+                    resolve();
+                };
+            });
+        }
+        
+        // 保存PDF
+        const filename = `留学潜力报告_${studentName}_${dateStr}_图片合成.pdf`;
+        pdf.save(filename);
+        
+        // 恢复原始样式
+        element.style.cssText = originalContainerStyle;
+        
+        // 移除加载提示
+        loadingMsg.remove();
+        
+        // 恢复显示操作按钮
+        if (actionButtons) {
+            actionButtons.style.display = 'flex';
+        }
+        
+        alert('PDF合成完成！');
+    } catch (error) {
+        console.error('PDF合成失败:', error);
+        
+        // 恢复原始样式
+        element.style.cssText = originalContainerStyle;
+        
+        // 移除加载提示
+        const loading = document.getElementById('pdf-combine-loading');
+        if (loading) {
+            loading.remove();
+        }
+        
+        // 恢复显示操作按钮
+        if (actionButtons) {
+            actionButtons.style.display = 'flex';
+        }
+        
+        alert('PDF合成失败：' + (error.message || '未知错误，请重试'));
+    }
 }
 
 // 打印报告

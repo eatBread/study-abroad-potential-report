@@ -15,6 +15,8 @@
     </style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
     <div class="report-container" id="report-content">
@@ -82,16 +84,20 @@
             <section class="radar-section">
                 <h2>综合能力评估</h2>
                 <div class="radar-container">
-                    <canvas id="radarChart" width="400" height="400"></canvas>
+                    <canvas id="radarChart" width="320" height="320"></canvas>
                 </div>
-                <div class="radar-legend">
-                    <div class="legend-item">
-                        <div class="legend-color" style="background-color: #3b82f6;"></div>
-                        <span>当前能力水平</span>
-                    </div>
+                <div class="radar-legend" id="radar-scores">
+                    <span>当前能力水平：</span>
+                    <span id="academic-score">学术能力：-</span>
+                    <span id="language-score">语言能力：-</span>
+                    <span id="artistic-score">文体素养：-</span>
+                    <span id="social-score">生活能力：-</span>
                 </div>
             </section>
+        </div>
 
+        <!-- 第二页 -->
+        <div class="page page-2">
             <!-- 四维能力详细分析 -->
             <section class="analysis-section">
                 <h2>四维能力详细分析</h2>
@@ -127,12 +133,8 @@
                         <p id="social-analysis"><!-- 动态内容：合并的优势、不足和建议 --></p>
                     </div>
                 </div>
-
             </section>
-        </div>
 
-        <!-- 第二页 -->
-        <div class="page page-2">
             <!-- 综合提升建议 -->
             <section class="suggestions-section">
                 <h2>综合提升建议</h2>
@@ -140,7 +142,10 @@
                     <!-- 动态内容 -->
                 </div>
             </section>
+        </div>
 
+        <!-- 第三页 -->
+        <div class="page page-3">
             <!-- 院校与专业推荐 -->
             <section class="universities-section">
                 <h2>院校与专业匹配推荐</h2>
@@ -158,7 +163,13 @@
                         <!-- 动态内容 -->
                     </div>
                 </div>
+            </section>
+        </div>
 
+        <!-- 第四页 -->
+        <div class="page page-4">
+            <!-- 院校与专业推荐（保底部分） -->
+            <section class="universities-section">
                 <div class="university-category">
                     <h3><span class="category-badge safety">保底</span>保底院校</h3>
                     <div class="university-list" id="safety-universities">
@@ -187,6 +198,8 @@
     <!-- 操作按钮 -->
     <div class="action-buttons">
         <button class="btn btn-primary" onclick="exportToPDF()">导出PDF报告</button>
+        <button class="btn btn-primary" onclick="exportToImages()">导出4张图片</button>
+        <button class="btn btn-primary" onclick="combineImagesToPDF()">图片合成</button>
         <button class="btn btn-secondary" onclick="window.close()">关闭窗口</button>
     </div>
 

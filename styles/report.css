@@ -59,38 +59,64 @@ body {
     flex-direction: column;
     margin: 0 auto;
     border-bottom: 1px solid var(--border-light);
+    box-sizing: border-box;
+}
+
+.page-1 {
+    page-break-after: always;
+    break-after: page;
+}
+
+.page-2 {
+    page-break-before: always;
+    page-break-after: always;
+    break-before: page;
+    break-after: page;
+}
+
+.page-3 {
+    page-break-before: always;
+    page-break-after: always;
+    break-before: page;
+    break-after: page;
+}
+
+.page-4 {
+    page-break-before: always;
+    break-before: page;
 }
 
 .page:last-child {
     page-break-after: auto;
+    break-after: auto;
 }
 
 /* 报告头部 */
 .report-header {
     text-align: center;
-    margin-bottom: 40px;
+    margin-bottom: 30px;
     position: relative;
-    padding: 40px 20px;
+    padding: 20px 20px;
     background: var(--primary-color);
-    margin: -30px -40px 40px -40px;
+    margin: -30px -40px 30px -40px;
     color: white;
     border-bottom: 4px solid var(--accent-color);
 }
 
 .header-content h1 {
-    font-size: 2.5rem;
+    font-size: 2.2rem;
     font-weight: 700;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     letter-spacing: 2px;
     font-family: 'Georgia', serif;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .header-content .subtitle {
-    font-size: 1.1rem;
+    font-size: 1rem;
     opacity: 0.9;
     font-weight: 400;
-    margin-bottom: 25px;
+    margin-bottom: 15px;
     font-style: italic;
     letter-spacing: 1px;
 }
@@ -114,7 +140,7 @@ body {
 
 /* 学生信息区域 */
 .student-info {
-    margin-bottom: 25px;
+    margin-bottom: 20px;
 }
 
 .student-info h2 {
@@ -160,7 +186,7 @@ body {
 
 /* 雷达图区域 */
 .radar-section {
-    margin-bottom: 25px;
+    margin-bottom: 20px;
 }
 
 .radar-section h2 {
@@ -181,10 +207,27 @@ body {
     border-radius: 8px;
 }
 
+#radarChart {
+    max-width: 320px;
+    max-height: 320px;
+    width: 100%;
+    height: auto;
+}
+
 .radar-legend {
     display: flex;
     justify-content: center;
+    align-items: center;
     margin-top: 10px;
+    flex-wrap: wrap;
+    gap: 15px;
+    font-size: 14px;
+    color: var(--text-color);
+}
+
+.radar-legend span {
+    white-space: nowrap;
+    font-weight: 500;
 }
 
 .legend-item {
@@ -861,7 +904,7 @@ body {
 
 /* 留学意向部分样式 */
 .intention-section {
-    margin-bottom: 30px;
+    margin-bottom: 20px;
     display: block;
     width: 100%;
 }
