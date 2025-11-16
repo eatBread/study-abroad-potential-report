@@ -1621,6 +1621,118 @@ async function combineImagesToPDF() {
     }
 }
 
+// 生成长图：将整个报告生成为一张长图
+async function exportToLongImage() {
+    const element = document.getElementById('report-content');
+    if (!element) {
+        alert('找不到报告内容，无法生成长图');
+        return;
+    }
+    
+    // 检查html2canvas是否可用
+    if (typeof html2canvas === 'undefined') {
+        alert('图片导出功能未加载，请刷新页面后重试');
+        return;
+    }
+    
+    // 隐藏操作按钮
+    const actionButtons = document.querySelector('.action-buttons');
+    if (actionButtons) {
+        actionButtons.style.display = 'none';
+    }
+    
+    // 获取学生姓名用于文件名
+    const studentName = reportData?.student?.studentName || '学生';
+    const dateStr = new Date().toLocaleDateString('zh-CN').replace(/\//g, '-');
+    const filename = `${studentName}_留学潜力报告_${dateStr}.png`;
+    
+    // 显示加载提示
+    const loadingMsg = document.createElement('div');
+    loadingMsg.id = 'long-image-loading';
+    loadingMsg.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.8); color: white; padding: 20px 40px; border-radius: 8px; z-index: 10000; font-size: 16px;';
+    loadingMsg.textContent = '正在生成长图，请稍候...';
+    document.body.appendChild(loadingMsg);
+    
+    try {
+        // 保存原始样式
+        const originalContainerStyle = element.style.cssText;
+        
+        // 设置容器样式以确保完整捕获
+        element.style.width = '210mm';
+        element.style.margin = '0 auto';
+        element.style.backgroundColor = '#ffffff';
+        
+        // 等待一小段时间确保样式应用
+        await new Promise(resolve => setTimeout(resolve, 300));
+        
+        // 使用html2canvas生成整个报告的长图
+        const canvas = await html2canvas(element, {
+            scale: 2, // 提高清晰度
+            useCORS: true,
+            allowTaint: true,
+            logging: false,
+            letterRendering: true,
+            scrollX: 0,
+            scrollY: 0,
+            windowWidth: element.scrollWidth,
+            windowHeight: element.scrollHeight,
+            backgroundColor: '#ffffff'
+        });
+        
+        // 将canvas转换为图片并下载
+        canvas.toBlob((blob) => {
+            if (blob) {
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+                
+                // 移除加载提示
+                if (loadingMsg.parentNode) {
+                    loadingMsg.parentNode.removeChild(loadingMsg);
+                }
+                
+                // 恢复操作按钮
+                if (actionButtons) {
+                    actionButtons.style.display = 'flex';
+                }
+                
+                // 恢复原始样式
+                element.style.cssText = originalContainerStyle;
+                
+                alert('长图生成成功！');
+            } else {
+                throw new Error('无法生成图片数据');
+            }
+        }, 'image/png', 1.0);
+        
+    } catch (error) {
+        console.error('生成长图失败:', error);
+        
+        // 移除加载提示
+        if (loadingMsg.parentNode) {
+            loadingMsg.parentNode.removeChild(loadingMsg);
+        }
+        
+        // 恢复操作按钮
+        if (actionButtons) {
+            actionButtons.style.display = 'flex';
+        }
+        
+        // 恢复原始样式
+        const element = document.getElementById('report-content');
+        if (element) {
+            element.style.cssText = '';
+        }
+        
+        alert('生成长图失败：' + (error.message || '未知错误，请重试'));
+    }
+}
+
 // 打印报告
 function printReport() {
     window.print();
