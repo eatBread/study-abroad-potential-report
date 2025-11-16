@@ -246,15 +246,15 @@ body {
 /* 分析区域 */
 .analysis-section,
 .suggestions-section {
-    margin-bottom: 25px;
+    margin-bottom: 5px;
 }
 
 .analysis-section h2,
 .suggestions-section h2 {
     font-size: 1.2rem;
     color: var(--primary-color);
-    margin-bottom: 20px;
-    padding-bottom: 10px;
+    margin-bottom: 5px;
+    padding-bottom: 5px;
     border-bottom: 3px solid var(--accent-color);
     font-weight: 700;
     font-family: 'Georgia', serif;
@@ -275,7 +275,7 @@ body {
 
 /* 五维能力详细分析样式 */
 .analysis-section {
-    margin-bottom: 30px;
+    margin-bottom: 5px;
     display: block;
     width: 100%;
 }
@@ -290,10 +290,10 @@ body {
 }
 
 .ability-detail {
-    margin-bottom: 25px;
+    margin-bottom: 10px;
     background: var(--surface-color);
     border-radius: 12px;
-    padding: 20px;
+    padding: 5px 20px;
     border: 1px solid var(--border-color);
     width: 100%;
     box-sizing: border-box;
@@ -308,7 +308,7 @@ body {
 .ability-detail h3 {
     font-size: 1.4rem;
     color: var(--primary-color);
-    margin-bottom: 15px;
+    margin-bottom: 5px;
     font-weight: 600;
     display: flex;
     align-items: center;
@@ -318,7 +318,7 @@ body {
 .ability-content {
     background: white;
     border-radius: 8px;
-    padding: 18px;
+    padding: 8px 18px;
     border-left: 4px solid var(--primary-color);
 }
 
