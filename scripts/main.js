@@ -794,18 +794,8 @@ function generateIntelligentAnalysis() {
         return element ? element.value : defaultValue;
     }
     
-    // 先计算学术能力
-    calculateAcademicAbility();
-    
-    // 计算语言能力
-    calculateLanguageAbility();
-    
-    // 计算文体素养
-    calculateArtisticQuality();
-    
-    // 计算社交能力
-    calculateSocialAbility();
-    
+    // 直接使用推荐信息录入页面当前的能力值（不重新计算，以保留用户可能修改的值）
+    // 注意：在生成报告时，应该使用用户当前在推荐信息录入页面设置的值，而不是重新计算
     const radar = {
         academicAbility: parseInt(safeGetValue('academicAbility', '75')) || 75,
         languageAbility: parseInt(safeGetValue('languageAbility', '70')) || 70,
