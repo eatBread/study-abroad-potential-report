@@ -963,8 +963,21 @@ function getMajorDirectionClass(majorDirection) {
 // 根据大学名称查找实际的 logo 路径
 function findUniversityLogo(universityName, englishName) {
     // 尝试从全局作用域获取 QS_TOP_UNIVERSITIES
-    const universities = typeof QS_TOP_UNIVERSITIES !== 'undefined' ? QS_TOP_UNIVERSITIES : 
-                        (typeof window !== 'undefined' && window.QS_TOP_UNIVERSITIES ? window.QS_TOP_UNIVERSITIES : null);
+    // 优先使用 main.js 中加载的数据，否则使用 window.QS_TOP_UNIVERSITIES
+    let universities = null;
+    
+    // 尝试从 main.js 的全局变量获取（如果已加载）
+    if (typeof window !== 'undefined') {
+        // 检查是否有从API或JS文件加载的数据
+        if (window.QS_TOP_UNIVERSITIES && Array.isArray(window.QS_TOP_UNIVERSITIES) && window.QS_TOP_UNIVERSITIES.length > 0) {
+            universities = window.QS_TOP_UNIVERSITIES;
+        }
+    }
+    
+    // 如果还是没有，尝试从模块导出获取（Node.js环境）
+    if (!universities && typeof QS_TOP_UNIVERSITIES !== 'undefined' && Array.isArray(QS_TOP_UNIVERSITIES)) {
+        universities = QS_TOP_UNIVERSITIES;
+    }
     
     if (universities && Array.isArray(universities)) {
         // 先尝试用中文名查找

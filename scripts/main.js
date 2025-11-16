@@ -2936,11 +2936,51 @@ document.addEventListener('DOMContentLoaded', function() {
 // 大学选择器功能
 let currentUniversityField = '';
 let filteredUniversities = [];
+// 注意：QS_TOP_UNIVERSITIES 在 university-data.js 中已声明，这里不重复声明
+// 我们使用 window.QS_TOP_UNIVERSITIES 来访问和更新
 
-// 初始化大学数据
-function initUniversityData() {
-    if (typeof QS_TOP_UNIVERSITIES !== 'undefined') {
-        filteredUniversities = QS_TOP_UNIVERSITIES;
+// 初始化大学数据（优先从API加载，失败则从JS文件加载）
+async function initUniversityData() {
+    try {
+        // 尝试从API加载
+        const response = await fetch('/api/universities');
+        if (response.ok) {
+            const universities = await response.json();
+            if (universities && universities.length > 0) {
+                // 更新全局变量（如果存在）或创建新的
+                if (typeof window !== 'undefined') {
+                    window.QS_TOP_UNIVERSITIES = universities;
+                }
+                // 如果 university-data.js 中的变量存在，也更新它
+                if (typeof QS_TOP_UNIVERSITIES !== 'undefined') {
+                    // 不能直接赋值给 const，所以更新 window 上的引用
+                    window.QS_TOP_UNIVERSITIES = universities;
+                }
+                filteredUniversities = universities;
+                console.log(`从API加载了 ${universities.length} 所大学数据`);
+                return;
+            }
+        }
+    } catch (error) {
+        console.warn('从API加载大学数据失败，尝试从JS文件加载:', error);
+    }
+    
+    // 如果API加载失败，回退到JS文件
+    // 优先使用 window.QS_TOP_UNIVERSITIES，然后是全局的 QS_TOP_UNIVERSITIES
+    let universities = null;
+    if (typeof window !== 'undefined' && window.QS_TOP_UNIVERSITIES) {
+        universities = window.QS_TOP_UNIVERSITIES;
+    } else if (typeof QS_TOP_UNIVERSITIES !== 'undefined') {
+        universities = QS_TOP_UNIVERSITIES;
+        // 同步到 window
+        if (typeof window !== 'undefined') {
+            window.QS_TOP_UNIVERSITIES = QS_TOP_UNIVERSITIES;
+        }
+    }
+    
+    if (universities && universities.length > 0) {
+        filteredUniversities = universities;
+        console.log(`从JS文件加载了 ${universities.length} 所大学数据`);
     } else {
         // 如果数据未加载，等待加载完成
         setTimeout(initUniversityData, 100);
@@ -2975,7 +3015,11 @@ function openUniversitySelector(fieldId) {
     }
     
     // 显示所有大学
-    filteredUniversities = QS_TOP_UNIVERSITIES;
+    // 获取大学数据（优先从window，否则从全局）
+    const universities = (typeof window !== 'undefined' && window.QS_TOP_UNIVERSITIES) ? 
+                        window.QS_TOP_UNIVERSITIES : 
+                        (typeof QS_TOP_UNIVERSITIES !== 'undefined' ? QS_TOP_UNIVERSITIES : []);
+    filteredUniversities = universities;
     renderUniversities();
     
     // 初始化确定按钮状态
@@ -3097,7 +3141,12 @@ function updateConfirmButton() {
 function filterUniversities() {
     const searchTerm = document.getElementById('universitySearch').value.toLowerCase();
     
-    filteredUniversities = QS_TOP_UNIVERSITIES.filter(university => {
+    // 获取大学数据（优先从window，否则从全局）
+    const universities = (typeof window !== 'undefined' && window.QS_TOP_UNIVERSITIES) ? 
+                        window.QS_TOP_UNIVERSITIES : 
+                        (typeof QS_TOP_UNIVERSITIES !== 'undefined' ? QS_TOP_UNIVERSITIES : []);
+    
+    filteredUniversities = universities.filter(university => {
         return university.chineseName.toLowerCase().includes(searchTerm) ||
                university.name.toLowerCase().includes(searchTerm) ||
                university.country.toLowerCase().includes(searchTerm);
@@ -3112,13 +3161,18 @@ function filterByCountry(country) {
     document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
     event.target.classList.add('active');
     
+    // 获取大学数据（优先从window，否则从全局）
+    const universities = (typeof window !== 'undefined' && window.QS_TOP_UNIVERSITIES) ? 
+                        window.QS_TOP_UNIVERSITIES : 
+                        (typeof QS_TOP_UNIVERSITIES !== 'undefined' ? QS_TOP_UNIVERSITIES : []);
+    
     if (country === 'all') {
-        filteredUniversities = QS_TOP_UNIVERSITIES;
+        filteredUniversities = universities;
     } else if (country === '其他') {
         const commonCountries = ['美国', '英国', '中国', '澳大利亚', '加拿大', '德国', '日本', '韩国', '新加坡'];
-        filteredUniversities = QS_TOP_UNIVERSITIES.filter(uni => !commonCountries.includes(uni.country));
+        filteredUniversities = universities.filter(uni => !commonCountries.includes(uni.country));
     } else {
-        filteredUniversities = QS_TOP_UNIVERSITIES.filter(uni => uni.country === country);
+        filteredUniversities = universities.filter(uni => uni.country === country);
     }
     
     // 保持搜索条件
