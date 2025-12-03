@@ -973,6 +973,7 @@ function saveAdminSettings() {
             title: safeGetValue('serviceTitle'),
             subtitle: safeGetValue('serviceSubtitle'),
             qrCodeImage: safeGetValue('qrCodeImage'),
+            thankyouQrCode: safeGetValue('thankyouQrCode'),
             contactEmail: safeGetValue('contactEmail'),
             techSupport: safeGetValue('techSupport')
         }
@@ -1137,6 +1138,7 @@ function loadAdminSettings() {
             safeSetValue('serviceTitle', adminSettings.service.title);
             safeSetValue('serviceSubtitle', adminSettings.service.subtitle);
             safeSetValue('qrCodeImage', adminSettings.service.qrCodeImage);
+            safeSetValue('thankyouQrCode', adminSettings.service.thankyouQrCode);
             safeSetValue('contactEmail', adminSettings.service.contactEmail);
             safeSetValue('techSupport', adminSettings.service.techSupport);
         }

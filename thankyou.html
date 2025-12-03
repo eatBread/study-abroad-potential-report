@@ -31,18 +31,16 @@
         }
         
         .thankyou-icon {
-            font-size: 5rem;
             margin-bottom: 30px;
-            animation: bounce 1s ease-in-out;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         
-        @keyframes bounce {
-            0%, 100% {
-                transform: translateY(0);
-            }
-            50% {
-                transform: translateY(-20px);
-            }
+        .thankyou-icon img {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 10px;
         }
         
         .thankyou-title {
@@ -159,11 +157,16 @@
 <body>
     <div class="thankyou-container">
         <div class="thankyou-content">
-            <div class="thankyou-icon">✅</div>
+            <div class="thankyou-icon">
+                <img id="thankyou-qr-code" src="image/default-qr.png" alt="二维码" style="width: 200px; height: 200px; object-fit: contain;">
+            </div>
             <h1 class="thankyou-title">感谢您的参与！</h1>
-            <p class="thankyou-message">
+            <p class="thankyou-message" style="margin-bottom: 20px;">
                 您的问卷已成功提交。我们的工作人员将尽快处理您的信息，
                 并为您生成个性化的留学潜力评估报告。
+            </p>
+            <p class="thankyou-message" style="font-size: 1rem; color: #4a5568; font-weight: 500;">
+                请扫描上方二维码添加工作人员领取留学潜力报告。
             </p>
             
             <div class="thankyou-info" id="thankyouInfo" style="display: none;">
@@ -183,7 +186,6 @@
             
             <div class="thankyou-actions">
                 <a href="home.html" class="btn-thankyou btn-primary-thankyou">返回首页</a>
-                <a href="admin.html" class="btn-thankyou btn-secondary-thankyou">管理后台</a>
             </div>
         </div>
     </div>
@@ -191,6 +193,30 @@
     <script>
         // 显示提交信息（如果有）
         document.addEventListener('DOMContentLoaded', function() {
+            // 加载感谢页二维码
+            const savedSettings = localStorage.getItem('adminSettings');
+            if (savedSettings) {
+                try {
+                    const adminSettings = JSON.parse(savedSettings);
+                    if (adminSettings.service && adminSettings.service.thankyouQrCode) {
+                        const qrCodePath = adminSettings.service.thankyouQrCode.trim();
+                        if (qrCodePath) {
+                            // 转换为绝对路径
+                            const qrCodeImg = document.getElementById('thankyou-qr-code');
+                            if (qrCodeImg) {
+                                if (qrCodePath.startsWith('http://') || qrCodePath.startsWith('https://') || qrCodePath.startsWith('/')) {
+                                    qrCodeImg.src = qrCodePath;
+                                } else {
+                                    qrCodeImg.src = '/' + qrCodePath.replace(/^\.\//, '');
+                                }
+                            }
+                        }
+                    }
+                } catch (e) {
+                    console.error('加载二维码配置错误:', e);
+                }
+            }
+            
             const surveyData = localStorage.getItem('surveyData');
             if (surveyData) {
                 try {
